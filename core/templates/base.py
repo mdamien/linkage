@@ -12,7 +12,7 @@ def basic_frame(*content):
             L.head / (
                 L.meta(charset='utf-8'),
                 L.title / 'Linkage',
-                L.link(rel='stylesheet', href="https://bootswatch.com/united/bootstrap.css", crossorigin="anonymous"),
+                L.link(rel='stylesheet', href="/static/css/bootstrap.css", crossorigin="anonymous"),
                 CSS,
             ),
             L.body / content,

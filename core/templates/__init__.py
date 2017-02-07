@@ -1,3 +1,5 @@
+from django.middleware.csrf import get_token
+
 from lys import L, raw
 
 from .base import base
@@ -6,13 +8,13 @@ TITLEBAR = L.div('.row') / (
     L.div('.col-md-12') / (
         L.nav('.navbar.navbar-default') / (
             L.div('.navbar-header') / (
-                L.a('.navbar-brand', href='#') / 'Linkage',
+                L.a('.navbar-brand', href='/') / 'Linkage',
             )
         )
     )
 )
 
-def result(**args):
+def result(request, graph):
     return base((
         L.br,
         L.div('.container-fluid') / (
@@ -33,7 +35,6 @@ def result(**args):
                     L.div('#outputTabs.tab-content') / (
                         L.div('#network.tab-pane.active') / L.div('#graph'),
                         L.div('#terms.tab-pane') / 'terms',
-                        L.div('#terms.tab-pane') / 'terms',
                         L.div('#groups.tab-pane') / 'groups',
                         L.div('#topics.tab-pane') / 'topics',
                     ),
@@ -44,26 +45,12 @@ def result(**args):
         L.script(src='/static/js/tether.js'),
         L.script(src='/static/js/bootstrap.js'),
         L.script(src='/static/js/vivagraph.js'),
-        L.script / raw("""
-          var graphGenerator = Viva.Graph.generator();
-          var graph = graphGenerator.wattsStrogatz(150, 4, 0.2);
-
-          var layout = Viva.Graph.Layout.forceDirected(graph, {
-              springLength : 10,
-              springCoeff : 0.0005,
-              dragCoeff : 0.02,
-              gravity : -1.2
-          });
-
-          var renderer = Viva.Graph.View.renderer(graph, {
-              container: document.getElementById('graph'),
-              layout: layout,
-          });
-          renderer.run();
-        """)
+        L.script(src='/static/js/papaparse.js'),
+        L.script / raw("var GRAPH_ID = {}".format(graph.pk)),
+        L.script(src='/static/js/graph.js'),
     ))
 
-def index(**args):
+def index(request, graphs):
     return base((
         L.br,
         L.div('.container-fluid') / (
@@ -78,10 +65,11 @@ def index(**args):
                             L.a('.btn.btn-primary.btn-large', href='#') / 'PubMed topic',
                         ),
                         L.h3 / 'Upload your own graph',
-                        L.form('.row') / (
-                            L.div('.col-md-5') / L.input('form-control', type='file'),
+                        L.form('.row', method="post", enctype="multipart/form-data") / (
+                            L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
+                            L.div('.col-md-5') / L.input('form-control', type='file', name='csv_file'),
                             L.div('.col-md-3') / (
-                                L.a('.btn.btn-primary.btn-large', href='#') / 'Import',
+                                L.input('.btn.btn-primary.btn-large', href='#', type='submit', value='Import'),
                             ),
                         )
                     ),
@@ -89,22 +77,8 @@ def index(**args):
                     L.h1 / 'Uploaded graphs',
                     L.ul / (
                         L.li / (
-                            L.a(href='/result/', style='color:grey') /
-                                '\'GMail import\' one hour ago (processing 40%)'
-                        ),
-                        L.li / (
-                            L.a(href='/result/') /
-                                '\'GMail import\' on Feb 5, 2017'
-                        ),
-                        L.li / (
-                            L.a(href='/result/') /
-                                '\'GMail import\' on Feb 2, 2017'
-                        ),
-                        L.li / (
-                            L.a(href='/result/') /
-                                '\'archiv search for "statistics"\' on Feb 1, 2017'
-                        ),
-                    ),
+                            L.a(href=graph.get_absolute_url()) / str(graph)
+                        ) for graph in graphs),
                 ),
             ),
         ),

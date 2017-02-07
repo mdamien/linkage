@@ -1,13 +1,22 @@
 from django.db import models
+from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.urls import reverse
 
-class ProcessedGraph(models.Model):
+class Graph(models.Model):
     name = models.CharField(max_length=100)
-    time = models.DateTimeField(auto_now_add=True)
 
-    # TODO: data
-    # nodes, links, clusters, groups, matrices,...
+    # csv of [origin, dest, text]
+    links = models.TextField(blank=True, default='')
+
+    # TODO: output data
+    # clusters, groups, matrices,...
 
     # TODO: user
 
+    imported_at = models.DateTimeField(auto_now_add=True)
+
+    def get_absolute_url(self):
+        return resolve('core.views.result', pk=self.pk)
+
     def __str__(self):
-        return '"{}"" at {}'.format(name, time)
+        return '"{}" {}'.format(self.name, naturaltime(self.imported_at))
