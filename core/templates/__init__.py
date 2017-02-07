@@ -59,11 +59,15 @@ def index(request, graphs):
                 L.div('.col-md-12') / (
                     L.p / (
                         L.h3 / 'Make a graph',
-                        L.ul / (
-                            L.a('.btn.btn-primary.btn-large', href='#') / 'Gmail import', ' ',
-                            L.a('.btn.btn-primary.btn-large', href='#') / 'arXiv topic', ' ',
-                            L.a('.btn.btn-primary.btn-large', href='#') / 'PubMed topic',
+                        L.form('.row', method='POST') / (
+                            L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
+                            L.div('.col-md-5') / L.input('.form-control', type='text', name='q'),
+                            L.ul / (
+                                L.button('.btn.btn-primary.btn-large', href='#') / 'arXiv topic', ' ',
+                                L.a('.btn.btn-primary.btn-large', href='#') / 'PubMed topic',
+                            ),
                         ),
+                        L.a('.btn.btn-primary.btn-large', href='#') / 'Gmail import', ' ',
                         L.h3 / 'Upload your own graph',
                         L.form('.row', method="post", enctype="multipart/form-data") / (
                             L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
