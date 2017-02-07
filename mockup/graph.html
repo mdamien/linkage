@@ -1,0 +1,69 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://bootswatch.com/united/bootstrap.css" crossorigin="anonymous">
+<style> #graph > svg { width: 100%; height: 100%}</style>
+</head>
+<body>
+  <br/>
+  <div class="container-fluid">
+  	<div class="row">
+  		<div class="col-md-12">
+  			<nav class="navbar navbar-default" role="navigation">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="#">Linkage</a>
+  				</div>
+  			</nav>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-2">
+          <div class='well'><strong>4</strong> groups<br/><strong>10</strong> topics</div>
+      </div>
+			<div class="col-md-10">
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#network" data-toggle="network">Network</a></li>
+          <li><a href="#terms" data-toggle="tab">Terms</a></li>
+          <li><a href="#groups" data-toggle="tab">Groups connexions</a></li>
+          <li><a href="#topics" data-toggle="tab">Topics connexions</a></li>
+        </ul>
+        <div id="myTabContent" class="tab-content">
+          <div class="tab-pane fade active in" id="network">
+            <div id='graph'></div>
+          </div>
+          <div class="tab-pane fade" id="terms">
+            <p>Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid. Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan four loko farm-to-table craft beer twee. Qui photo booth letterpress, commodo enim craft beer mlkshk aliquip jean shorts ullamco ad vinyl cillum PBR. Homo nostrud organic, assumenda labore aesthetic magna delectus mollit.</p>
+          </div>
+          <div class="tab-pane fade" id="groups">
+            <p>Etsy mixtape wayfarers, ethical wes anderson tofu before they sold out mcsweeney's organic lomo retro fanny pack lo-fi farm-to-table readymade. Messenger bag gentrify pitchfork tattooed craft beer, iphone skateboard locavore carles etsy salvia banksy hoodie helvetica. DIY synth PBR banksy irony. Leggings gentrify squid 8-bit cred pitchfork.</p>
+          </div>
+          <div class="tab-pane fade" id="topics">
+            <p>Trust fund seitan letterpress, keytar raw denim keffiyeh etsy art party before they sold out master cleanse gluten-free squid scenester freegan cosby sweater. Fanny pack portland seitan DIY, art party locavore wolf cliche high life echo park Austin. Cred vinyl keffiyeh DIY salvia PBR, banh mi before they sold out farm-to-table VHS viral locavore cosby sweater.</p>
+          </div>
+        </div>
+  		</div>
+  	</div>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.js" integrity="sha256-jVfFb7AbGi7S/SLNl8SB4/MYaf549eEs+NlIWMoARHg=" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+  <script src="js/vivagraph.js"></script>
+  <script>
+
+  var graphGenerator = Viva.Graph.generator();
+  var graph = graphGenerator.wattsStrogatz(150, 4, 0.2);
+
+  var layout = Viva.Graph.Layout.forceDirected(graph, {
+      springLength : 10,
+      springCoeff : 0.0005,
+      dragCoeff : 0.02,
+      gravity : -1.2
+  });
+
+  var renderer = Viva.Graph.View.renderer(graph, {
+      container: document.getElementById('graph'),
+      layout: layout,
+  });
+  renderer.run();
+  </script>
+</body>
+</html>
