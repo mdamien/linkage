@@ -1,3 +1,19 @@
+var COLORS = [
+  '#1f77b4', '#aec7e8',
+  '#ff7f0e', '#ffbb78',
+  '#2ca02c', '#98df8a',
+  '#d62728', '#ff9896',
+  '#9467bd', '#c5b0d5',
+  '#8c564b', '#c49c94',
+  '#e377c2', '#f7b6d2',
+  '#7f7f7f', '#c7c7c7',
+  '#bcbd22', '#dbdb8d'
+];
+
+var hashIt = function(s){
+  return s.split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a},0);
+}
+
 $.get('/result/' + GRAPH_ID + '/data/', function(csv) {
   var data = Papa.parse(csv).data;
   console.log(data);
@@ -15,22 +31,16 @@ $.get('/result/' + GRAPH_ID + '/data/', function(csv) {
   var graphics = Viva.Graph.View.svgGraphics(),
       nodeSize = 10;
 
-  var layout = Viva.Graph.Layout.forceDirected(graph, {
-      springLength : 10,
-      springCoeff : 0.0005,
-      dragCoeff : 0.02,
-      gravity : -1.2
-  });
-
   graphics.node(function(node) {
+    var color = hashIt(node.id) % 2;
     var ui = Viva.Graph.svg('g'),
         svgText = Viva.Graph.svg('text').attr('y', '-6px').text(node.id),
         circle = Viva.Graph.svg('circle')
           .attr('cx', 0)
           .attr('cy', 0)
-          .attr('style', 'fill: #efb73e')
+          .attr('style', 'fill: ' + COLORS[color])
           .attr('r', 5);
-    ui.append(svgText);
+    // ui.append(svgText);
     ui.append(circle);
     return ui;
   }).placeNode(function(nodeUI, pos) {
@@ -63,9 +73,11 @@ $.get('/result/' + GRAPH_ID + '/data/', function(csv) {
   defs.append(marker);
   var geom = Viva.Graph.geom();
   graphics.link(function(link){
+      var color = hashIt(link.id) % 2 + 3;
       // Notice the Triangle marker-end attribe:
       return Viva.Graph.svg('path')
-                 .attr('stroke', 'gray')
+                 .attr('stroke-width', 2)
+                 .attr('stroke', COLORS[color])
                  .attr('marker-end', 'url(#Triangle)');
   }).placeLink(function(linkUI, fromPos, toPos) {
       // Here we should take care about
@@ -97,9 +109,16 @@ $.get('/result/' + GRAPH_ID + '/data/', function(csv) {
       linkUI.attr("d", data);
   });
 
+  var layout = Viva.Graph.Layout.forceDirected(graph, {
+      springLength : 10,
+      springCoeff : 0.0005,
+      dragCoeff : 0.02,
+      gravity : -1.2
+  });
+
   var renderer = Viva.Graph.View.renderer(graph, {
       container: document.getElementById('graph'),
-      layout: layout,
+      // layout: layout,
       graphics: graphics,
   });
   renderer.run();

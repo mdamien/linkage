@@ -16,7 +16,7 @@ class Graph(models.Model):
     imported_at = models.DateTimeField(auto_now_add=True)
 
     def get_absolute_url(self):
-        return resolve('core.views.result', pk=self.pk)
+        return reverse('result', kwargs={'pk': self.pk})
 
     def __str__(self):
         return '"{}" {}'.format(self.name, naturaltime(self.imported_at))
