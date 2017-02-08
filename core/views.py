@@ -2,7 +2,7 @@ import csv
 from io import TextIOWrapper
 
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 
@@ -17,7 +17,7 @@ def index(request):
 
         from config.celery import process_graph
         process_graph.delay(graph.pk)
-        
+
         return redirect(graph)
     if request.POST:
         q = request.POST['q']
@@ -31,10 +31,31 @@ def index(request):
 @login_required
 def result(request, pk):
     graph = get_object_or_404(models.Graph, pk=pk)
-    return HttpResponse(templates.result(request, graph))
+    result = None
+    try:
+        result = models.ProcessingResult.objects.get(graph=graph)
+    except:
+        pass
+    return HttpResponse(templates.result(request, graph, result))
 
 
 @login_required
 def api_result(request, pk):
     graph = get_object_or_404(models.Graph, pk=pk)
-    return HttpResponse(graph.links)
+
+    data = {
+        'links': graph.links,
+    }
+
+    result = None
+    try:
+        result = models.ProcessingResult.objects.get(graph=graph)
+    except:
+        pass
+    if result:
+        data['result'] = {
+            'progress': result.progress,
+            'clusters': result.clusters,
+            'topics': result.topics,
+        }
+    return JsonResponse(data)

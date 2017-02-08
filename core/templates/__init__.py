@@ -17,16 +17,23 @@ TITLEBAR = L.div('.row') / (
     )
 )
 
-def result(request, graph):
+def result(request, graph, result):
+    sidebar = ''
+    if result:
+        sidebar += 'progress: ' + str(int(result.progress*100)) + '\n\n'
+        if result.log:
+            sidebar += result.log + '\n\n'
+        if result.clusters:
+            sidebar += 'clusters:\n' + result.clusters + '\n\n'
+            sidebar += 'topics:\n' + result.topics + '\n\n'
+
     return base((
         L.br,
         L.div('.container-fluid') / (
             TITLEBAR,
             L.div('.row') / (
                 L.div('.col-md-2') / (
-                    L.div('.well') / (
-                        L.strong / '4', ' groups', L.br, L.strong / '10', ' topics'
-                    )
+                    L.pre / sidebar
                 ),
                 L.div('.col-md-10') / (
                     L.ul('.nav.nav-tabs') / (
