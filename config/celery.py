@@ -20,7 +20,7 @@ app.config_from_object('django.conf:settings')
 def process_graph(pk):
     print('Processing graph %d' % pk)
 
-    import time
+    import time, csv, random, io
 
     from core.models import Graph, ProcessingResult
     graph = Graph.objects.get(pk=pk)
@@ -28,14 +28,42 @@ def process_graph(pk):
     result = ProcessingResult(graph=graph)
     result.save()
 
+    """
     for i in range(6):
         time.sleep(5)
         result.progress = i*2 / 10
         result.save()
+    """
 
-    result.clusters = '1,cluster1\n2,cluster2'
-    result.topics = '1,2,topic1\n2,3,topic2'
+    links = list(csv.reader(graph.links.split('\n')))
 
+    NB_OF_CLUSTERS = 3
+    all_clusters = ['%d_clusters_%d' % (pk, i) for i in range(NB_OF_CLUSTERS)]
+
+    clusters = io.StringIO()
+    writer = csv.writer(clusters)
+
+    nodes = set()
+    for link in links:
+        if len(link) > 1:
+            nodes.add(link[0])
+            nodes.add(link[1])
+
+    for node in nodes:
+        writer.writerow([node, random.choice(all_clusters)])
+
+    NB_OF_TOPICS = 3
+    all_topics = ['%d_topic_%d' % (pk, i) for i in range(NB_OF_TOPICS)]
+
+    topics = io.StringIO()
+    writer = csv.writer(topics)
+    for link in links:
+        if len(link) > 1:
+            writer.writerow([link[0], link[1], random.choice(all_topics)])
+
+    result.progress = 1;
+    result.clusters = clusters.getvalue()
+    result.topics = topics.getvalue()
     result.save()
 
     return None

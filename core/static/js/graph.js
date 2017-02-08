@@ -1,21 +1,22 @@
 $.get('/result/' + GRAPH_ID + '/data/', function(full_data) {
   var graph = Viva.Graph.graph();
 
-  var links = Papa.parse(full_data.links).data;
+  var links = Papa.parse(full_data.links, {delimiter: ','}).data;
   links.forEach(function(line) {
     if (line[1]) { // not an empty line
       graph.addLink(line[0], line[1], line[2]);
     }
   });
 
+  var nodeToCluster = {};
+  var edgeToTopic = {};
   if (full_data.result && full_data.result.clusters) {
-    var clusters = Papa.parse(full_data.result.clusters).data;
-    var nodeToCluster = {}
+    var clusters = Papa.parse(full_data.result.clusters, {delimiter: ','}).data;
     clusters.forEach(function(line) {
       nodeToCluster[line[0]] = line[1];
     });
-    var topics = Papa.parse(full_data.result.topics).data;
-    var edgeToTopic = {};
+
+    var topics = Papa.parse(full_data.result.topics, {delimiter: ','}).data;
     topics.forEach(function(line) {
       edgeToTopic[line[0]+','+line[1]] = line[2];
     });
