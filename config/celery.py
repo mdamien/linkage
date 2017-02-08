@@ -15,13 +15,27 @@ app.config_from_object('django.conf:settings')
 # Load task modules from all registered Django app configs.
 # app.autodiscover_tasks()
 
-
-@app.task(bind=True)
-def debug_task(self):
-    print('Request: {0!r}'.format(self.request))
-
 # TODO: move this back to core/ when autodiscover_tasks is working
 @task()
 def process_graph(pk):
     print('Processing graph %d' % pk)
+
+    import time
+
+    from core.models import Graph, ProcessingResult
+    graph = Graph.objects.get(pk=pk)
+
+    result = ProcessingResult(graph=graph)
+    result.save()
+
+    for i in range(6):
+        time.sleep(5)
+        result.progress = i*2 / 10
+        result.save()
+
+    result.clusters = '1,cluster1\n2,cluster2'
+    result.topics = '1,2,topic1\n2,3,topic2'
+
+    result.save()
+
     return None
