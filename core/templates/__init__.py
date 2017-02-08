@@ -9,7 +9,10 @@ TITLEBAR = L.div('.row') / (
         L.nav('.navbar.navbar-default') / (
             L.div('.navbar-header') / (
                 L.a('.navbar-brand', href='/') / 'Linkage',
-            )
+            ),
+            L.ul('.nav.navbar-nav.navbar-right') / (
+                L.li / (L.a(href='/admin/logout/') / raw('logout&nbsp;&nbsp;')),
+            ),
         )
     )
 )
