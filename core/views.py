@@ -14,6 +14,10 @@ def index(request):
         links = TextIOWrapper(request.FILES['csv_file'].file, encoding=request.encoding).read()
         graph = models.Graph(name='CSV import of %s' % (request.FILES['csv_file'].name), links=links)
         graph.save()
+
+        from config.celery import process_graph
+        process_graph.delay(graph.pk)
+        
         return redirect(graph)
     if request.POST:
         q = request.POST['q']
@@ -21,7 +25,7 @@ def index(request):
         graph = models.Graph(name='arXiv import of search term: %s' % (q, ), links=links)
         graph.save()
         return redirect(graph)
-    return HttpResponse(templates.index(request, models.Graph.objects.all().order_by('-imported_at')))
+    return HttpResponse(templates.index(request, models.Graph.objects.all().order_by('-created_at')))
 
 
 @login_required
