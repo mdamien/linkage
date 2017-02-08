@@ -1,0 +1,7 @@
+install nginx python3 virtualenv python3-dev build-essential
+
+pip install -r requirements_prod.txt
+
+nginx config:
+
+run run_prod.sh

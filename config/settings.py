@@ -80,6 +80,7 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'collected_static')
 
 LOGIN_URL = '/admin/login/'
 LOGOUT_URL = '/admin/logout/'
