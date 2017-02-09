@@ -70,8 +70,15 @@ function get_graph_graphics(clusters, topics) {
             .attr('cy', 0)
             .attr('style', 'fill: ' + COLORS[color])
             .attr('r', 5);
-      // ui.append(svgText);
+      ui.append(svgText);
       ui.append(circle);
+
+      svgText.attr('visibility', 'hidden');
+      $(ui).hover(function() {
+        svgText.attr('visibility', 'visible');
+      }, function() {
+        svgText.attr('visibility', 'hidden');
+      });
       return ui;
     }).placeNode(function(nodeUI, pos) {
         nodeUI.attr('transform',
@@ -108,6 +115,7 @@ function get_graph_graphics(clusters, topics) {
         if (topic) {
           color = hashIt(topic) % COLORS.length;
         }
+                
         // Notice the Triangle marker-end attribe:
         return Viva.Graph.svg('path')
                    .attr('stroke-width', 2)
