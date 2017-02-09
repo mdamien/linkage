@@ -63,37 +63,45 @@ def result(request, graph, result):
 def index(request, graphs):
     return base((
         L.br,
-        L.div('.container-fluid') / (
+        L.div('.container') / (
             TITLEBAR,
             L.div('.row') / (
-                L.div('.col-md-12') / (
+                L.div('.col-md-6') / (
                     L.p / (
-                        L.h3 / 'Make a graph',
+                        L.h4 / 'Import a graph for processing',
                         L.form('.row', method='POST') / (
                             L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
-                            L.div('.col-md-5') / L.input('.form-control', type='text', name='q'),
-                            L.ul / (
-                                L.button('.btn.btn-primary.btn-large', href='#') / 'arXiv topic', ' ',
-                                L.a('.btn.btn-primary.btn-large', href='#') / 'PubMed topic',
+                            L.div('.col-md-9') / L.input('.form-control', type='text', name='q'),
+                            L.div('.col-md-3') / (
+                                L.button('.btn.btn-primary.btn-large', href='#') / 'arXiv topic'
                             ),
                         ),
-                        L.a('.btn.btn-primary.btn-large', href='#') / 'Gmail import', ' ',
-                        L.h3 / 'Upload your own graph',
+                        L.br,
                         L.form('.row', method="post", enctype="multipart/form-data") / (
                             L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
-                            L.div('.col-md-5') / L.input('form-control', type='file', name='csv_file'),
+                            L.div('.col-md-9') / L.input('form-control', type='file', name='csv_file'),
                             L.div('.col-md-3') / (
-                                L.input('.btn.btn-primary.btn-large', href='#', type='submit', value='Import'),
+                                L.input('.btn.btn-primary.btn-large', href='#', type='submit', value='Import .csv'),
                             ),
                         )
                     ),
-                    L.hr,
-                    L.h1 / 'Uploaded graphs',
+                ),
+                (
+                    L.div('.col-md-6'),
+                    L.h4 / 'Uploaded graphs',
                     L.ul / (
                         L.li / (
                             L.a(href=graph.get_absolute_url()) / str(graph)
                         ) for graph in graphs),
-                ),
+                ) if len(graphs) > 0 else None,
             ),
+            L.div('.row') / (
+                L.div('.col-md-12 text-center') / (
+                    L.hr,
+                    L.img(src='/static/img/descartes.png', height='60'),
+                    raw('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'), # dat spacer
+                    L.img(src='/static/img/map5.jpg', height='60'),
+                ),
+            )
         ),
     ))
