@@ -5,15 +5,11 @@ from lys import L, raw
 from .base import base
 
 TITLEBAR = L.div('.row') / (
-    L.div('.col-md-12') / (
-        L.nav('.navbar.navbar-default') / (
-            L.div('.navbar-header') / (
-                L.a('.navbar-brand', href='/') / 'Linkage',
-            ),
-            L.ul('.nav.navbar-nav.navbar-right') / (
-                L.li / (L.a(href='/admin/logout/') / raw('logout&nbsp;&nbsp;')),
-            ),
-        )
+    L.div('.col-md-6') / (
+        L.a(href='/') / (L.h2 / 'Linkage'),
+    ),
+    L.div('.col-md-6.text-right') / (
+        L.a('.btn.btn-link', href='/admin/logout/', style='margin-top: 20px;display:inline-block') / 'logout',
     )
 )
 
@@ -28,7 +24,6 @@ def result(request, graph, result):
             sidebar += 'topics:\n' + result.topics + '\n\n'
 
     return base((
-        L.br,
         L.div('.container-fluid') / (
             TITLEBAR,
             L.div('.row') / (
@@ -62,7 +57,6 @@ def result(request, graph, result):
 
 def index(request, graphs):
     return base((
-        L.br,
         L.div('.container') / (
             TITLEBAR,
             L.div('.row') / (
@@ -87,12 +81,13 @@ def index(request, graphs):
                     ),
                 ),
                 (
-                    L.div('.col-md-6'),
-                    L.h4 / 'Uploaded graphs',
-                    L.ul / (
-                        L.li / (
-                            L.a(href=graph.get_absolute_url()) / str(graph)
-                        ) for graph in graphs),
+                    L.div('.col-md-6') / (
+                        L.h4 / 'Uploaded graphs',
+                        L.ul / (
+                            L.li / (
+                                L.a(href=graph.get_absolute_url()) / str(graph)
+                            ) for graph in graphs),
+                    ),
                 ) if len(graphs) > 0 else None,
             ),
             L.div('.row') / (
