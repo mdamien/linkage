@@ -4,13 +4,23 @@ from lys import L, raw
 
 from .base import base
 
-TITLEBAR = L.div('.row') / (
-    L.div('.col-md-6') / (
-        L.a(href='/') / (L.h2 / 'Linkage'),
+def header(request):
+    return L.div('.row') / (
+        L.div('.col-md-6') / (
+            L.a(href='/') / (L.h2 / 'Linkage'),
+        ),
+        L.div('.col-md-6.text-right') / (
+            L.a('.btn.btn-link', href='/admin/logout/', style='margin-top: 20px;display:inline-block') / 'logout',
+        ) if request.user.is_authenticated else None,
+    ), L.hr
+
+FOOTER = L.div('.row') / (
+    L.div('.col-md-12 text-center') / (
+        L.hr,
+        L.img(src='/static/img/descartes.png', height='60'),
+        raw('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'), # dat spacer
+        L.img(src='/static/img/map5.jpg', height='60'),
     ),
-    L.div('.col-md-6.text-right') / (
-        L.a('.btn.btn-link', href='/admin/logout/', style='margin-top: 20px;display:inline-block') / 'logout',
-    )
 )
 
 def result(request, graph, result):
@@ -25,7 +35,7 @@ def result(request, graph, result):
 
     return base((
         L.div('.container-fluid') / (
-            TITLEBAR,
+            header(request),
             L.div('.row') / (
                 L.div('.col-md-2') / (
                     L.pre / sidebar
@@ -58,7 +68,7 @@ def result(request, graph, result):
 def index(request, graphs):
     return base((
         L.div('.container') / (
-            TITLEBAR,
+            header(request),
             L.div('.row') / (
                 L.div('.col-md-6') / (
                     L.p / (
@@ -90,13 +100,34 @@ def index(request, graphs):
                     ),
                 ) if len(graphs) > 0 else None,
             ),
+            FOOTER
+        ),
+    ))
+
+
+def login(request):
+    return base((
+        L.div('.container') / (
+            header(request),
             L.div('.row') / (
-                L.div('.col-md-12 text-center') / (
-                    L.hr,
-                    L.img(src='/static/img/descartes.png', height='60'),
-                    raw('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'), # dat spacer
-                    L.img(src='/static/img/map5.jpg', height='60'),
+                L.div('.col-md-3.center-block', style='float:none') / (
+                    L.div('.alert.alert-dismissible.alert-info') / 'You need to login to access this application',
+                    L.form(method='post') / (
+                        L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
+                        L.div('.form-group') / (
+                            L.label('control-label') / 'Username',
+                            L.input('form-control', name='username'),
+                        ),
+                        L.div('.form-group') / (
+                            L.label('control-label') / 'Password',
+                            L.input('form-control', type='password', name='password'),
+                        ),
+                        L.div('.form-group.text-center') / (
+                            L.button('.btn.btn-primary', type='submit') / 'Login'
+                        )
+                    ),
                 ),
-            )
+            ),
+            FOOTER
         ),
     ))

@@ -57,3 +57,14 @@ def api_result(request, pk):
             'topics': result.topics,
         }
     return JsonResponse(data)
+
+
+def login(request):
+    if request.POST:
+        login(request.POST['username'], request.POST['password'])
+    return HttpResponse(templates.login(request, form))
+
+
+def logout(request):
+
+    return redirect('/')
