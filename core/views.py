@@ -58,13 +58,17 @@ def api_result(request, pk):
         }
     return JsonResponse(data)
 
+from django.contrib.auth.views import login as login_view
 
 def login(request):
     if request.POST:
-        login(request.POST['username'], request.POST['password'])
-    return HttpResponse(templates.login(request, form))
+        login_view(request)
+        if request.user.is_authenticated():
+            return redirect('/')
+    return HttpResponse(templates.login(request))
 
+from django.contrib.auth import logout as auth_logout
 
 def logout(request):
-
+    auth_logout(request)
     return redirect('/')

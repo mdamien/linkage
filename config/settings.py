@@ -84,9 +84,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'collected_static')
 
-LOGIN_URL = '/admin/login/'
-LOGOUT_URL = '/admin/logout/'
-
 # CELERY
 BROKER_URL = 'redis://localhost:6379'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379'

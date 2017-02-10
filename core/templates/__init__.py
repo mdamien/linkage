@@ -10,7 +10,7 @@ def header(request):
             L.a(href='/') / (L.h2 / 'Linkage'),
         ),
         L.div('.col-md-6.text-right') / (
-            L.a('.btn.btn-link', href='/admin/logout/', style='margin-top: 20px;display:inline-block') / 'logout',
+            L.a('.btn.btn-link', href='/accounts/logout/', style='margin-top: 20px;display:inline-block') / 'logout',
         ) if request.user.is_authenticated else None,
     ), L.hr
 
@@ -23,6 +23,8 @@ FOOTER = L.div('.row') / (
         L.a(href='http://map5.mi.parisdescartes.fr/') / L.img(src='/static/img/map5.jpg', height='60'),
         SPACER,
         L.a(href='http://www.cnrs.fr/') / L.img(src='/static/img/cnrs.png', height='60'),
+        SPACER,
+        L.a(href='http://www.idfinnov.com/') / L.img(src='/static/img/idfinnov.jpg', height='60'),
         SPACER,
         L.a(href='http://samm.univ-paris1.fr/') / L.img(src='/static/img/samm.png', height='60'),
         SPACER,
