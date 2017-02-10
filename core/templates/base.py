@@ -12,6 +12,7 @@ def basic_frame(*content):
             L.head / (
                 L.meta(charset='utf-8'),
                 L.title / 'Linkage',
+                L.link(rel='icon', type='image/png', href='/static/img/favicon.png'),
                 L.link(rel='stylesheet', href="/static/css/bootstrap.css", crossorigin="anonymous"),
                 CSS,
             ),
