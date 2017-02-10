@@ -1,4 +1,8 @@
+import collections, csv
+from io import StringIO
+
 from django.middleware.csrf import get_token
+from django.contrib.humanize.templatetags.humanize import naturaltime
 
 from lys import L, raw
 
@@ -33,22 +37,61 @@ FOOTER = L.div('.row') / (
     ),
 )
 
-def result(request, graph, result):
-    sidebar = ''
-    if result:
-        sidebar += 'progress: ' + str(int(result.progress*100)) + '\n\n'
-        if result.log:
-            sidebar += result.log + '\n\n'
-        if result.clusters:
-            sidebar += 'clusters:\n' + result.clusters + '\n\n'
-            sidebar += 'topics:\n' + result.topics + '\n\n'
+def _result_sidebar(graph, result):
+    nodes = set()
+    nb_links = 0
+    for link in csv.reader(StringIO(graph.links), delimiter=','):
+        if len(link) > 0:
+            nodes.add(link[0])
+            nodes.add(link[1])
+            nb_links += 1
 
+    clusters = collections.Counter([line.split(',')[-1] for line in result.clusters.split('\n') if line])
+    topics = collections.Counter([line.split(',')[-1] for line in result.topics.split('\n') if line])
+
+    return (
+        L.div('.panel.panel-primary') / (
+            L.div('.panel-heading') / (
+                L.h3('.panel-title') / graph.name
+            ),
+            L.div('.panel-body') / (
+                L.strong() / str(nb_links),' edges ',
+                L.br,
+                L.strong() / str(len(nodes)), ' nodes',
+                L.br,
+                'imported ', L.strong() / naturaltime(graph.created_at),
+            )
+        ),
+        L.hr,
+        L.div('.panel.panel-default') / (
+            L.div('.panel-heading') / (
+                L.h3('.panel-title') / (str(len(clusters)), ' clusters'),
+            ),
+            L.div('.list-group') / (
+                (
+                    L.div('.list-group-item') / ('%s (%d)' % (cluster, c))
+                ) for cluster, c in clusters.most_common()
+            ),
+        ) if result else None,
+        L.div('.panel.panel-default') / (
+            L.div('.panel-heading') / (
+                L.h3('.panel-title') / (str(len(topics)), ' topics'),
+            ),
+            L.div('.list-group') / (
+                (
+                    L.div('.list-group-item') / ('%s (%d)' % (topic, c))
+                ) for topic, c in topics.most_common()
+            ),
+        ) if result else None,
+    )
+
+def result(request, graph, result):
     return base((
         L.div('.container-fluid') / (
             header(request),
             L.div('.row') / (
                 L.div('.col-md-2') / (
-                    L.pre / sidebar
+                    _result_sidebar(graph, result)
                 ),
                 L.div('.col-md-10') / (
                     L.ul('.nav.nav-tabs') / (
@@ -56,7 +99,7 @@ def result(request, graph, result):
                         L.li / (L.a(href='#terms', data_toggle='tab') / 'Terms'),
                         L.li / (L.a(href='#groups', data_toggle='tab') / 'Groups connexions'),
                         L.li / (L.a(href='#topics', data_toggle='tab') / 'Topics connexions'),
-                    ),
+                    ) if False else None,
                     L.div('#outputTabs.tab-content') / (
                         L.div('#network.tab-pane.active') / L.div('#graph'),
                         L.div('#terms.tab-pane') / 'terms',
