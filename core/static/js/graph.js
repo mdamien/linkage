@@ -109,13 +109,13 @@ function get_graph_graphics(clusters, topics) {
     var defs = graphics.getSvgRoot().append('defs');
     defs.append(marker);
     var geom = Viva.Graph.geom();
-    graphics.link(function(link){
+    graphics.link(function(link) {
         var color = hashIt(link.id) % 2 + 3;
         var topic = topics[link.fromId + ',' + link.toId];
         if (topic) {
           color = hashIt(topic) % COLORS.length;
         }
-                
+
         // Notice the Triangle marker-end attribe:
         return Viva.Graph.svg('path')
                    .attr('stroke-width', 2)

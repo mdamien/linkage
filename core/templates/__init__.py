@@ -14,12 +14,19 @@ def header(request):
         ) if request.user.is_authenticated else None,
     ), L.hr
 
+SPACER = raw('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;') # dat spacer
 FOOTER = L.div('.row') / (
     L.div('.col-md-12 text-center') / (
         L.hr,
-        L.img(src='/static/img/descartes.png', height='60'),
-        raw('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'), # dat spacer
-        L.img(src='/static/img/map5.jpg', height='60'),
+        L.a(href='http://www.parisdescartes.fr/') / L.img(src='/static/img/descartes.png', height='60'),
+        SPACER,
+        L.a(href='http://map5.mi.parisdescartes.fr/') / L.img(src='/static/img/map5.jpg', height='60'),
+        SPACER,
+        L.a(href='http://www.cnrs.fr/') / L.img(src='/static/img/cnrs.png', height='60'),
+        SPACER,
+        L.a(href='http://samm.univ-paris1.fr/') / L.img(src='/static/img/samm.png', height='60'),
+        SPACER,
+        L.a(href='http://univ-paris1.fr/') / L.img(src='/static/img/paris1.png', height='60'),
     ),
 )
 
