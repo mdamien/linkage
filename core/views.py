@@ -14,7 +14,7 @@ def index(request):
         links = TextIOWrapper(request.FILES['csv_file'].file, encoding=request.encoding).read()
         graph = models.Graph(name='CSV import of %s' % (request.FILES['csv_file'].name), links=links)
         graph.save()
-    if request.POST:
+    elif request.POST:
         q = request.POST['q']
         links = third_party_import.arxiv_to_csv(q)
         graph = models.Graph(name='arXiv import of search term: %s' % (q, ), links=links)

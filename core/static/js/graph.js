@@ -2,6 +2,7 @@ $.get('/result/' + GRAPH_ID + '/data/', function(full_data) {
   var graph = Viva.Graph.graph();
 
   var links = Papa.parse(full_data.links, {delimiter: ','}).data;
+  console.log('links:', links.length);
   links.forEach(function(line) {
     if (line[1]) { // not an empty line
       graph.addLink(line[0], line[1], line[2]);
