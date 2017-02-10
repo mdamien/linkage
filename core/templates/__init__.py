@@ -10,6 +10,7 @@ def header(request):
             L.a(href='/') / (L.h2 / 'Linkage'),
         ),
         L.div('.col-md-6.text-right') / (
+            L.a('.btn.btn-link', href='/admin/', style='margin-top: 20px;display:inline-block') / 'admin',
             L.a('.btn.btn-link', href='/accounts/logout/', style='margin-top: 20px;display:inline-block') / 'logout',
         ) if request.user.is_authenticated else None,
     ), L.hr
@@ -84,6 +85,7 @@ def index(request, graphs):
                         L.h4 / 'Import a graph for processing',
                         L.form('.row', method='POST') / (
                             L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
+                            L.input(type='hidden', name='action', value='import'),
                             L.div('.col-md-9') / L.input('.form-control', type='text', name='q'),
                             L.div('.col-md-3') / (
                                 L.button('.btn.btn-primary.btn-large', href='#') / 'arXiv topic'
@@ -92,6 +94,7 @@ def index(request, graphs):
                         L.br,
                         L.form('.row', method="post", enctype="multipart/form-data") / (
                             L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
+                            L.input(type='hidden', name='action', value='import'),
                             L.div('.col-md-9') / L.input('form-control', type='file', name='csv_file'),
                             L.div('.col-md-3') / (
                                 L.input('.btn.btn-primary.btn-large', href='#', type='submit', value='Import .csv'),
@@ -102,9 +105,22 @@ def index(request, graphs):
                 (
                     L.div('.col-md-6') / (
                         L.h4 / 'Uploaded graphs',
-                        L.ul / (
-                            L.li / (
-                                L.a(href=graph.get_absolute_url()) / str(graph)
+                        L.div('.list-group') / (
+                            L.a('.list-group-item', href=graph.get_absolute_url()) / (
+                                L.div('.row') / (
+                                    L.div('.col-md-10') / (
+                                        str(graph)
+                                    ),
+                                    L.div('.col-md-2') / (
+                                        L.form(method='post') / (
+                                            L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
+                                            L.input(type='hidden', name='action', value='delete'),
+                                            L.input(type='hidden', name='graph_id', value=str(graph.pk)),
+                                            L.button('.btn.btn-primary.btn-xs', type='submit') / 'delete', # L.span('.glyphicon.glyphicon-remove'),
+                                        )
+                                    )
+                                )
+                                
                             ) for graph in graphs),
                     ),
                 ) if len(graphs) > 0 else None,

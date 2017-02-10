@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.urls import reverse
+from django.contrib.auth.models import User
 
 class Graph(models.Model):
     name = models.CharField(max_length=100)
@@ -8,7 +9,7 @@ class Graph(models.Model):
     # csv of [origin, dest, text]
     links = models.TextField(blank=True, default='')
 
-    # TODO: user
+    user = models.ForeignKey(User)
 
     created_at = models.DateTimeField(auto_now_add=True)
 

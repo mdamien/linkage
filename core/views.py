@@ -10,20 +10,27 @@ from core import templates, models, third_party_import
 @login_required
 def index(request):
     graph = None
-    if request.POST and request.FILES:
-        links = TextIOWrapper(request.FILES['csv_file'].file, encoding=request.encoding).read()
-        graph = models.Graph(name='CSV import of %s' % (request.FILES['csv_file'].name), links=links)
-        graph.save()
-    elif request.POST:
-        q = request.POST['q']
-        links = third_party_import.arxiv_to_csv(q)
-        graph = models.Graph(name='arXiv import of search term: %s' % (q, ), links=links)
-        graph.save()
-    if graph:
-        from config.celery import process_graph
-        process_graph.delay(graph.pk)
-        return redirect(graph)
-    return HttpResponse(templates.index(request, models.Graph.objects.all().order_by('-created_at')))
+    if request.POST and request.POST['action'] == 'import':
+        if request.POST and request.FILES:
+            links = TextIOWrapper(request.FILES['csv_file'].file, encoding=request.encoding).read()
+            graph = models.Graph(name='CSV import of %s' % (request.FILES['csv_file'].name), links=links, user=request.user)
+            graph.save()
+        elif request.POST:
+            q = request.POST['q']
+            links = third_party_import.arxiv_to_csv(q)
+            graph = models.Graph(name='arXiv import of search term: %s' % (q, ), links=links, user=request.user)
+            graph.save()
+        if graph:
+            from config.celery import process_graph
+            process_graph.delay(graph.pk)
+            return redirect(graph)
+
+    if request.POST and request.POST['action'] == 'delete':
+        graph = get_object_or_404(models.Graph, pk=request.POST['graph_id'])
+        graph.delete()
+        return redirect('/')
+
+    return HttpResponse(templates.index(request, models.Graph.objects.filter(user=request.user).order_by('-created_at')))
 
 
 @login_required
