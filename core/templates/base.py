@@ -3,6 +3,10 @@ from lys import L, render, raw
 CSS = L.style / raw("""
 /* hack for bootstrap + vivagraph */
 #graph > svg { width: 100%; height: 700px }
+/* hack for bootstrap + firefox + input[file] */
+.form-control {
+    height: auto;
+}
 """)
 
 def basic_frame(*content):

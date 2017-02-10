@@ -124,26 +124,53 @@ def index(request, graphs):
             header(request),
             L.div('.row') / (
                 L.div('.col-md-6') / (
-                    L.p / (
-                        L.h4 / 'Import a graph for processing',
-                        L.form('.row', method='POST') / (
-                            L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
-                            L.input(type='hidden', name='action', value='import'),
-                            L.div('.col-md-9') / L.input('.form-control', type='text', name='q'),
-                            L.div('.col-md-3') / (
-                                L.button('.btn.btn-primary.btn-large', href='#') / 'arXiv topic'
+                    L.form('.row.form-horizontal', method="post", enctype="multipart/form-data") / (
+                        L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
+                        L.input(type='hidden', name='action', value='import'),
+                        L.p / (
+                            L.h4 / 'Import a graph for processing',
+                            L.div('.row') / (
+                                L.div('.col-md-9') / L.input('.form-control', type='text', name='q'),
+                                L.div('.col-md-3') / (
+                                    L.button('.btn.btn-primary.btn-large', href='#') / 'arXiv topic'
+                                )
                             ),
-                        ),
-                        L.br,
-                        L.form('.row', method="post", enctype="multipart/form-data") / (
-                            L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
-                            L.input(type='hidden', name='action', value='import'),
-                            L.div('.col-md-9') / L.input('form-control', type='file', name='csv_file'),
-                            L.div('.col-md-3') / (
-                                L.input('.btn.btn-primary.btn-large', href='#', type='submit', value='Import .csv'),
+                            L.br,
+                            L.div('.row') / (
+                                L.div('.col-md-9') / L.input('form-control', type='file', name='csv_file'),
+                                L.div('.col-md-3') / (
+                                    L.input('.btn.btn-primary.btn-large', href='#', type='submit', value='Import .csv'),
+                                )
+                            ),
+                            L.div('.form-group') / (
+                                L.div('.col-md-3.control-label') / (L.strong / 'Clustering'),
+                                L.div('.col-md-9') / (
+                                    L.div('.radio') / (
+                                        L.label / (
+                                            L.input(name='clustering', value='auto', checked='', type='radio'), 'Auto',
+                                        ),
+                                    ),
+                                    L.div('.radio') / (
+                                        L.label / (
+                                            L.input(name='clustering', value='manual', type='radio'), 'Manual',
+                                        ),
+                                    )
+                                ),
+                            ),
+                            L.div('.form-group') / (
+                                L.div('.col-md-3.control-label') / (L.strong / 'Clusters (Q)'),
+                                L.div('.col-md-9') / (
+                                    L.input(name='clusters', value='10', type='number'),
+                                ),
+                            ),
+                            L.div('.form-group') / (
+                                L.div('.col-md-3.control-label') / (L.strong / 'Topics (K)'),
+                                L.div('.col-md-9') / (
+                                    L.input(name='topics', value='10', type='number'),
+                                ),
                             ),
                         )
-                    ),
+                    )
                 ),
                 (
                     L.div('.col-md-6') / (
