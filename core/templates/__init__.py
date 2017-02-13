@@ -98,7 +98,8 @@ def result(request, graph, result):
             header(request),
             L.div('.row') / (
                 L.div('.col-md-2') / (
-                    _result_sidebar(graph, result)
+                    _result_sidebar(graph, result),
+                    L.div('.panel.panel-info') / ( L.div('.panel-heading') / L.div('._hover-preview')),
                 ),
                 L.div('.col-md-10') / (
                     L.ul('.nav.nav-tabs') / (

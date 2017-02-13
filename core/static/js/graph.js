@@ -19,7 +19,9 @@ $.get('/result/' + GRAPH_ID + '/data/', function(full_data) {
 
     links.forEach(function(line) {
       if (line[1]) { // not an empty line
-        graph.addLink(nodeToCluster[line[0]] || line[0], nodeToCluster[line[1]] || line[1], line[2]);
+        var cluster0 = nodeToCluster[line[0]] || line[0];
+        var cluster1 = nodeToCluster[line[1]] || line[1];
+        if (cluster0 !== cluster1) graph.addLink(cluster0, cluster1);
       }
     });
   } else {
@@ -70,7 +72,7 @@ function get_graph_graphics(graph, links, clusters, topics) {
         nodeSize = 10;
 
     graphics.node(function(node) {
-      var color = hashIt(node.id) % 2;
+      var color = 0;
       if (clusters[node.id]) {
         color = hashIt(clusters[node.id]) % COLORS.length;
       }
@@ -79,16 +81,21 @@ function get_graph_graphics(graph, links, clusters, topics) {
           circle = Viva.Graph.svg('circle')
             .attr('cx', 0)
             .attr('cy', 0)
+            .attr('stroke', 'black')
+            .attr('stroke-width', '0')
             .attr('style', 'fill: ' + COLORS[color])
             .attr('r', 5);
-      ui.append(svgText);
+      // ui.append(svgText);
       ui.append(circle);
 
       svgText.attr('visibility', 'hidden');
       $(ui).hover(function() {
-        svgText.attr('visibility', 'visible');
+        // svgText.attr('visibility', 'visible');
+        circle.attr('stroke-width', '1');
+        $('._hover-preview').text(node.id);
       }, function() {
-        svgText.attr('visibility', 'hidden');
+        circle.attr('stroke-width', '0');
+        // svgText.attr('visibility', 'hidden');
       });
 
       $(ui).click(function() {
@@ -165,11 +172,19 @@ function get_graph_graphics(graph, links, clusters, topics) {
           color = hashIt(topic) % COLORS.length;
         }
 
-        // Notice the Triangle marker-end attribe:
-        return Viva.Graph.svg('path')
+        var ui = Viva.Graph.svg('path')
                    .attr('stroke-width', 2)
                    .attr('stroke', COLORS[color])
                    .attr('marker-end', 'url(#Triangle)');
+
+        $(ui).hover(function() {
+          ui.attr('stroke-width', 3);
+          $('._hover-preview').text(link.data);
+        }, function() {
+          ui.attr('stroke-width', 2);
+        });
+
+        return ui;
     }).placeLink(function(linkUI, fromPos, toPos) {
         // Here we should take care about
         //  "Links should start/stop at node's bounding box, not at the node center."
