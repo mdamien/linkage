@@ -17,7 +17,7 @@ app.config_from_object('django.conf:settings')
 
 # TODO: move this back to core/ when autodiscover_tasks is working
 @task()
-def process_graph(pk):
+def process_graph(pk, n_clusters, n_topics):
     print('Processing graph %d' % pk)
 
     import time, csv, random, io
@@ -37,7 +37,7 @@ def process_graph(pk):
 
     links = list(csv.reader(graph.links.split('\n')))
 
-    NB_OF_CLUSTERS = 3
+    NB_OF_CLUSTERS = 3 if n_clusters == None else n_clusters
     all_clusters = ['%d_clusters_%d' % (pk, i) for i in range(NB_OF_CLUSTERS)]
 
     clusters = io.StringIO()
@@ -52,7 +52,7 @@ def process_graph(pk):
     for node in nodes:
         writer.writerow([node, random.choice(all_clusters)])
 
-    NB_OF_TOPICS = 3
+    NB_OF_TOPICS = 3 if n_topics == None else n_topics
     all_topics = ['%d_topic_%d' % (pk, i) for i in range(NB_OF_TOPICS)]
 
     topics = io.StringIO()

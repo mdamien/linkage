@@ -3,11 +3,6 @@ $.get('/result/' + GRAPH_ID + '/data/', function(full_data) {
 
   var links = Papa.parse(full_data.links, {delimiter: ','}).data;
   console.log('links:', links.length);
-  links.forEach(function(line) {
-    if (line[1]) { // not an empty line
-      graph.addLink(line[0], line[1], line[2]);
-    }
-  });
 
   var nodeToCluster = {};
   var edgeToTopic = {};
@@ -21,6 +16,18 @@ $.get('/result/' + GRAPH_ID + '/data/', function(full_data) {
     topics.forEach(function(line) {
       edgeToTopic[line[0]+','+line[1]] = line[2];
     });
+
+    links.forEach(function(line) {
+      if (line[1]) { // not an empty line
+        graph.addLink(nodeToCluster[line[0]] || line[0], nodeToCluster[line[1]] || line[1], line[2]);
+      }
+    });
+  } else {
+    links.forEach(function(line) {
+      if (line[1]) { // not an empty line
+        graph.addLink(line[0], line[1], line[2]);
+      }
+    });
   }
 
   var layout = Viva.Graph.Layout.forceDirected(graph, {
@@ -30,15 +37,18 @@ $.get('/result/' + GRAPH_ID + '/data/', function(full_data) {
       gravity : -1.2
   });
 
-  var renderer = Viva.Graph.View.renderer(graph, {
+  RENDERER = Viva.Graph.View.renderer(graph, {
       container: document.getElementById('graph'),
       // layout: layout,
-      graphics: get_graph_graphics(nodeToCluster, edgeToTopic),
+      graphics: get_graph_graphics(graph, links, nodeToCluster, edgeToTopic),
   });
-  renderer.run();
+  RENDERER.run();
+  setTimeout(function() {
+    RENDERER.pause();
+  }, 2000);
 });
 
-function get_graph_graphics(clusters, topics) {
+function get_graph_graphics(graph, links, clusters, topics) {
     var COLORS = [
       '#1f77b4', '#aec7e8',
       '#ff7f0e', '#ffbb78',
@@ -80,6 +90,44 @@ function get_graph_graphics(clusters, topics) {
       }, function() {
         svgText.attr('visibility', 'hidden');
       });
+
+      $(ui).click(function() {
+        console.log('clicked on', node);
+        if (!clusters[node.id]) {
+          // remove current node
+          graph.removeNode(node.id);
+
+          // add all nodes of the cluster
+          links.forEach(function(line) {
+            if (line[1]) { // not an empty line
+              // if origin node in cluster, add it
+              if (clusters[line[0]] == node.id) {
+                if (graph.getNode(line[1]) || clusters[line[1]] == node.id) {
+                  graph.addLink(line[0], line[1], line[2]);
+                } else {
+                  // if target node not yet expanded, link to the cluster
+                  graph.addLink(line[0], clusters[line[1]], line[2]);
+                }
+              }
+              // if target node in cluster, add it
+              else if (clusters[line[1]] == node.id) {
+                if (graph.getNode(line[0]) || clusters[line[0]] == node.id) {
+                  graph.addLink(line[0], line[1], line[2]);
+                } else {
+                  // if origin node not yet expanded, link to the cluster
+                  graph.addLink(clusters[line[0]], line[1], line[2]);
+                }
+              }
+            }
+          });
+
+          RENDERER.resume();
+          setTimeout(function() {
+            RENDERER.pause();
+          }, 2000);
+        }
+      });
+
       return ui;
     }).placeNode(function(nodeUI, pos) {
         nodeUI.attr('transform',

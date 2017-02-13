@@ -11,6 +11,10 @@ from core import templates, models, third_party_import
 def index(request):
     graph = None
     if request.POST and request.POST['action'] == 'import':
+        clusters, topics = None, None
+        if request.POST['clustering'] == 'manual':
+            clusters = int(request.POST['clusters'])
+            topics = int(request.POST['topics'])
         if request.POST and request.FILES:
             links = TextIOWrapper(request.FILES['csv_file'].file, encoding=request.encoding).read()
             graph = models.Graph(name='CSV import of %s' % (request.FILES['csv_file'].name), links=links, user=request.user)
@@ -22,7 +26,7 @@ def index(request):
             graph.save()
         if graph:
             from config.celery import process_graph
-            process_graph.delay(graph.pk)
+            process_graph.delay(graph.pk, clusters, topics)
             return redirect(graph)
 
     if request.POST and request.POST['action'] == 'delete':

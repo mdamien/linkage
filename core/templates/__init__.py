@@ -37,6 +37,12 @@ FOOTER = L.div('.row') / (
     ),
 )
 
+JS_LIBS = (
+        L.script(src='/static/js/vendor/jquery.js'),
+        L.script(src='/static/js/vendor/tether.js'),
+        L.script(src='/static/js/vendor/bootstrap.js'),
+)
+
 def _result_sidebar(graph, result):
     nodes = set()
     nb_links = 0
@@ -46,8 +52,9 @@ def _result_sidebar(graph, result):
             nodes.add(link[1])
             nb_links += 1
 
-    clusters = collections.Counter([line.split(',')[-1] for line in result.clusters.split('\n') if line])
-    topics = collections.Counter([line.split(',')[-1] for line in result.topics.split('\n') if line])
+    if result:
+        clusters = collections.Counter([line.split(',')[-1] for line in result.clusters.split('\n') if line])
+        topics = collections.Counter([line.split(',')[-1] for line in result.topics.split('\n') if line])
 
     return (
         L.div('.panel.panel-primary') / (
@@ -109,11 +116,9 @@ def result(request, graph, result):
                 ),
             ),
         ),
-        L.script(src='/static/js/jquery.js'),
-        L.script(src='/static/js/tether.js'),
-        L.script(src='/static/js/bootstrap.js'),
-        L.script(src='/static/js/vivagraph.js'),
-        L.script(src='/static/js/papaparse.js'),
+        JS_LIBS,
+        L.script(src='/static/js/vendor/vivagraph.js'),
+        L.script(src='/static/js/vendor/papaparse.js'),
         L.script / raw("var GRAPH_ID = {}".format(graph.pk)),
         L.script(src='/static/js/graph.js'),
     ))
@@ -157,13 +162,13 @@ def index(request, graphs):
                                     )
                                 ),
                             ),
-                            L.div('.form-group') / (
+                            L.div('.form-group._clustering-options') / (
                                 L.div('.col-md-3.control-label') / (L.strong / 'Clusters (Q)'),
                                 L.div('.col-md-9') / (
                                     L.input(name='clusters', value='10', type='number'),
                                 ),
                             ),
-                            L.div('.form-group') / (
+                            L.div('.form-group._clustering-options') / (
                                 L.div('.col-md-3.control-label') / (L.strong / 'Topics (K)'),
                                 L.div('.col-md-9') / (
                                     L.input(name='topics', value='10', type='number'),
@@ -197,6 +202,8 @@ def index(request, graphs):
             ),
             FOOTER
         ),
+        JS_LIBS,
+        L.script(src='/static/js/import.js'),
     ))
 
 
