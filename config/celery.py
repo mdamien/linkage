@@ -53,13 +53,15 @@ def process_graph(pk, n_clusters, n_topics):
         writer.writerow([node, random.choice(all_clusters)])
 
     NB_OF_TOPICS = 3 if n_topics == None else n_topics
-    all_topics = ['%d_topic_%d' % (pk, i) for i in range(NB_OF_TOPICS)]
 
     topics = io.StringIO()
     writer = csv.writer(topics)
     for link in links:
         if len(link) > 1:
-            writer.writerow([link[0], link[1], random.choice(all_topics)])
+            row = [link[0], link[1]]
+            for topic in range(NB_OF_TOPICS):
+                row.append(str(random.random()))
+            writer.writerow(row)
 
     result.progress = 1;
     result.clusters = clusters.getvalue()

@@ -14,7 +14,9 @@ $.get('/result/' + GRAPH_ID + '/data/', function(full_data) {
 
     var topics = Papa.parse(full_data.result.topics, {delimiter: ','}).data;
     topics.forEach(function(line) {
-      edgeToTopic[line[0]+','+line[1]] = line[2];
+      edgeToTopic[line[0]+','+line[1]] = line.slice(2).map(function(v){
+        return parseFloat(v);
+      });
     });
 
     links.forEach(function(line) {
@@ -169,7 +171,8 @@ function get_graph_graphics(graph, links, clusters, topics) {
         var color = hashIt(link.id) % 2 + 3;
         var topic = topics[link.fromId + ',' + link.toId];
         if (topic) {
-          color = hashIt(topic) % COLORS.length;
+          var idx_max = topic.indexOf(Math.max.apply(Math, topic))
+          color = hashIt(''+idx_max) % COLORS.length;
         }
 
         var ui = Viva.Graph.svg('path')
@@ -179,7 +182,7 @@ function get_graph_graphics(graph, links, clusters, topics) {
 
         $(ui).hover(function() {
           ui.attr('stroke-width', 3);
-          $('._hover-preview').text(link.data);
+          $('._hover-preview').text(link.data + ' ' + topics[link.fromId + ',' + link.toId]);
         }, function() {
           ui.attr('stroke-width', 2);
         });

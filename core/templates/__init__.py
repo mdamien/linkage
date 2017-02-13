@@ -54,7 +54,14 @@ def _result_sidebar(graph, result):
 
     if result:
         clusters = collections.Counter([line.split(',')[-1] for line in result.clusters.split('\n') if line])
-        topics = collections.Counter([line.split(',')[-1] for line in result.topics.split('\n') if line])
+
+        topics = None
+        for row in csv.reader(StringIO(result.topics), delimiter=','):
+            if len(row) > 0:
+                if topics is None:
+                    topics = [0 for _ in row[2:]]
+                for i, v in enumerate(row[2:]):
+                    topics[i] += float(v)
 
     return (
         L.div('.panel.panel-primary') / (
@@ -86,8 +93,8 @@ def _result_sidebar(graph, result):
             ),
             L.div('.list-group') / (
                 (
-                    L.div('.list-group-item') / ('%s (%d)' % (topic, c))
-                ) for topic, c in topics.most_common()
+                    L.div('.list-group-item') / ('%.1f' % (v, ), ' %')
+                ) for v in topics
             ),
         ) if result else None,
     )

@@ -27,7 +27,7 @@ class ProcessingResult(models.Model):
 
     # csv of [node,cluster]
     clusters = models.TextField(blank=True, default='')
-    # csv of [node1,node2,topic]
+    # csv of [node1,node2,topic1_percentage,topic2_percentage,topic3_percentage,...]
     topics = models.TextField(blank=True, default='')
 
     created_at = models.DateTimeField(auto_now_add=True)
