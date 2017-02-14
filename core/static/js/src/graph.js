@@ -1,29 +1,59 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import renderSidebar from './graph/sidebar.js';
+
+// TODO: STATE is here to keep computed things in memory, could be cleaned up
+var STATE = {};
 
 var graph = Viva.Graph.graph();
 
 var links = Papa.parse(GRAPH.links, {delimiter: ','}).data;
 console.log('links:', links.length);
 
-var a = <h3>{GRAPH.name}</h3>;
+STATE.n_edges = links.length;
 
-ReactDOM.render(a, document.getElementById('_sidebar'))
+var nodes = new Set();
+links.forEach(function(line) {
+  if (line[1]) { // not an empty line
+    nodes.add(line[0]);
+    nodes.add(line[1]);
+  }
+});
+STATE.n_nodes = nodes.size;
 
 var nodeToCluster = {};
 var edgeToTopic = {};
+
 if (GRAPH.result && GRAPH.result.clusters) {
   var clusters = Papa.parse(GRAPH.result.clusters, {delimiter: ','}).data;
+  var clusterToNodes = {};
   clusters.forEach(function(line) {
-    nodeToCluster[line[0]] = line[1];
-  });
+    var cluster = line[1];
+    if (cluster) {
+      nodeToCluster[line[0]] = cluster;
 
+      if (!(cluster in clusterToNodes)) {
+        clusterToNodes[cluster] = []
+      }
+      clusterToNodes[cluster].push(line[0]);      
+    }
+  });
+  STATE.clusterToNodes = clusterToNodes;
+
+  var topicToEdgesPercentage = null;
   var topics = Papa.parse(GRAPH.result.topics, {delimiter: ','}).data;
   topics.forEach(function(line) {
-    edgeToTopic[line[0]+','+line[1]] = line.slice(2).map(function(v){
+    var percentages = line.slice(2).map(function(v){
       return parseFloat(v);
     });
+    edgeToTopic[line[0]+','+line[1]] = percentages;
+    if (topicToEdgesPercentage == null) {
+      topicToEdgesPercentage = percentages;
+    } else {
+      percentages.forEach((v, i) => {
+        topicToEdgesPercentage[i] += v;
+      });
+    }
   });
+  STATE.topicToEdgesPercentage = topicToEdgesPercentage;
 
   links.forEach(function(line) {
     if (line[1]) { // not an empty line
@@ -47,15 +77,19 @@ var layout = Viva.Graph.Layout.forceDirected(graph, {
     gravity : -1.2
 });
 
-RENDERER = Viva.Graph.View.renderer(graph, {
+var RENDERER = Viva.Graph.View.renderer(graph, {
     container: document.getElementById('_graph'),
     // layout: layout,
     graphics: get_graph_graphics(graph, links, nodeToCluster, edgeToTopic),
 });
+
 RENDERER.run();
 setTimeout(function() {
   RENDERER.pause();
 }, 2000);
+
+renderSidebar(STATE);
+
 
 function get_graph_graphics(graph, links, clusters, topics) {
     var COLORS = [

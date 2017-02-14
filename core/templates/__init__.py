@@ -104,6 +104,7 @@ def serialize_graph(graph, result):
     data = {
         'name': graph.name,
         'links': graph.links,
+        'created_at': naturaltime(graph.created_at),
     }
     if result:
         data['result'] = {
@@ -118,11 +119,11 @@ def result(request, graph, result):
         L.div('.container-fluid') / (
             header(request),
             L.div('.row') / (
-                L.div('.col-md-2') / (
+                L.div('.col-md-3') / (
                     L.div('#_sidebar'),
                     L.div('.panel.panel-info') / ( L.div('.panel-heading') / L.div('._hover-preview')),
                 ),
-                L.div('.col-md-10') / (
+                L.div('.col-md-9') / (
                     L.div('.panel.panel-default') / L.div('#_graph.panel-body'),
                 ),
             ),
@@ -131,6 +132,7 @@ def result(request, graph, result):
         L.script(src='/static/js/vendor/vivagraph.js'),
         L.script(src='/static/js/vendor/papaparse.js'),
         L.script / raw("var GRAPH = {}".format(serialize_graph(graph, result))),
+        L.script(src='/static/js/dist/vendor.js'),
         L.script(src='/static/js/dist/graph.js'),
     ))
 
