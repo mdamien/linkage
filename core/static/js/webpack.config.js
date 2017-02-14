@@ -1,7 +1,14 @@
+var path = require('path');
+
 module.exports = {
   devtool: 'cheap-eval-source-map',
-  entry: './graph.js',
+  entry: './src/graph.js',
   output: {
-    filename: 'graph.compiled.js'
-  }
-}
+    filename: 'dist/graph.js'
+  },
+  module: {
+  	rules: [
+      { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader' },
+    ]
+  },
+};

@@ -36,7 +36,6 @@ def index(request):
 
     return HttpResponse(templates.index(request, models.Graph.objects.filter(user=request.user).order_by('-created_at')))
 
-
 @login_required
 def result(request, pk):
     graph = get_object_or_404(models.Graph, pk=pk)
@@ -46,28 +45,6 @@ def result(request, pk):
     except:
         pass
     return HttpResponse(templates.result(request, graph, result))
-
-
-@login_required
-def api_result(request, pk):
-    graph = get_object_or_404(models.Graph, pk=pk)
-
-    data = {
-        'links': graph.links,
-    }
-
-    result = None
-    try:
-        result = models.ProcessingResult.objects.get(graph=graph)
-    except:
-        pass
-    if result:
-        data['result'] = {
-            'progress': result.progress,
-            'clusters': result.clusters,
-            'topics': result.topics,
-        }
-    return JsonResponse(data)
 
 from django.contrib.auth.views import login as login_view
 

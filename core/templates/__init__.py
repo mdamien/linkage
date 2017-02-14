@@ -1,4 +1,4 @@
-import collections, csv
+import collections, csv, json
 from io import StringIO
 
 from django.middleware.csrf import get_token
@@ -96,8 +96,22 @@ def _result_sidebar(graph, result):
                     L.div('.list-group-item') / ('%.1f' % (v, ), ' %')
                 ) for v in topics
             ),
-        ) if result else None,
+        ) if result and topics else None,
     )
+
+
+def serialize_graph(graph, result):
+    data = {
+        'name': graph.name,
+        'links': graph.links,
+    }
+    if result:
+        data['result'] = {
+            'progress': result.progress,
+            'clusters': result.clusters,
+            'topics': result.topics,
+        }
+    return json.dumps(data)
 
 def result(request, graph, result):
     return base((
@@ -105,31 +119,21 @@ def result(request, graph, result):
             header(request),
             L.div('.row') / (
                 L.div('.col-md-2') / (
-                    _result_sidebar(graph, result),
+                    L.div('#_sidebar'),
                     L.div('.panel.panel-info') / ( L.div('.panel-heading') / L.div('._hover-preview')),
                 ),
                 L.div('.col-md-10') / (
-                    L.ul('.nav.nav-tabs') / (
-                        L.li('.active') / (L.a(href='#network', data_toggle='tab') / 'Network'),
-                        L.li / (L.a(href='#terms', data_toggle='tab') / 'Terms'),
-                        L.li / (L.a(href='#groups', data_toggle='tab') / 'Groups connexions'),
-                        L.li / (L.a(href='#topics', data_toggle='tab') / 'Topics connexions'),
-                    ) if False else None,
-                    L.div('#outputTabs.tab-content') / (
-                        L.div('#network.tab-pane.active') / L.div('#graph'),
-                        L.div('#terms.tab-pane') / 'terms',
-                        L.div('#groups.tab-pane') / 'groups',
-                        L.div('#topics.tab-pane') / 'topics',
-                    ),
+                    L.div('.panel.panel-default') / L.div('#_graph.panel-body'),
                 ),
             ),
         ),
         JS_LIBS,
         L.script(src='/static/js/vendor/vivagraph.js'),
         L.script(src='/static/js/vendor/papaparse.js'),
-        L.script / raw("var GRAPH_ID = {}".format(graph.pk)),
-        L.script(src='/static/js/graph.compiled.js'),
+        L.script / raw("var GRAPH = {}".format(serialize_graph(graph, result))),
+        L.script(src='/static/js/dist/graph.js'),
     ))
+
 
 def index(request, graphs):
     return base((
@@ -211,7 +215,7 @@ def index(request, graphs):
             FOOTER
         ),
         JS_LIBS,
-        L.script(src='/static/js/import.js'),
+        L.script(src='/static/js/src/import.js'),
     ))
 
 

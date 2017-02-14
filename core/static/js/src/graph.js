@@ -1,56 +1,61 @@
-$.get('/result/' + GRAPH_ID + '/data/', function(full_data) {
-  var graph = Viva.Graph.graph();
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-  var links = Papa.parse(full_data.links, {delimiter: ','}).data;
-  console.log('links:', links.length);
+var graph = Viva.Graph.graph();
 
-  var nodeToCluster = {};
-  var edgeToTopic = {};
-  if (full_data.result && full_data.result.clusters) {
-    var clusters = Papa.parse(full_data.result.clusters, {delimiter: ','}).data;
-    clusters.forEach(function(line) {
-      nodeToCluster[line[0]] = line[1];
-    });
+var links = Papa.parse(GRAPH.links, {delimiter: ','}).data;
+console.log('links:', links.length);
 
-    var topics = Papa.parse(full_data.result.topics, {delimiter: ','}).data;
-    topics.forEach(function(line) {
-      edgeToTopic[line[0]+','+line[1]] = line.slice(2).map(function(v){
-        return parseFloat(v);
-      });
-    });
+var a = <h3>{GRAPH.name}</h3>;
 
-    links.forEach(function(line) {
-      if (line[1]) { // not an empty line
-        var cluster0 = nodeToCluster[line[0]] || line[0];
-        var cluster1 = nodeToCluster[line[1]] || line[1];
-        if (cluster0 !== cluster1) graph.addLink(cluster0, cluster1);
-      }
-    });
-  } else {
-    links.forEach(function(line) {
-      if (line[1]) { // not an empty line
-        graph.addLink(line[0], line[1], line[2]);
-      }
-    });
-  }
+ReactDOM.render(a, document.getElementById('_sidebar'))
 
-  var layout = Viva.Graph.Layout.forceDirected(graph, {
-      springLength : 10,
-      springCoeff : 0.0005,
-      dragCoeff : 0.02,
-      gravity : -1.2
+var nodeToCluster = {};
+var edgeToTopic = {};
+if (GRAPH.result && GRAPH.result.clusters) {
+  var clusters = Papa.parse(GRAPH.result.clusters, {delimiter: ','}).data;
+  clusters.forEach(function(line) {
+    nodeToCluster[line[0]] = line[1];
   });
 
-  RENDERER = Viva.Graph.View.renderer(graph, {
-      container: document.getElementById('graph'),
-      // layout: layout,
-      graphics: get_graph_graphics(graph, links, nodeToCluster, edgeToTopic),
+  var topics = Papa.parse(GRAPH.result.topics, {delimiter: ','}).data;
+  topics.forEach(function(line) {
+    edgeToTopic[line[0]+','+line[1]] = line.slice(2).map(function(v){
+      return parseFloat(v);
+    });
   });
-  RENDERER.run();
-  setTimeout(function() {
-    RENDERER.pause();
-  }, 2000);
+
+  links.forEach(function(line) {
+    if (line[1]) { // not an empty line
+      var cluster0 = nodeToCluster[line[0]] || line[0];
+      var cluster1 = nodeToCluster[line[1]] || line[1];
+      if (cluster0 !== cluster1) graph.addLink(cluster0, cluster1);
+    }
+  });
+} else {
+  links.forEach(function(line) {
+    if (line[1]) { // not an empty line
+      graph.addLink(line[0], line[1], line[2]);
+    }
+  });
+}
+
+var layout = Viva.Graph.Layout.forceDirected(graph, {
+    springLength : 10,
+    springCoeff : 0.0005,
+    dragCoeff : 0.02,
+    gravity : -1.2
 });
+
+RENDERER = Viva.Graph.View.renderer(graph, {
+    container: document.getElementById('_graph'),
+    // layout: layout,
+    graphics: get_graph_graphics(graph, links, nodeToCluster, edgeToTopic),
+});
+RENDERER.run();
+setTimeout(function() {
+  RENDERER.pause();
+}, 2000);
 
 function get_graph_graphics(graph, links, clusters, topics) {
     var COLORS = [
