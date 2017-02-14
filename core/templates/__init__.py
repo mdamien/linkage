@@ -128,7 +128,7 @@ def result(request, graph, result):
         L.script(src='/static/js/vendor/vivagraph.js'),
         L.script(src='/static/js/vendor/papaparse.js'),
         L.script / raw("var GRAPH_ID = {}".format(graph.pk)),
-        L.script(src='/static/js/graph.js'),
+        L.script(src='/static/js/graph.compiled.js'),
     ))
 
 def index(request, graphs):
