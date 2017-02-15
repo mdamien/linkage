@@ -1,5 +1,4 @@
 import collections, csv, json
-from io import StringIO
 
 from django.middleware.csrf import get_token
 from django.contrib.humanize.templatetags.humanize import naturaltime

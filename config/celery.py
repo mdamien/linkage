@@ -35,7 +35,7 @@ def process_graph(pk, n_clusters, n_topics):
         result.save()
     """
 
-    links = list(csv.reader(graph.links.split('\n')))
+    links = list(csv.reader(io.StringIO(graph.links)))
 
     NB_OF_CLUSTERS = 3 if n_clusters == None else n_clusters
     all_clusters = ['%d_clusters_%d' % (pk, i) for i in range(NB_OF_CLUSTERS)]

@@ -222,7 +222,7 @@ function get_graph_graphics(graph, links, clusters, topics) {
 
         $(ui).hover(function() {
           ui.attr('stroke-width', 3);
-          renderGraphSidebar(link.data + ' ' + topics[link.fromId + ',' + link.toId]);
+          renderGraphSidebar(link.data, topics[link.fromId + ',' + link.toId]);
         }, function() {
           ui.attr('stroke-width', 2);
         });
