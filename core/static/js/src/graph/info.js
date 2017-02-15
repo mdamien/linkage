@@ -19,9 +19,9 @@ function render(label, topics = [], renderer) {
   }
 
   var buttons = <div style={{ position: 'absolute', top: 10, left: 10}}>
-    <button className="btn btn-primary btn-xs" onClick={() => renderer.resume()}>start</button>
+    <button className="btn btn-primary btn-xs" onClick={() => renderer.resume()}>resume</button>
     &nbsp;
-    <button href="#" className="btn btn-primary btn-xs" onClick={() => renderer.pause()}>stop</button>
+    <button href="#" className="btn btn-primary btn-xs" onClick={() => renderer.pause()}>pause</button>
   </div>;
 
   ReactDOM.render(<div>{buttons}{popup}</div>, document.getElementById('_graph-sidebar'));

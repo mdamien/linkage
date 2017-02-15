@@ -1,4 +1,5 @@
 import io, csv, email
+from email.utils import parseaddr
 
 import arxiv
 
@@ -28,7 +29,9 @@ def mbox_to_csv(mbox):
             msg = email.message_from_string(mail)
             if msg['To'] and msg['From']:
                 for sender in msg['From'].split(','):
+                    sender = parseaddr(sender)[1]
                     for dest in msg['To'].split(','):
+                        dest = parseaddr(dest)[1]
                         writer.writerow([sender, dest, msg['Subject']])
 
     for line in mbox:
