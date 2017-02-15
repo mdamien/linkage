@@ -43,63 +43,6 @@ JS_LIBS = (
         L.script(src='/static/js/vendor/bootstrap.js'),
 )
 
-def _result_sidebar(graph, result):
-    nodes = set()
-    nb_links = 0
-    for link in csv.reader(StringIO(graph.links), delimiter=','):
-        if len(link) > 0:
-            nodes.add(link[0])
-            nodes.add(link[1])
-            nb_links += 1
-
-    if result:
-        clusters = collections.Counter([line.split(',')[-1] for line in result.clusters.split('\n') if line])
-
-        topics = None
-        for row in csv.reader(StringIO(result.topics), delimiter=','):
-            if len(row) > 0:
-                if topics is None:
-                    topics = [0 for _ in row[2:]]
-                for i, v in enumerate(row[2:]):
-                    topics[i] += float(v)
-
-    return (
-        L.div('.panel.panel-primary') / (
-            L.div('.panel-heading') / (
-                L.h3('.panel-title') / graph.name
-            ),
-            L.div('.panel-body') / (
-                L.strong() / str(nb_links),' edges ',
-                L.br,
-                L.strong() / str(len(nodes)), ' nodes',
-                L.br,
-                'imported ', L.strong() / naturaltime(graph.created_at),
-            )
-        ),
-        L.hr,
-        L.div('.panel.panel-default') / (
-            L.div('.panel-heading') / (
-                L.h3('.panel-title') / (str(len(clusters)), ' clusters'),
-            ),
-            L.div('.list-group') / (
-                (
-                    L.div('.list-group-item') / ('%s (%d)' % (cluster, c))
-                ) for cluster, c in clusters.most_common()
-            ),
-        ) if result else None,
-        L.div('.panel.panel-default') / (
-            L.div('.panel-heading') / (
-                L.h3('.panel-title') / (str(len(topics)), ' topics'),
-            ),
-            L.div('.list-group') / (
-                (
-                    L.div('.list-group-item') / ('%.1f' % (v, ), ' %')
-                ) for v in topics
-            ),
-        ) if result and topics else None,
-    )
-
-
 def serialize_graph(graph, result):
     data = {
         'name': graph.name,
@@ -121,10 +64,12 @@ def result(request, graph, result):
             L.div('.row') / (
                 L.div('.col-md-3') / (
                     L.div('#_sidebar'),
-                    L.div('.panel.panel-info') / ( L.div('.panel-heading') / L.div('._hover-preview')),
                 ),
                 L.div('.col-md-9') / (
-                    L.div('.panel.panel-default') / L.div('#_graph.panel-body'),
+                    L.div('.panel.panel-default', style='position:relative') / (
+                        L.div('#_graph-sidebar'),
+                        L.div('#_graph.panel-body'),
+                    )
                 ),
             ),
         ),

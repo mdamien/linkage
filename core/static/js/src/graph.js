@@ -1,4 +1,5 @@
 import renderSidebar from './graph/sidebar.js';
+import renderGraphSidebar from './graph/info.js';
 
 // TODO: STATE is here to keep computed things in memory, could be cleaned up
 var STATE = {};
@@ -133,7 +134,7 @@ function get_graph_graphics(graph, links, clusters, topics) {
       $(ui).hover(function() {
         // svgText.attr('visibility', 'visible');
         circle.attr('stroke-width', '1');
-        $('._hover-preview').text(node.id);
+        renderGraphSidebar(node.id);
       }, function() {
         circle.attr('stroke-width', '0');
         // svgText.attr('visibility', 'hidden');
@@ -221,7 +222,7 @@ function get_graph_graphics(graph, links, clusters, topics) {
 
         $(ui).hover(function() {
           ui.attr('stroke-width', 3);
-          $('._hover-preview').text(link.data + ' ' + topics[link.fromId + ',' + link.toId]);
+          renderGraphSidebar(link.data + ' ' + topics[link.fromId + ',' + link.toId]);
         }, function() {
           ui.attr('stroke-width', 2);
         });
