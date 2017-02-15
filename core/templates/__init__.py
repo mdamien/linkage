@@ -95,14 +95,16 @@ def index(request, graphs):
                             L.div('.row') / (
                                 L.div('.col-md-9') / L.input('.form-control', type='text', name='q'),
                                 L.div('.col-md-3') / (
-                                    L.button('.btn.btn-primary.btn-large', href='#') / 'arXiv topic'
+                                    L.input('.btn.btn-primary.btn-large', name='choice_arxiv', type='submit', value='arXiv topic'),
                                 )
                             ),
                             L.br,
                             L.div('.row') / (
-                                L.div('.col-md-9') / L.input('form-control', type='file', name='csv_file'),
-                                L.div('.col-md-3') / (
-                                    L.input('.btn.btn-primary.btn-large', href='#', type='submit', value='Import .csv'),
+                                L.div('.col-md-5') / L.input('form-control', type='file', name='csv_file'),
+                                L.div('.col-md-6') / (
+                                    L.input('.btn.btn-primary.btn-large', name='choice_csv', type='submit', value='Import .csv'),
+                                    SPACER,
+                                    L.input('.btn.btn-primary.btn-large', name='choice_mbox', type='submit', value='Import .mbox'),
                                 )
                             ),
                             L.div('.form-group') / (

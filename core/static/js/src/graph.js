@@ -90,7 +90,7 @@ setTimeout(function() {
 }, 2000);
 
 renderSidebar(STATE);
-
+renderGraphSidebar(undefined, undefined, RENDERER);
 
 function get_graph_graphics(graph, links, clusters, topics) {
     var COLORS = [
@@ -134,7 +134,7 @@ function get_graph_graphics(graph, links, clusters, topics) {
       $(ui).hover(function() {
         // svgText.attr('visibility', 'visible');
         circle.attr('stroke-width', '1');
-        renderGraphSidebar(node.id);
+        renderGraphSidebar(node.id, undefined, RENDERER);
       }, function() {
         circle.attr('stroke-width', '0');
         // svgText.attr('visibility', 'hidden');
@@ -142,7 +142,7 @@ function get_graph_graphics(graph, links, clusters, topics) {
 
       $(ui).click(function() {
         console.log('clicked on', node);
-        if (!clusters[node.id]) {
+        if (node.id in STATE.clusterToNodes) {
           // remove current node
           graph.removeNode(node.id);
 
@@ -222,7 +222,7 @@ function get_graph_graphics(graph, links, clusters, topics) {
 
         $(ui).hover(function() {
           ui.attr('stroke-width', 3);
-          renderGraphSidebar(link.data, topics[link.fromId + ',' + link.toId]);
+          renderGraphSidebar(link.data, topics[link.fromId + ',' + link.toId], RENDERER);
         }, function() {
           ui.attr('stroke-width', 2);
         });

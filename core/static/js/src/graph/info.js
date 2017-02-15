@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-function render(label, topics = []) {
-  var output = <div></div>;
+function render(label, topics = [], renderer) {
+  var popup = <div></div>;
   if (label || topics.length > 0) {
-    output = <div
+    popup = <div
         className="alert alert-dismissible alert-info"
-        style={{ position: 'absolute', top: 0, right: 0, width: '30%'}}>
+        style={{ position: 'absolute', top: 10, right: 10, width: '30%'}}>
       <button type="button" className="close" onClick={() => render()}>&times;</button>
       {label}
       {topics.length > 0 ? <div>
@@ -18,7 +18,13 @@ function render(label, topics = []) {
     </div>;
   }
 
-  ReactDOM.render(output, document.getElementById('_graph-sidebar'));
+  var buttons = <div style={{ position: 'absolute', top: 10, left: 10}}>
+    <button className="btn btn-primary btn-xs" onClick={() => renderer.resume()}>start</button>
+    &nbsp;
+    <button href="#" className="btn btn-primary btn-xs" onClick={() => renderer.pause()}>stop</button>
+  </div>;
+
+  ReactDOM.render(<div>{buttons}{popup}</div>, document.getElementById('_graph-sidebar'));
 };
 
 export default render;

@@ -15,15 +15,22 @@ def index(request):
         if request.POST['clustering'] == 'manual':
             clusters = int(request.POST['clusters'])
             topics = int(request.POST['topics'])
-        if request.POST and request.FILES:
-            links = TextIOWrapper(request.FILES['csv_file'].file, encoding=request.encoding).read()
-            graph = models.Graph(name='CSV import of %s' % (request.FILES['csv_file'].name), links=links, user=request.user)
-            graph.save()
-        elif request.POST:
+        if request.FILES:
+            if 'choice_csv' in request.POST:
+                links = TextIOWrapper(request.FILES['csv_file'].file, encoding=request.encoding).read()
+                graph = models.Graph(name='CSV import of %s' % (request.FILES['csv_file'].name), links=links, user=request.user)
+                graph.save()
+            elif 'choice_mbox' in request.POST:
+                mbox = TextIOWrapper(request.FILES['csv_file'].file, encoding=request.encoding)
+                links = third_party_import.mbox_to_csv(mbox)
+                graph = models.Graph(name='MBOX import of %s' % (request.FILES['csv_file'].name), links=links, user=request.user)
+                graph.save()
+        if 'choice_arxiv' in request.POST:
             q = request.POST['q']
-            links = third_party_import.arxiv_to_csv(q)
-            graph = models.Graph(name='arXiv import of search term: %s' % (q, ), links=links, user=request.user)
-            graph.save()
+            if len(q) > 0:
+                links = third_party_import.arxiv_to_csv(q)
+                graph = models.Graph(name='arXiv import of search term: %s' % (q, ), links=links, user=request.user)
+                graph.save()
         if graph:
             from config.celery import process_graph
             process_graph.delay(graph.pk, clusters, topics)
