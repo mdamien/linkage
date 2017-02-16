@@ -3,3 +3,4 @@ lys
 arxiv
 django-celery
 redis
+nltk

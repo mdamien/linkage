@@ -35,6 +35,11 @@ export default state => {
                 {state.topicToEdgesPercentage.map((v, i) => 
                     <div className='list-group-item' key={i}>
                         {i} ({v.toFixed(2) + ' %'})
+                        <br/>ex: {state.topicToTerms[i].slice(0, 10).map((t, i) =>
+                            i % 2 == 0 ? <span>
+                                <span className="label label-default" key={i}>{t}</span>&nbsp;
+                            </span> : null
+                        )}
                     </div>
                 )}
             </div>

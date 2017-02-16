@@ -56,6 +56,8 @@ if (GRAPH.result && GRAPH.result.clusters) {
   });
   STATE.topicToEdgesPercentage = topicToEdgesPercentage;
 
+  STATE.topicToTerms = Papa.parse(GRAPH.result.topics_terms, {delimiter: ','}).data;
+
   links.forEach(function(line) {
     if (line[1]) { // not an empty line
       var cluster0 = nodeToCluster[line[0]] || line[0];
@@ -72,10 +74,10 @@ if (GRAPH.result && GRAPH.result.clusters) {
 }
 
 var layout = Viva.Graph.Layout.forceDirected(graph, {
-    springLength : 10,
+    springLength : 100,
     springCoeff : 0.0005,
     dragCoeff : 0.02,
-    gravity : -1.2
+    gravity : -1.0
 });
 
 var RENDERER = Viva.Graph.View.renderer(graph, {

@@ -53,6 +53,7 @@ def serialize_graph(graph, result):
             'progress': result.progress,
             'clusters': result.clusters,
             'topics': result.topics,
+            'topics_terms': result.topics_terms,
         }
     return json.dumps(data)
 
@@ -91,14 +92,14 @@ def index(request, graphs):
                         L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
                         L.input(type='hidden', name='action', value='import'),
                         L.p / (
-                            L.h4 / 'Import a graph for processing',
+                            L.h4 / 'Import a graph via an arXiv request',
                             L.div('.row') / (
                                 L.div('.col-md-9') / L.input('.form-control', type='text', name='q'),
                                 L.div('.col-md-3') / (
-                                    L.input('.btn.btn-primary.btn-large', name='choice_arxiv', type='submit', value='arXiv topic'),
+                                    L.input('.btn.btn-primary.btn-large', name='choice_arxiv', type='submit', value='search'),
                                 )
                             ),
-                            L.br,
+                            L.h4 / 'Or via a file',
                             L.div('.row') / (
                                 L.div('.col-md-5') / L.input('form-control', type='file', name='csv_file'),
                                 L.div('.col-md-6') / (

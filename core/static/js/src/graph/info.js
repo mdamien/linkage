@@ -6,9 +6,9 @@ function render(label, topics = [], renderer) {
   if (label || topics.length > 0) {
     popup = <div
         className="alert alert-dismissible alert-info"
-        style={{ position: 'absolute', top: 10, right: 10, width: '30%'}}>
+        style={{ position: 'absolute', top: 10, right: 10, width: '40%'}}>
       <button type="button" className="close" onClick={() => render()}>&times;</button>
-      <div style={{whiteSpace: 'pre'}}>{label}</div>
+      {label}
       {topics.length > 0 ? <div>
         Topics:
         <ul>

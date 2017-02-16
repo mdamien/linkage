@@ -1,4 +1,6 @@
 import io, csv, email
+
+from email import header
 from email.utils import parseaddr
 
 import arxiv
@@ -14,7 +16,9 @@ def arxiv_to_csv(q):
     print('arxiv search for', q, '; results:', N)
     for result in results:
         for author in result['authors']:
-            writer.writerow([result['title'], author])
+            for author2 in result['authors']:
+                if author != author2:
+                    writer.writerow([author, author2, result['title']])
 
     return output.getvalue()
 
@@ -28,7 +32,8 @@ def mbox_to_csv(mbox):
         if mail:
             msg = email.message_from_string(mail)
 
-            body = msg['Subject']
+            subject = header.make_header(header.decode_header(msg['Subject']))
+            body = str(subject)
             if False:
                 body += '\n'
                 if msg.is_multipart():
