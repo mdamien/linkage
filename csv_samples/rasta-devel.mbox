@@ -1,0 +1,163 @@
+From joel.becker@oracle.com Tue May 20 17:13:10 2003
+Received: from rgmgw4.us.oracle.com ([138.1.191.13])
+	by oss.oracle.com with esmtp (Exim 4.14)
+	id 19IFM6-0001VG-37
+	for rasta-devel@oss.oracle.com; Tue, 20 May 2003 17:13:10 -0500
+Received: from rgmgw4.us.oracle.com (localhost [127.0.0.1])
+	h4KMD8a03519	for <rasta-devel@oss.oracle.com>;
+	Tue, 20 May 2003 16:13:09 -0600 (MDT)
+Received: from rgmum2.us.oracle.com (rgmum2.us.oracle.com [138.1.191.23])
+	h4KMD7J03500	for <rasta-devel@oss.oracle.com>;
+	Tue, 20 May 2003 16:13:07 -0600 (MDT)
+Received: from ca-server1.us.oracle.com by rgmum6.us.oracle.com
+	with ESMTP id 184306971053468777; Tue, 20 May 2003 18:12:57 -0400
+Received: from jlbec by ca-server1.us.oracle.com with local (Exim 3.36 #1
+	(Debian))	id 19IFLt-0001aG-00
+	for <rasta-devel@oss.oracle.com>; Tue, 20 May 2003 15:12:57 -0700
+Date: Tue, 20 May 2003 15:12:56 -0700
+From: Joel Becker <Joel.Becker@oracle.com>
+To: rasta-devel@oss.oracle.com
+Message-ID: <20030520221256.GM32128@ca-server1.us.oracle.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Burt-Line: Trees are cool.
+X-Red-Smith: Ninety feet between bases is perhaps as close as man has ever
+	come to perfection.
+User-Agent: Mutt/1.5.4i
+Sender: <joel.becker@oracle.com>
+Subject: [Rasta-devel] test
+X-BeenThere: rasta-devel@oss.oracle.com
+X-Mailman-Version: 2.1.1
+Precedence: list
+List-Id: Discussion on developing the RASTA system.
+	<rasta-devel.oss.oracle.com>
+List-Unsubscribe: <http://oss.oracle.com/mailman/listinfo/rasta-devel>,
+	<mailto:rasta-devel-request@oss.oracle.com?subject=unsubscribe>
+List-Archive: <http://oss.oracle.com/pipermail/rasta-devel>
+List-Post: <mailto:rasta-devel@oss.oracle.com>
+List-Help: <mailto:rasta-devel-request@oss.oracle.com?subject=help>
+List-Subscribe: <http://oss.oracle.com/mailman/listinfo/rasta-devel>,
+	<mailto:rasta-devel-request@oss.oracle.com?subject=subscribe>
+X-List-Received-Date: Tue, 20 May 2003 22:13:10 -0000
+
+test
+
+-- 
+
+"If at first you don't succeed, cover all traces that you tried."
+                                                        -Unknown
+
+Joel Becker
+Senior Member of Technical Staff
+Oracle Corporation
+E-mail: joel.becker@oracle.com
+Phone: (650) 506-8127
+
+From joel.becker@oracle.com Wed May 28 12:58:13 2003
+X-Mailman-Handler: $Id: mm-handler,v 1.2 2002/04/05 19:41:09 bwarsaw Exp $
+Received: from oss.oracle.com (localhost [127.0.0.1])h4SHwCMQ018610
+	for <rasta-devel@oss.oracle.com>; Wed, 28 May 2003 12:58:13 -0500
+Received: from rgmgw6.us.oracle.com (rgmgw6.us.oracle.com [138.1.191.15])
+	h4SHwCMQ018605
+	for <rasta-devel@oss.oracle.com>; Wed, 28 May 2003 12:58:12 -0500
+Received: from rgmgw6.us.oracle.com (localhost [127.0.0.1])
+	h4SHw7P06862	for <rasta-devel@oss.oracle.com>;
+	Wed, 28 May 2003 11:58:09 -0600 (MDT)
+Received: from rgmum13.us.oracle.com (rgmum13.us.oracle.com [138.1.191.17])
+	h4SHvZT05478	for <rasta-devel@oss.oracle.com>;
+	Wed, 28 May 2003 11:57:35 -0600 (MDT)
+Received: from ca-server1.us.oracle.com by rgmum12.us.oracle.com
+	with ESMTP id 201448491054144449; Wed, 28 May 2003 11:54:09 -0600
+Received: from jlbec by ca-server1.us.oracle.com with local (Exim 3.36 #1
+	(Debian))	id 19L57t-0003Em-00
+	for <rasta-devel@oss.oracle.com>; Wed, 28 May 2003 10:54:13 -0700
+Date: Wed, 28 May 2003 10:54:12 -0700
+From: Joel Becker <Joel.Becker@oracle.com>
+To: rasta-devel@oss.oracle.com
+Message-ID: <20030528175412.GW32128@ca-server1.us.oracle.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Burt-Line: Trees are cool.
+X-Red-Smith: Ninety feet between bases is perhaps as close as man has ever
+	come to perfection.
+User-Agent: Mutt/1.5.4i
+Sender: <joel.becker@oracle.com>
+Subject: [Rasta-devel] Testing 1
+X-BeenThere: rasta-devel@oss.oracle.com
+X-Mailman-Version: 2.1.1
+Precedence: list
+List-Id: Discussion on developing the RASTA system.
+	<rasta-devel.oss.oracle.com>
+List-Unsubscribe: <http://oss.oracle.com/mailman/listinfo/rasta-devel>,
+	<mailto:rasta-devel-request@oss.oracle.com?subject=unsubscribe>
+List-Archive: <http://oss.oracle.com/pipermail/rasta-devel>
+List-Post: <mailto:rasta-devel@oss.oracle.com>
+List-Help: <mailto:rasta-devel-request@oss.oracle.com?subject=help>
+List-Subscribe: <http://oss.oracle.com/mailman/listinfo/rasta-devel>,
+	<mailto:rasta-devel-request@oss.oracle.com?subject=subscribe>
+X-List-Received-Date: Wed, 28 May 2003 17:58:13 -0000
+
+Testing 1
+
+-- 
+
+"Behind every successful man there's a lot of unsuccessful years."
+        - Bob Brown
+
+Joel Becker
+Senior Member of Technical Staff
+Oracle Corporation
+E-mail: joel.becker@oracle.com
+Phone: (650) 506-8127
+From jlbec@www.linux.org.uk Wed May 28 12:54:34 2003
+X-Mailman-Handler: $Id: mm-handler,v 1.2 2002/04/05 19:41:09 bwarsaw Exp $
+Received: from oss.oracle.com (localhost [127.0.0.1])h4SHsYMQ018475
+	for <rasta-devel@oss.oracle.com>; Wed, 28 May 2003 12:54:34 -0500
+Received: from www.linux.org.uk (parcelfarce.linux.theplanet.co.uk
+	[195.92.249.252])h4SHsVMQ018470
+	for <rasta-devel@oss.oracle.com>; Wed, 28 May 2003 12:54:33 -0500
+Received: from jlbec by www.linux.org.uk with local (Exim 4.14)
+	id 19L588-0002ha-T8
+	for rasta-devel@oss.oracle.com; Wed, 28 May 2003 18:54:28 +0100
+From: Joel Becker <jlbec@evilplan.org>
+To: rasta-devel@oss.oracle.com
+Message-ID: <20030528175428.GK8153@parcelfarce.linux.theplanet.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.4.1i
+X-Burt-Line: Trees are cool.
+X-Red-Smith: Ninety feet between bases is perhaps as close as man has ever
+	come to perfection.
+Sender: Joel Becker <jlbec@www.linux.org.uk>
+X-Mailman-Approved-At: Sat, 28 Jun 2003 10:20:11 -0500
+Subject: [Rasta-devel] Testing 2
+X-BeenThere: rasta-devel@oss.oracle.com
+X-Mailman-Version: 2.1.1
+Precedence: list
+List-Id: Discussion on developing the RASTA system.
+	<rasta-devel.oss.oracle.com>
+List-Unsubscribe: <http://oss.oracle.com/mailman/listinfo/rasta-devel>,
+	<mailto:rasta-devel-request@oss.oracle.com?subject=unsubscribe>
+List-Archive: <http://oss.oracle.com/pipermail/rasta-devel>
+List-Post: <mailto:rasta-devel@oss.oracle.com>
+List-Help: <mailto:rasta-devel-request@oss.oracle.com?subject=help>
+List-Subscribe: <http://oss.oracle.com/mailman/listinfo/rasta-devel>,
+	<mailto:rasta-devel-request@oss.oracle.com?subject=subscribe>
+Date: Wed, 28 May 2003 17:54:35 -0000
+X-Original-Date: Wed, 28 May 2003 18:54:28 +0100
+X-List-Received-Date: Wed, 28 May 2003 17:54:35 -0000
+
+testing 2
+
+-- 
+
+"What does it say about a society's priorities when the time you
+ spend in meetings on Monday is greater than the total number of
+ hours you spent sleeping over the weekend?"
+	- Nat Friedman
+
+			http://www.jlbec.org/
+			jlbec@evilplan.org

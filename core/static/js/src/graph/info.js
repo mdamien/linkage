@@ -8,7 +8,7 @@ function render(label, topics = [], renderer) {
         className="alert alert-dismissible alert-info"
         style={{ position: 'absolute', top: 10, right: 10, width: '30%'}}>
       <button type="button" className="close" onClick={() => render()}>&times;</button>
-      {label}
+      <div style={{whiteSpace: 'pre'}}>{label}</div>
       {topics.length > 0 ? <div>
         Topics:
         <ul>

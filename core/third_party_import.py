@@ -27,12 +27,22 @@ def mbox_to_csv(mbox):
     def add_mail():
         if mail:
             msg = email.message_from_string(mail)
+
+            body = msg['Subject']
+            if False:
+                body += '\n'
+                if msg.is_multipart():
+                    for payload in msg.get_payload():
+                        body += payload.get_payload()
+                else:
+                    body += msg.get_payload()
+
             if msg['To'] and msg['From']:
                 for sender in msg['From'].split(','):
                     sender = parseaddr(sender)[1]
                     for dest in msg['To'].split(','):
                         dest = parseaddr(dest)[1]
-                        writer.writerow([sender, dest, msg['Subject']])
+                        writer.writerow([sender, dest, body])
 
     for line in mbox:
         if line.startswith('From '):

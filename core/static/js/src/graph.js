@@ -60,7 +60,7 @@ if (GRAPH.result && GRAPH.result.clusters) {
     if (line[1]) { // not an empty line
       var cluster0 = nodeToCluster[line[0]] || line[0];
       var cluster1 = nodeToCluster[line[1]] || line[1];
-      if (cluster0 !== cluster1) graph.addLink(cluster0, cluster1);
+      graph.addLink(cluster0, cluster1);
     }
   });
 } else {
