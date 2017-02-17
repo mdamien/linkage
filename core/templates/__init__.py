@@ -68,7 +68,9 @@ def result(request, graph, result):
                 L.div('.col-md-9') / (
                     L.div('.panel.panel-default', style='position:relative') / (
                         L.div('#_graph-sidebar'),
-                        L.div('#_graph.panel-body'),
+                        L.div('#_graph.panel-body') / (
+                            L.h3('#_loading.text-center') / 'Loading...'
+                        ),
                     )
                 ),
             ),
@@ -168,13 +170,15 @@ def index(request, graphs):
     ))
 
 
-def login(request):
+def login(request, message):
     return base((
         L.div('.container') / (
             header(request),
             L.div('.row') / (
                 L.div('.col-md-3.center-block', style='float:none') / (
-                    L.div('.alert.alert-dismissible.alert-info') / 'You need to login to access this application',
+                    (L.div('.alert.alert-danger') / message) if message else (
+                        L.div('.alert.alert-info') / 'You need to login to access this application'
+                    ),
                     L.form(method='post') / (
                         L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
                         L.div('.form-group') / (

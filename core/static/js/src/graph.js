@@ -86,6 +86,8 @@ var RENDERER = Viva.Graph.View.renderer(graph, {
     graphics: get_graph_graphics(graph, links, nodeToCluster, edgeToTopic),
 });
 
+document.getElementById('_loading').outerHTML = '';
+
 RENDERER.run();
 setTimeout(function() {
   RENDERER.pause();

@@ -56,11 +56,14 @@ def result(request, pk):
 from django.contrib.auth.views import login as login_view
 
 def login(request):
+    message = None
     if request.POST:
         login_view(request)
         if request.user.is_authenticated():
             return redirect('/')
-    return HttpResponse(templates.login(request))
+        else:
+            message = "Please enter a correct username and password"
+    return HttpResponse(templates.login(request, message))
 
 from django.contrib.auth import logout as auth_logout
 
