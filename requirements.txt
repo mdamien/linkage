@@ -4,3 +4,5 @@ arxiv
 django-celery
 redis
 nltk
+channels
+asgi_redis
