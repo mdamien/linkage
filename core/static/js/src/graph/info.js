@@ -1,27 +1,35 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-function render(label, topics = [], renderer) {
+import { hashedColor } from './utils';
+
+var ColorSquare = color => <span className='label' style={{ backgroundColor: color, marginRight: 10 }}> </span>;
+
+/*
+  params = {title, is_node, topics, renderer}
+*/
+function render(params) {
   var popup = <div></div>;
-  if (label || topics.length > 0) {
+  if (params.title || (params.topics && params.topics.length > 0)) {
     popup = <div
         className="alert alert-dismissible alert-info"
         style={{ position: 'absolute', top: 10, right: 10, width: '40%'}}>
       <button type="button" className="close" onClick={() => render()}>&times;</button>
-      {label}
-      {topics.length > 0 ? <div>
+      {params.title}
+      {params.cluster ? <p> - {ColorSquare(hashedColor(params.cluster))} {params.cluster}</p> : null}
+      {params.topics && params.topics.length > 0 ? <div>
         Topics:
         <ul>
-        {topics.map((v, i) => <li key={i}>{i}: {v.toFixed(2)} %</li>)}
+        {params.topics.map((v, i) => <li key={i}>{i}: {v.toFixed(2)} %</li>)}
         </ul>
       </div> : null}
     </div>;
   }
 
   var buttons = <div style={{ position: 'absolute', top: 10, left: 10}}>
-    <button className="btn btn-primary btn-xs" onClick={() => renderer.resume()}>resume</button>
+    <button className="btn btn-primary btn-xs" onClick={() => params.renderer.resume()}>resume</button>
     &nbsp;
-    <button href="#" className="btn btn-primary btn-xs" onClick={() => renderer.pause()}>pause</button>
+    <button href="#" className="btn btn-primary btn-xs" onClick={() => params.renderer.pause()}>pause</button>
   </div>;
 
   ReactDOM.render(<div>{buttons}{popup}</div>, document.getElementById('_graph-sidebar'));

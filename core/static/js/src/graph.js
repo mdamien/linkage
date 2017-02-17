@@ -1,5 +1,7 @@
-import renderSidebar from './graph/sidebar.js';
-import renderGraphSidebar from './graph/info.js';
+import renderSidebar from './graph/sidebar';
+import renderGraphSidebar from './graph/info';
+
+import { hashedColor, COLORS } from './graph/utils';
 
 // TODO: STATE is here to keep computed things in memory, could be cleaned up
 var STATE = {};
@@ -94,33 +96,18 @@ setTimeout(function() {
 }, 2000);
 
 renderSidebar(STATE);
-renderGraphSidebar(undefined, undefined, RENDERER);
+renderGraphSidebar({
+  renderer: RENDERER,
+});
 
 function get_graph_graphics(graph, links, clusters, topics) {
-    var COLORS = [
-      '#1f77b4', '#aec7e8',
-      '#ff7f0e', '#ffbb78',
-      '#2ca02c', '#98df8a',
-      '#d62728', '#ff9896',
-      '#9467bd', '#c5b0d5',
-      '#8c564b', '#c49c94',
-      '#e377c2', '#f7b6d2',
-      '#7f7f7f', '#c7c7c7',
-      '#bcbd22', '#dbdb8d'
-    ];
-
-    var hashIt = function(s){
-      return Math.abs(s.split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a},0)) * 3423;
-    }
-
-
     var graphics = Viva.Graph.View.svgGraphics(),
         nodeSize = 10;
 
     graphics.node(function(node) {
-      var color = 0;
+      var color = hashedColor(node.id);
       if (clusters[node.id]) {
-        color = hashIt(clusters[node.id]) % COLORS.length;
+        color = hashedColor(clusters[node.id]);
       }
       var ui = Viva.Graph.svg('g'),
           svgText = Viva.Graph.svg('text').attr('y', '-6px').text(node.id),
@@ -129,16 +116,33 @@ function get_graph_graphics(graph, links, clusters, topics) {
             .attr('cy', 0)
             .attr('stroke', 'black')
             .attr('stroke-width', '0')
-            .attr('style', 'fill: ' + COLORS[color])
-            .attr('r', 5);
+            .attr('style', 'fill: ' + color)
+            .attr('r', 5),
+          square = Viva.Graph.svg('rect')
+            .attr('stroke', 'black')
+            .attr('stroke-width', '0')
+            .attr('x', -5)
+            .attr('y', -5)
+            .attr('width', 10)
+            .attr('height', 10)
+            .attr('style', 'fill: ' + color);
       // ui.append(svgText);
-      ui.append(circle);
+      if (STATE.clusterToNodes && node.id in STATE.clusterToNodes) {
+        ui.append(square)
+      } else {
+        ui.append(circle);
+      }
 
       svgText.attr('visibility', 'hidden');
       $(ui).hover(function() {
         // svgText.attr('visibility', 'visible');
         circle.attr('stroke-width', '1');
-        renderGraphSidebar(node.id, undefined, RENDERER);
+        renderGraphSidebar({
+          title: node.id,
+          is_node: true,
+          cluster: clusters[node.id],
+          renderer: RENDERER,
+        });
       }, function() {
         circle.attr('stroke-width', '0');
         // svgText.attr('visibility', 'hidden');
@@ -146,7 +150,7 @@ function get_graph_graphics(graph, links, clusters, topics) {
 
       $(ui).click(function() {
         console.log('clicked on', node);
-        if (node.id in STATE.clusterToNodes) {
+        if (STATE.clusterToNodes && node.id in STATE.clusterToNodes) {
           // remove current node
           graph.removeNode(node.id);
 
@@ -212,21 +216,25 @@ function get_graph_graphics(graph, links, clusters, topics) {
     defs.append(marker);
     var geom = Viva.Graph.geom();
     graphics.link(function(link) {
-        var color = hashIt(link.id) % 2 + 3;
+        var color = hashedColor('nopepp');
         var topic = topics[link.fromId + ',' + link.toId];
         if (topic) {
           var idx_max = topic.indexOf(Math.max.apply(Math, topic))
-          color = hashIt(''+idx_max) % COLORS.length;
+          color = hashedColor(''+idx_max);
         }
 
         var ui = Viva.Graph.svg('path')
                    .attr('stroke-width', 2)
-                   .attr('stroke', COLORS[color])
+                   .attr('stroke', color)
                    .attr('marker-end', 'url(#Triangle)');
 
         $(ui).hover(function() {
           ui.attr('stroke-width', 3);
-          renderGraphSidebar(link.data, topics[link.fromId + ',' + link.toId], RENDERER);
+          renderGraphSidebar({
+            title: link.data,
+            topics: topics[link.fromId + ',' + link.toId],
+            renderer: RENDERER,
+          });
         }, function() {
           ui.attr('stroke-width', 2);
         });

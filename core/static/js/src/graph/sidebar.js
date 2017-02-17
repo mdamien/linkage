@@ -1,6 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import { hashedColor } from './utils';
+
+var ColorSquare = color => <span className='label' style={{ backgroundColor: color, marginRight: 10 }}> </span>;
+
 export default state => {
     var sidebar = <div>
         <div className='panel panel-primary'>
@@ -22,7 +26,7 @@ export default state => {
             <div className='list-group'>
                 {Object.keys(state.clusterToNodes).map(key => 
                     <div className='list-group-item' key={key}>
-                        {key} ({state.clusterToNodes[key].length})
+                        {ColorSquare(hashedColor(key))} {key} ({state.clusterToNodes[key].length})
                     </div>
                 )}
             </div>
@@ -34,9 +38,9 @@ export default state => {
             <div className='list-group'>
                 {state.topicToEdgesPercentage.map((v, i) => 
                     <div className='list-group-item' key={i}>
-                        {i} ({v.toFixed(2) + ' %'})
+                        {ColorSquare(hashedColor(''+i))} {i} ({v.toFixed(2) + ' %'})
                         <br/>ex: {state.topicToTerms[i].slice(0, 10).map((t, i) =>
-                            i % 2 == 0 ? <span>
+                            i % 2 == 0 ? <span key={i}>
                                 <span className="label label-default" key={i}>{t}</span>&nbsp;
                             </span> : null
                         )}
