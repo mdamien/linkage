@@ -84,12 +84,13 @@ def result(request, graph, result):
     ))
 
 
-def index(request, graphs):
+def index(request, graphs, messages):
     return base((
         L.div('.container') / (
             header(request),
             L.div('.row') / (
                 L.div('.col-md-6') / (
+                    (L.div('.alert.alert-' + msgtype) / msg for msgtype, msg in messages),
                     L.form('.row.form-horizontal', method="post", enctype="multipart/form-data") / (
                         L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
                         L.input(type='hidden', name='action', value='import'),
@@ -105,7 +106,14 @@ def index(request, graphs):
                             L.div('.row') / (
                                 L.div('.col-md-5') / L.input('form-control', type='file', name='csv_file'),
                                 L.div('.col-md-6') / (
-                                    L.input('.btn.btn-primary.btn-large', name='choice_csv', type='submit', value='Import .csv'),
+                                    L.input('.btn.btn-primary.btn-large',
+                                        data_balloon_pos="bottom",
+                                        data_balloon="A list of edges formatted like this: 'node1,node2,text'",
+                                        name='choice_csv', type='submit', value='Import .csv'),
+                                    ' ',
+                                    L.span('.label.label-default',
+                                        data_balloon_pos="bottom",
+                                        data_balloon="A list of edges formatted like this: 'node1,node2,text'") / '?',
                                     SPACER,
                                     L.input('.btn.btn-primary.btn-large', name='choice_mbox', type='submit', value='Import .mbox'),
                                 )
