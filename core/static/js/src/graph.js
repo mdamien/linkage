@@ -63,13 +63,7 @@ function init() {
 
     STATE.topicToTerms = Papa.parse(GRAPH.result.topics_terms, {delimiter: ','}).data;
 
-    links.forEach(function(line) {
-      if (line[1]) { // not an empty line
-        var cluster0 = nodeToCluster[line[0]] || line[0];
-        var cluster1 = nodeToCluster[line[1]] || line[1];
-        graph.addLink(cluster0, cluster1);
-      }
-    });
+    _add_clusters(graph, links, nodeToCluster)
   } else {
     links.forEach(function(line) {
       if (line[1]) { // not an empty line
@@ -106,9 +100,73 @@ function init() {
   renderSidebar(STATE);
   renderGraphSidebar({
     renderer: RENDERER,
+    expand_clusters: expand_clusters.bind(this, graph, links, nodeToCluster),
+    collapse_clusters: collapse_clusters.bind(this, graph, links, nodeToCluster),
   });
 }
 
+function expand_cluster(cluster_name, graph, links, clusters) {
+  // remove current node
+  graph.removeNode(cluster_name);
+
+  // add all nodes of the cluster
+  links.forEach(function(line) {
+    if (line[1]) { // not an empty line
+      // if origin node in cluster, add it
+      if (clusters[line[0]] == cluster_name) {
+        if (graph.getNode(line[1]) || clusters[line[1]] == cluster_name) {
+          graph.addLink(line[0], line[1], line[2]);
+        } else {
+          // if target node not yet expanded, link to the cluster
+          graph.addLink(line[0], clusters[line[1]], line[2]);
+        }
+      }
+      // if target node in cluster, add it
+      else if (clusters[line[1]] == cluster_name) {
+        if (graph.getNode(line[0]) || clusters[line[0]] == cluster_name) {
+          graph.addLink(line[0], line[1], line[2]);
+        } else {
+          // if origin node not yet expanded, link to the cluster
+          graph.addLink(clusters[line[0]], line[1], line[2]);
+        }
+      }
+    }
+  });
+}
+
+function expand_clusters(graph, links, clusters) {
+  Object.keys(STATE.clusterToNodes).forEach(cluster => {
+    expand_cluster(cluster, graph, links, clusters);
+  })
+
+  RENDERER.resume();
+  setTimeout(function() {
+    RENDERER.pause();
+  }, 2000);
+}
+
+function _add_clusters(graph, links, clusters) {
+  links.forEach(function(line) {
+    if (line[1]) { // not an empty line
+      var cluster0 = clusters[line[0]] || line[0];
+      var cluster1 = clusters[line[1]] || line[1];
+      graph.addLink(cluster0, cluster1);
+    }
+  });
+}
+
+function collapse_clusters(graph, links, clusters) {
+  graph.forEachNode(function(node){
+    graph.removeNode(node.id);
+  });
+
+  _add_clusters(graph, links, clusters);
+
+  RENDERER.resume();
+  setTimeout(function() {
+    RENDERER.pause();
+  }, 2000);
+}
 
 function get_graph_graphics(graph, links, clusters, topics) {
     var graphics = Viva.Graph.View.svgGraphics(),
@@ -152,6 +210,8 @@ function get_graph_graphics(graph, links, clusters, topics) {
           is_node: true,
           cluster: clusters[node.id],
           renderer: RENDERER,
+          expand_clusters: expand_clusters.bind(this, graph, links, clusters),
+          collapse_clusters: collapse_clusters.bind(this, graph, links, clusters),
         });
       }, function() {
         circle.attr('stroke-width', '0');
@@ -161,32 +221,7 @@ function get_graph_graphics(graph, links, clusters, topics) {
       $(ui).click(function() {
         console.log('clicked on', node);
         if (STATE.clusterToNodes && node.id in STATE.clusterToNodes) {
-          // remove current node
-          graph.removeNode(node.id);
-
-          // add all nodes of the cluster
-          links.forEach(function(line) {
-            if (line[1]) { // not an empty line
-              // if origin node in cluster, add it
-              if (clusters[line[0]] == node.id) {
-                if (graph.getNode(line[1]) || clusters[line[1]] == node.id) {
-                  graph.addLink(line[0], line[1], line[2]);
-                } else {
-                  // if target node not yet expanded, link to the cluster
-                  graph.addLink(line[0], clusters[line[1]], line[2]);
-                }
-              }
-              // if target node in cluster, add it
-              else if (clusters[line[1]] == node.id) {
-                if (graph.getNode(line[0]) || clusters[line[0]] == node.id) {
-                  graph.addLink(line[0], line[1], line[2]);
-                } else {
-                  // if origin node not yet expanded, link to the cluster
-                  graph.addLink(clusters[line[0]], line[1], line[2]);
-                }
-              }
-            }
-          });
+          expand_cluster(node.id, graph, links, clusters);
 
           RENDERER.resume();
           setTimeout(function() {
@@ -244,6 +279,8 @@ function get_graph_graphics(graph, links, clusters, topics) {
             title: link.data,
             topics: topics[link.fromId + ',' + link.toId],
             renderer: RENDERER,
+            expand_clusters: expand_clusters.bind(this, graph, links, clusters),
+            collapse_clusters: collapse_clusters.bind(this, graph, links, clusters),
           });
         }, function() {
           ui.attr('stroke-width', 2);
