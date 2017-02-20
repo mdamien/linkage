@@ -56,7 +56,7 @@ def serialize_graph(graph, result):
             'topics': result.topics,
             'topics_terms': result.topics_terms,
         }
-    return json.dumps(data)
+    return data
 
 def result(request, graph, result):
     return base((
@@ -79,10 +79,14 @@ def result(request, graph, result):
         JS_LIBS,
         L.script(src='/static/js/vendor/vivagraph.js'),
         L.script(src='/static/js/vendor/papaparse.js'),
-        L.script / raw("var GRAPH = {}".format(serialize_graph(graph, result))),
+        L.script / raw("var GRAPH = {}".format(json.dumps(serialize_graph(graph, result)))),
         L.script(src='/static/js/dist/vendor.js'),
         L.script(src='/static/js/dist/graph.js'),
     ))
+
+
+def api_result(request, graph, result):
+    return serialize_graph(graph, result)
 
 
 def index(request, graphs, messages):

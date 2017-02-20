@@ -4,101 +4,111 @@ import renderGraphSidebar from './graph/info';
 import { hashedColor, COLORS } from './graph/utils';
 
 // TODO: STATE is here to keep computed things in memory, could be cleaned up
-var STATE = {};
+var STATE = null;
+var RENDERER = null;
 
-var graph = Viva.Graph.graph();
+function init() {
+  STATE = {};
+  var graph = Viva.Graph.graph();
 
-var links = Papa.parse(GRAPH.links, {delimiter: ','}).data;
-console.log('links:', links.length);
+  var links = Papa.parse(GRAPH.links, {delimiter: ','}).data;
+  console.log('links:', links.length);
 
-STATE.n_edges = links.length;
+  STATE.n_edges = links.length;
 
-var nodes = new Set();
-links.forEach(function(line) {
-  if (line[1]) { // not an empty line
-    nodes.add(line[0]);
-    nodes.add(line[1]);
-  }
-});
-STATE.n_nodes = nodes.size;
+  var nodes = new Set();
+  links.forEach(function(line) {
+    if (line[1]) { // not an empty line
+      nodes.add(line[0]);
+      nodes.add(line[1]);
+    }
+  });
+  STATE.n_nodes = nodes.size;
 
-var nodeToCluster = {};
-var edgeToTopic = {};
+  var nodeToCluster = {};
+  var edgeToTopic = {};
 
-if (GRAPH.result && GRAPH.result.clusters) {
-  var clusters = Papa.parse(GRAPH.result.clusters, {delimiter: ','}).data;
-  var clusterToNodes = {};
-  clusters.forEach(function(line) {
-    var cluster = line[1];
-    if (cluster) {
-      nodeToCluster[line[0]] = cluster;
+  if (GRAPH.result && GRAPH.result.clusters) {
+    var clusters = Papa.parse(GRAPH.result.clusters, {delimiter: ','}).data;
+    var clusterToNodes = {};
+    clusters.forEach(function(line) {
+      var cluster = line[1];
+      if (cluster) {
+        nodeToCluster[line[0]] = cluster;
 
-      if (!(cluster in clusterToNodes)) {
-        clusterToNodes[cluster] = []
+        if (!(cluster in clusterToNodes)) {
+          clusterToNodes[cluster] = []
+        }
+        clusterToNodes[cluster].push(line[0]);      
       }
-      clusterToNodes[cluster].push(line[0]);      
-    }
-  });
-  STATE.clusterToNodes = clusterToNodes;
-
-  var topicToEdgesPercentage = null;
-  var topics = Papa.parse(GRAPH.result.topics, {delimiter: ','}).data;
-  topics.forEach(function(line) {
-    var percentages = line.slice(2).map(function(v){
-      return parseFloat(v);
     });
-    edgeToTopic[line[0]+','+line[1]] = percentages;
-    if (topicToEdgesPercentage == null) {
-      topicToEdgesPercentage = percentages;
-    } else {
-      percentages.forEach((v, i) => {
-        topicToEdgesPercentage[i] += v;
+    STATE.clusterToNodes = clusterToNodes;
+
+    var topicToEdgesPercentage = null;
+    var topics = Papa.parse(GRAPH.result.topics, {delimiter: ','}).data;
+    topics.forEach(function(line) {
+      var percentages = line.slice(2).map(function(v){
+        return parseFloat(v);
       });
-    }
-  });
-  STATE.topicToEdgesPercentage = topicToEdgesPercentage;
+      edgeToTopic[line[0]+','+line[1]] = percentages;
+      if (topicToEdgesPercentage == null) {
+        topicToEdgesPercentage = percentages;
+      } else {
+        percentages.forEach((v, i) => {
+          topicToEdgesPercentage[i] += v;
+        });
+      }
+    });
+    STATE.topicToEdgesPercentage = topicToEdgesPercentage;
 
-  STATE.topicToTerms = Papa.parse(GRAPH.result.topics_terms, {delimiter: ','}).data;
+    STATE.topicToTerms = Papa.parse(GRAPH.result.topics_terms, {delimiter: ','}).data;
 
-  links.forEach(function(line) {
-    if (line[1]) { // not an empty line
-      var cluster0 = nodeToCluster[line[0]] || line[0];
-      var cluster1 = nodeToCluster[line[1]] || line[1];
-      graph.addLink(cluster0, cluster1);
-    }
+    links.forEach(function(line) {
+      if (line[1]) { // not an empty line
+        var cluster0 = nodeToCluster[line[0]] || line[0];
+        var cluster1 = nodeToCluster[line[1]] || line[1];
+        graph.addLink(cluster0, cluster1);
+      }
+    });
+  } else {
+    links.forEach(function(line) {
+      if (line[1]) { // not an empty line
+        graph.addLink(line[0], line[1], line[2]);
+      }
+    });
+  }
+
+  var layout = Viva.Graph.Layout.forceDirected(graph, {
+      springLength : 100,
+      springCoeff : 0.0005,
+      dragCoeff : 0.02,
+      gravity : -1.0
   });
-} else {
-  links.forEach(function(line) {
-    if (line[1]) { // not an empty line
-      graph.addLink(line[0], line[1], line[2]);
-    }
+
+  document.getElementById('_graph').innerHTML = '';
+
+  RENDERER = Viva.Graph.View.renderer(graph, {
+      container: document.getElementById('_graph'),
+      // layout: layout,
+      graphics: get_graph_graphics(graph, links, nodeToCluster, edgeToTopic),
+  });
+
+  var loading = document.getElementById('_loading');
+  if (loading) {
+    document.getElementById('_loading').outerHTML = '';
+  }
+
+  RENDERER.run();
+  setTimeout(function() {
+    RENDERER.pause();
+  }, 2000);
+
+  renderSidebar(STATE);
+  renderGraphSidebar({
+    renderer: RENDERER,
   });
 }
 
-var layout = Viva.Graph.Layout.forceDirected(graph, {
-    springLength : 100,
-    springCoeff : 0.0005,
-    dragCoeff : 0.02,
-    gravity : -1.0
-});
-
-var RENDERER = Viva.Graph.View.renderer(graph, {
-    container: document.getElementById('_graph'),
-    // layout: layout,
-    graphics: get_graph_graphics(graph, links, nodeToCluster, edgeToTopic),
-});
-
-document.getElementById('_loading').outerHTML = '';
-
-RENDERER.run();
-setTimeout(function() {
-  RENDERER.pause();
-}, 2000);
-
-renderSidebar(STATE);
-renderGraphSidebar({
-  renderer: RENDERER,
-});
 
 function get_graph_graphics(graph, links, clusters, topics) {
     var graphics = Viva.Graph.View.svgGraphics(),
@@ -275,10 +285,16 @@ function get_graph_graphics(graph, links, clusters, topics) {
 
 var socket = new WebSocket("ws://" + window.location.host + '/result/' + GRAPH.id + '/');
 socket.onmessage = function(e) {
-  location.reload();
+  $.getJSON('/result/' + GRAPH.id + '/data/', function(data) {
+    GRAPH = data;
+    init();
+  });
 }
+
 socket.onopen = function() {
 
 }
 // Call onopen directly if socket is already open
 if (socket.readyState == WebSocket.OPEN) socket.onopen();
+
+init();

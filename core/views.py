@@ -70,6 +70,16 @@ def result(request, pk):
         pass
     return HttpResponse(templates.result(request, graph, result))
 
+@login_required
+def api_result(request, pk):
+    graph = get_object_or_404(models.Graph, pk=pk)
+    result = None
+    try:
+        result = models.ProcessingResult.objects.get(graph=graph)
+    except:
+        pass
+    return JsonResponse(templates.api_result(request, graph, result))
+
 from django.contrib.auth.views import login as login_view
 
 def login(request):
