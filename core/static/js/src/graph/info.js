@@ -14,7 +14,11 @@ function render(params) {
     popup = <div
         className="alert alert-dismissible alert-info"
         style={{ position: 'absolute', top: 10, right: 10, width: '40%'}}>
-      <button type="button" className="close" onClick={() => render()}>&times;</button>
+      <button type="button" className="close" onClick={() => render({
+        renderer: params.renderer,
+        expand_clusters: params.expand_clusters,
+        collapse_clusters: params.collapse_clusters,
+      })}>&times;</button>
       {params.title}
       {params.cluster ? <p> - {ColorSquare(hashedColor(params.cluster))} {params.cluster}</p> : null}
       {params.topics && params.topics.length > 0 ? <div>
