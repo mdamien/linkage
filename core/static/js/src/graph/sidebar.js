@@ -30,7 +30,12 @@ export default state => {
                     </div>
                 )}
             </div>
-        </div> : <div className='alert alert-info'>processing graph...</div>}
+        </div> : <div className='alert alert-info'>
+            processing graph...
+            <div className="progress progress-striped active hide">
+              <div className="progress-bar progress-bar-success" style={{width: '10%'}}></div>
+            </div>
+        </div>}
         {state.topicToEdgesPercentage ? <div className='panel panel-default'>
             <div className='panel-heading'>
                 <h3 className='panel-title'>Topics - {state.topicToEdgesPercentage.length}</h3>

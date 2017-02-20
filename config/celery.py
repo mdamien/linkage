@@ -1,6 +1,9 @@
 import os
 from celery import Celery, task
 
+from channels import Group
+
+
 import graph_processing
 
 # set the default Django settings module for the 'celery' program.
@@ -35,5 +38,9 @@ def process_graph(pk, n_clusters, n_topics):
     result.topics = topics
     result.topics_terms = topics_terms
     result.save()
+
+    Group("result-%s" % pk).send({
+        'text': '%d - DONE' % pk
+    })
 
     return None

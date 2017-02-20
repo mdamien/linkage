@@ -271,3 +271,14 @@ function get_graph_graphics(graph, links, clusters, topics) {
     });
   return graphics;
 }
+
+
+var socket = new WebSocket("ws://" + window.location.host + '/result/' + GRAPH.id + '/');
+socket.onmessage = function(e) {
+  location.reload();
+}
+socket.onopen = function() {
+
+}
+// Call onopen directly if socket is already open
+if (socket.readyState == WebSocket.OPEN) socket.onopen();

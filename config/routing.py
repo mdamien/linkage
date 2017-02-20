@@ -1,8 +1,12 @@
-from channels.routing import route
-from core.consumers import ws_message, ws_add, ws_disconnect
+from channels.routing import route, include
 
-channel_routing = [
-    route("websocket.receive", ws_message),
-    route("websocket.connect", ws_add),
+from core.consumers import ws_add, ws_disconnect
+
+result_routing = [
+    route("websocket.connect", ws_add, path=r"^/(?P<graph_pk>\d+)/$"),
     route("websocket.disconnect", ws_disconnect),
+]
+
+routing = [
+    include(result_routing, path=r"^/result"),
 ]

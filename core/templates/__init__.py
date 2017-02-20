@@ -44,6 +44,7 @@ JS_LIBS = (
 
 def serialize_graph(graph, result):
     data = {
+        'id': graph.pk,
         'name': graph.name,
         'links': graph.links,
         'created_at': naturaltime(graph.created_at),
@@ -97,7 +98,7 @@ def index(request, graphs, messages):
                         L.p / (
                             L.h4 / 'Import a graph via an arXiv request',
                             L.div('.row') / (
-                                L.div('.col-md-9') / L.input('.form-control', type='text', name='q'),
+                                L.div('.col-md-9') / L.input('.form-control', type='text', name='q', placeholder="'security', 'defense', 'weapons', 'deep learning',.."),
                                 L.div('.col-md-3') / (
                                     L.input('.btn.btn-primary.btn-large', name='choice_arxiv', type='submit', value='search'),
                                 )
