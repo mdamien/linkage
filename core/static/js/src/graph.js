@@ -72,18 +72,10 @@ function init() {
     });
   }
 
-  var layout = Viva.Graph.Layout.forceDirected(graph, {
-      springLength : 100,
-      springCoeff : 0.0005,
-      dragCoeff : 0.02,
-      gravity : -1.0
-  });
-
   document.getElementById('_graph').innerHTML = '';
 
   RENDERER = Viva.Graph.View.renderer(graph, {
       container: document.getElementById('_graph'),
-      // layout: layout,
       graphics: get_graph_graphics(graph, links, nodeToCluster, edgeToTopic),
   });
 
@@ -320,7 +312,7 @@ function get_graph_graphics(graph, links, clusters, topics) {
 }
 
 var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-var socket = new WebSocket("ws_scheme://" + window.location.host + '/result/' + GRAPH.id + '/');
+var socket = new WebSocket(ws_scheme + "://" + window.location.host + '/result/' + GRAPH.id + '/');
 socket.onmessage = function(e) {
   $.getJSON('/result/' + GRAPH.id + '/data/', function(data) {
     GRAPH = data;

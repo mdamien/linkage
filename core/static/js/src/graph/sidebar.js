@@ -46,7 +46,10 @@ export default state => {
                         {ColorSquare(hashedColor(''+i))} {i} ({v.toFixed(2) + ' %'})
                         <br/>ex: {state.topicToTerms[i].slice(0, 10).map((t, i) =>
                             i % 2 == 0 ? <span key={i}>
-                                <span className="label label-default" key={i}>{t}</span>&nbsp;
+                                <span
+                                    className="label label-default"
+                                    key={i}
+                                >{t}</span>{' '}
                             </span> : null
                         )}
                     </div>
