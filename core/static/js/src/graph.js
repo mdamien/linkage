@@ -319,8 +319,8 @@ function get_graph_graphics(graph, links, clusters, topics) {
   return graphics;
 }
 
-
-var socket = new WebSocket("ws://" + window.location.host + '/result/' + GRAPH.id + '/');
+var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+var socket = new WebSocket("ws_scheme://" + window.location.host + '/result/' + GRAPH.id + '/');
 socket.onmessage = function(e) {
   $.getJSON('/result/' + GRAPH.id + '/data/', function(data) {
     GRAPH = data;
