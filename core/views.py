@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 
 from core import templates, models, third_party_import
 
+from django.core.exceptions import PermissionDenied
+
 @login_required
 def index(request):
     messages = []
@@ -67,6 +69,8 @@ def index(request):
 @login_required
 def result(request, pk):
     graph = get_object_or_404(models.Graph, pk=pk)
+    if request.user.pk != graph.user.pk:
+        raise PermissionDenied
     result = None
     try:
         result = models.ProcessingResult.objects.get(graph=graph)
@@ -77,6 +81,8 @@ def result(request, pk):
 @login_required
 def api_result(request, pk):
     graph = get_object_or_404(models.Graph, pk=pk)
+    if request.user.pk != graph.user.pk:
+        raise PermissionDenied
     result = None
     try:
         result = models.ProcessingResult.objects.get(graph=graph)
