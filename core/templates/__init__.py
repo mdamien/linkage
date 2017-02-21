@@ -109,8 +109,8 @@ def index(request, graphs, messages):
                             ),
                             L.h4 / 'Or via a file',
                             L.div('.row') / (
-                                L.div('.col-md-5') / L.input('form-control', type='file', name='csv_file'),
-                                L.div('.col-md-6') / (
+                                L.div('.col-md-7') / L.input('form-control', type='file', name='csv_file'),
+                                L.div('.col-md-5') / (
                                     L.input('.btn.btn-primary.btn-large',
                                         data_balloon_pos="bottom",
                                         data_balloon="A list of edges formatted like this: 'node1,node2,text'",
@@ -119,9 +119,25 @@ def index(request, graphs, messages):
                                     L.span('.label.label-default',
                                         data_balloon_pos="bottom",
                                         data_balloon="A list of edges formatted like this: 'node1,node2,text'") / '?',
-                                    SPACER,
+                                )
+                            ),
+                            L.br,
+                            L.div('.row') / (
+                                L.div('.col-md-7') / L.input('form-control', type='file', name='mbox_file'),
+                                L.div('.col-md-5') / (
                                     L.input('.btn.btn-primary.btn-large', name='choice_mbox', type='submit', value='Import .mbox'),
                                 )
+                            ),
+                            L.div('.form-group._mbox-options') / (
+                                L.div('.col-md-3.control-label') / (' '),
+                                L.div('.col-md-9') / (
+                                    L.div('.checkbox') / (
+                                        L.label / (
+                                            L.input(name='mbox_subject_only', checked='', type='checkbox'),
+                                            ' Import email subjects only'
+                                        )                                    
+                                    ),                                 
+                                ),
                             ),
                             L.div('.form-group') / (
                                 L.div('.col-md-3.control-label') / (L.strong / 'Clustering'),

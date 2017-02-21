@@ -27,12 +27,16 @@ def index(request):
             if ('choice_csv' in request.POST or 'choice_mbox' in request.POST) and not request.FILES:
                 messages.append(['danger', 'You must include a file to import'])
             elif 'choice_csv' in request.POST:
+                if 'csv_file' not in request.FILES:
+                    messages.append(['danger', 'You must include a file to import'])
                 links = TextIOWrapper(request.FILES['csv_file'].file, encoding=request.encoding).read()
                 graph = models.Graph(name='CSV import of %s' % (request.FILES['csv_file'].name), links=links, user=request.user)
             elif 'choice_mbox' in request.POST:
-                mbox = TextIOWrapper(request.FILES['csv_file'].file, encoding=request.encoding)
-                links = third_party_import.mbox_to_csv(mbox)
-                graph = models.Graph(name='MBOX import of %s' % (request.FILES['csv_file'].name), links=links, user=request.user)
+                if 'mbox_file' not in request.FILES:
+                    messages.append(['danger', 'You must include a file to import'])
+                mbox = TextIOWrapper(request.FILES['mbox_file'].file, encoding=request.encoding)
+                links = third_party_import.mbox_to_csv(mbox, request.POST.get('mbox_subject_only'))
+                graph = models.Graph(name='MBOX import of %s' % (request.FILES['mbox_file'].name), links=links, user=request.user)
             elif 'choice_arxiv' in request.POST:
                 q = request.POST['q']
                 if len(q) > 0:

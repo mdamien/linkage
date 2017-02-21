@@ -22,7 +22,7 @@ def arxiv_to_csv(q):
 
     return output.getvalue()
 
-def mbox_to_csv(mbox):
+def mbox_to_csv(mbox, subject_only):
     output = io.StringIO()
     writer = csv.writer(output)
 
@@ -34,7 +34,7 @@ def mbox_to_csv(mbox):
 
             subject = header.make_header(header.decode_header(msg['Subject']))
             body = str(subject)
-            if False:
+            if not subject_only:
                 body += '\n'
                 if msg.is_multipart():
                     for payload in msg.get_payload():
