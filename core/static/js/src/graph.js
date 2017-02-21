@@ -138,10 +138,14 @@ function expand_clusters(graph, links, clusters) {
 }
 
 function _add_clusters(graph, links, clusters) {
+  var added_links = new Set();
   links.forEach(function(line) {
     if (line[1]) { // not an empty line
       var cluster0 = clusters[line[0]] || line[0];
       var cluster1 = clusters[line[1]] || line[1];
+      var key = cluster0 + ',' + cluster1;
+      if (added_links.has(key)) return;
+      added_links.add(key);
       graph.addLink(cluster0, cluster1);
     }
   });
