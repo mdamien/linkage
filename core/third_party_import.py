@@ -1,7 +1,8 @@
 import io, csv, email
 
 from email import header
-from email.utils import parseaddr
+from email.utils import parseaddr, getaddresses
+from email.utils import getaddresses
 
 import arxiv
 
@@ -32,21 +33,38 @@ def mbox_to_csv(mbox, subject_only):
         if mail:
             msg = email.message_from_string(mail)
 
-            subject = header.make_header(header.decode_header(msg['Subject']))
+            try:
+                subject = header.make_header(header.decode_header(msg['Subject']))
+            except:
+                subject = msg['Subject']
             body = str(subject)
             if not subject_only:
                 body += '\n'
                 if msg.is_multipart():
+                    # todo: RLYY ? make it recursive
                     for payload in msg.get_payload():
-                        body += payload.get_payload()
+                        subpayloads = payload.get_payload()
+                        if type(subpayloads) is list:
+                            for subpayload in subpayloads:
+                                subsubpayloads = subpayload.get_payload()
+                                if type(subsubpayloads) is list:
+                                    for subsubpayload in subsubpayloads:
+                                        body += '\n' + subsubpayload.get_payload()
+                                else:
+                                    body += '\n' + subsubpayloads
+                        else:
+                            body += '\n' + subpayloads
                 else:
-                    body += msg.get_payload()
+                    body += '\n' + msg.get_payload()
 
             if msg['To'] and msg['From']:
-                for sender in msg['From'].split(','):
-                    sender = parseaddr(sender)[1]
-                    for dest in msg['To'].split(','):
-                        dest = parseaddr(dest)[1]
+                for _, sender in getaddresses(msg.get_all('from', [])):
+                    tos = msg.get_all('to', [])
+                    ccs = msg.get_all('cc', [])
+                    resent_tos = msg.get_all('resent-to', [])
+                    resent_ccs = msg.get_all('resent-cc', [])
+                    all_recipients = getaddresses(tos + ccs + resent_tos + resent_ccs)
+                    for _, dest in all_recipients:
                         writer.writerow([sender, dest, body])
 
     for line in mbox:

@@ -1,6 +1,8 @@
-import csv, random, io
+import csv, random, io, sys
 import collections
 import time
+
+csv.field_size_limit(sys.maxsize) # http://stackoverflow.com/questions/15063936/csv-error-field-larger-than-field-limit-131072
 
 from nltk.tokenize import word_tokenize
 from nltk.stem.snowball import SnowballStemmer
