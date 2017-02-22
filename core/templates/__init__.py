@@ -1,4 +1,6 @@
-import collections, csv, json
+import collections, csv, json, io, sys
+
+csv.field_size_limit(sys.maxsize) # http://stackoverflow.com/questions/15063936/csv-error-field-larger-than-field-limit-131072
 
 from django.middleware.csrf import get_token
 from django.contrib.humanize.templatetags.humanize import naturaltime
@@ -42,11 +44,19 @@ JS_LIBS = (
         L.script(src='/static/js/vendor/bootstrap.js'),
 )
 
+def strip_links(links):
+    stripped = io.StringIO()
+    writer = csv.writer(stripped)
+    for link in csv.reader(io.StringIO(links)):
+        if len(link) > 1:
+            writer.writerow([link[0], link[1], link[2][:200]])
+    return stripped.getvalue()
+
 def serialize_graph(graph, result):
     data = {
         'id': graph.pk,
         'name': graph.name,
-        'links': graph.links,
+        'links': strip_links(graph.links),
         'created_at': naturaltime(graph.created_at),
     }
     if result:
