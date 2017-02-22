@@ -35,29 +35,28 @@ def mbox_to_csv(mbox, subject_only):
         if mail:
             msg = email.message_from_string(mail)
 
-            try:
-                subject = header.make_header(header.decode_header(msg['Subject']))
-            except:
-                subject = msg['Subject']
+            subject = header.make_header(header.decode_header(msg['Subject']))
             body = str(subject)
             if not subject_only:
                 body += '\n'
-                if msg.is_multipart():
-                    # todo: RLYY ? make it recursive
-                    for payload in msg.get_payload():
-                        subpayloads = payload.get_payload()
-                        if type(subpayloads) is list:
-                            for subpayload in subpayloads:
-                                subsubpayloads = subpayload.get_payload()
-                                if type(subsubpayloads) is list:
-                                    for subsubpayload in subsubpayloads:
-                                        body += '\n' + strip_tags(subsubpayload.get_payload())
-                                else:
-                                    body += '\n' + strip_tags(subsubpayloads)
-                        else:
-                            body += '\n' + strip_tags(subpayloads)
-                else:
-                    body += '\n' + strip_tags(msg.get_payload())
+
+                def parse_payload(message):
+                    if message.is_multipart():
+                        for part in message.get_payload(): 
+                            yield from parse_payload(part)
+                    else:
+                        yield message, message.get_payload(decode=True)
+
+                for submsg, part in parse_payload(msg):
+                    content_type = submsg.get_content_type()
+                    content = ''
+                    if 'plain' in content_type:
+                        charset = submsg.get_content_charset('utf-8')
+                        content = part.decode(charset)
+                    if 'html' in content_type:
+                        charset = submsg.get_content_charset('utf-8')
+                        content = strip_tags(part.decode(charset))
+                    body += '\n' + content
 
             if msg['To'] and msg['From']:
                 for _, sender in getaddresses(msg.get_all('from', [])):
@@ -73,6 +72,7 @@ def mbox_to_csv(mbox, subject_only):
         if line.startswith('From '):
             add_mail()
             mail = ''
-        mail += line
+        if mail is not None: # ignore email without headers
+            mail += line
     add_mail()  
     return output.getvalue()
