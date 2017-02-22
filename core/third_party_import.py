@@ -1,10 +1,8 @@
 import io, csv, email
 
 from email import header
-from email.utils import parseaddr, getaddresses
 from email.utils import getaddresses
-
-from django.utils.html import strip_tags
+from email.utils import getaddresses
 
 from bs4 import BeautifulSoup
 

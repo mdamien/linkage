@@ -166,7 +166,7 @@ function collapse_clusters(graph, links, clusters) {
 
 function get_graph_graphics(graph, links, clusters, topics) {
     var graphics = Viva.Graph.View.svgGraphics(),
-        nodeSize = 10;
+        nodeSize = 20;
 
     graphics.node(function(node) {
       var color = hashedColor(node.id);
@@ -181,14 +181,14 @@ function get_graph_graphics(graph, links, clusters, topics) {
             .attr('stroke', 'black')
             .attr('stroke-width', '0')
             .attr('style', 'fill: ' + color)
-            .attr('r', 5),
+            .attr('r', 7),
           square = Viva.Graph.svg('rect')
             .attr('stroke', 'black')
             .attr('stroke-width', '0')
-            .attr('x', -5)
-            .attr('y', -5)
-            .attr('width', 10)
-            .attr('height', 10)
+            .attr('x', -10)
+            .attr('y', -10)
+            .attr('width', 20)
+            .attr('height', 20)
             .attr('style', 'fill: ' + color);
       // ui.append(svgText);
       if (STATE.clusterToNodes && node.id in STATE.clusterToNodes) {
@@ -265,7 +265,7 @@ function get_graph_graphics(graph, links, clusters, topics) {
         }
 
         var ui = Viva.Graph.svg('path')
-                   .attr('stroke-width', 2)
+                   .attr('stroke-width', 0.5)
                    .attr('stroke', color)
                    .attr('marker-end', 'url(#Triangle)');
 
@@ -279,7 +279,7 @@ function get_graph_graphics(graph, links, clusters, topics) {
             collapse_clusters: collapse_clusters.bind(this, graph, links, clusters),
           });
         }, function() {
-          ui.attr('stroke-width', 2);
+          ui.attr('stroke-width', 0.5);
         });
 
         return ui;
