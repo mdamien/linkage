@@ -4,6 +4,8 @@ from email import header
 from email.utils import parseaddr, getaddresses
 from email.utils import getaddresses
 
+from django.utils.html import strip_tags
+
 import arxiv
 
 def arxiv_to_csv(q):
@@ -49,13 +51,13 @@ def mbox_to_csv(mbox, subject_only):
                                 subsubpayloads = subpayload.get_payload()
                                 if type(subsubpayloads) is list:
                                     for subsubpayload in subsubpayloads:
-                                        body += '\n' + subsubpayload.get_payload()
+                                        body += '\n' + strip_tags(subsubpayload.get_payload())
                                 else:
-                                    body += '\n' + subsubpayloads
+                                    body += '\n' + strip_tags(subsubpayloads)
                         else:
-                            body += '\n' + subpayloads
+                            body += '\n' + strip_tags(subpayloads)
                 else:
-                    body += '\n' + msg.get_payload()
+                    body += '\n' + strip_tags(msg.get_payload())
 
             if msg['To'] and msg['From']:
                 for _, sender in getaddresses(msg.get_all('from', [])):
