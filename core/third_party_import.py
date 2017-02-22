@@ -6,7 +6,10 @@ from email.utils import getaddresses
 
 from django.utils.html import strip_tags
 
+from bs4 import BeautifulSoup
+
 import arxiv
+import chardet
 
 def arxiv_to_csv(q):
     results = arxiv.query(q, prune=True, start=0, max_results=100)
@@ -50,12 +53,17 @@ def mbox_to_csv(mbox, subject_only):
                 for submsg, part in parse_payload(msg):
                     content_type = submsg.get_content_type()
                     content = ''
+                    def decode():
+                        charset = submsg.get_content_charset('utf-8')
+                        try:
+                            return part.decode(charset)
+                        except UnicodeDecodeError:
+                            charset = chardet.detect(part)['encoding']
+                            return part.decode(charset)
                     if 'plain' in content_type:
-                        charset = submsg.get_content_charset('utf-8')
-                        content = part.decode(charset)
+                        content = decode()
                     if 'html' in content_type:
-                        charset = submsg.get_content_charset('utf-8')
-                        content = strip_tags(part.decode(charset))
+                        content = BeautifulSoup(decode()).text
                     body += '\n' + content
 
             if msg['To'] and msg['From']:

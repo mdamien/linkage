@@ -6,3 +6,5 @@ redis
 nltk
 channels
 asgi_redis
+beautifulsoup4
+chardet
