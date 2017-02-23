@@ -1,16 +1,16 @@
-from django.conf import settings
-DEBUG = settings.DEBUG
-
-import collections, csv, json, io, sys
-
-csv.field_size_limit(sys.maxsize) # http://stackoverflow.com/questions/15063936/csv-error-field-larger-than-field-limit-131072
+import random, collections, csv, json, io, sys
 
 from django.middleware.csrf import get_token
 from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.conf import settings
 
 from lys import L, raw
 
 from .base import base
+
+csv.field_size_limit(sys.maxsize) # http://stackoverflow.com/questions/15063936/csv-error-field-larger-than-field-limit-131072
+DEBUG = settings.DEBUG
+COMMIT_HASH = settings.COMMIT_HASH
 
 def header(request):
     return L.div('.row') / (
@@ -101,8 +101,8 @@ def result(request, graph, result):
         L.script(src='/static/js/vendor/vivagraph.js'),
         L.script(src='/static/js/vendor/papaparse.js'),
         L.script / raw("var GRAPH = {}".format(json.dumps(serialize_graph(graph, result)))),
-        L.script(src='/static/js/dist/vendor.js'),
-        L.script(src='/static/js/dist/graph.js'),
+        L.script(src='/static/js/dist/vendor.js?v=' + COMMIT_HASH),
+        L.script(src='/static/js/dist/graph.js?v=' + COMMIT_HASH),
     ))
 
 
@@ -216,7 +216,7 @@ def index(request, graphs, messages):
             FOOTER
         ),
         JS_LIBS,
-        L.script(src='/static/js/src/import.js'),
+        L.script(src='/static/js/src/import.js?v=' + COMMIT_HASH),
     ))
 
 

@@ -8,3 +8,4 @@ channels
 asgi_redis
 beautifulsoup4
 chardet
+raven
