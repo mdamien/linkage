@@ -121,11 +121,13 @@ def index(request, graphs, messages):
                         L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
                         L.input(type='hidden', name='action', value='import'),
                         L.p / (
-                            L.h4 / 'Import a graph via an arXiv request',
+                            L.h4 / 'Import a graph via a search request',
                             L.div('.row') / (
-                                L.div('.col-md-9') / L.input('.form-control', type='text', name='q', placeholder="'security', 'defense', 'weapons', 'deep learning',.."),
-                                L.div('.col-md-3') / (
-                                    L.input('.btn.btn-primary.btn-large', name='choice_arxiv', type='submit', value='search'),
+                                L.div('.col-md-5') / L.input('.form-control', type='text', name='q', placeholder="'security', 'defense', 'weapons', 'deep learning',.."),
+                                L.div('.col-md-7') / (
+                                    L.input('.btn.btn-primary.btn-large', name='choice_arxiv', type='submit', value='search arXiv'),
+                                    SPACER,
+                                    L.input('.btn.btn-primary.btn-large', name='choice_hal', type='submit', value='search HAL'),
                                 )
                             ),
                             L.h4 / 'Or via a file',

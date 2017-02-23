@@ -1,4 +1,4 @@
-import io, csv, email
+import io, csv, email, json
 
 from email import header
 from email.utils import getaddresses
@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 
 import arxiv
 import chardet
+import requests
 
 def arxiv_to_csv(q):
     results = arxiv.query(q, prune=True, start=0, max_results=100)
@@ -25,6 +26,30 @@ def arxiv_to_csv(q):
                     writer.writerow([author, author2, result['title']])
 
     return output.getvalue()
+
+
+def hal_to_csv(q):
+    params = {
+        'fl': 'authFullName_s,title_s',
+        'q': q,
+    }
+    resp = requests.get('https://api.archives-ouvertes.fr/search/', params=params)
+    results = resp.json()['response']['docs']
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    N = len(results)
+
+    print('HAL search for', q, '; results:', N)
+    for result in results:
+        for author in result['authFullName_s']:
+            for author2 in result['authFullName_s']:
+                if author != author2:
+                    writer.writerow([author, author2, result['title_s']])
+
+    return output.getvalue()
+
 
 def mbox_to_csv(mbox, subject_only):
     output = io.StringIO()
