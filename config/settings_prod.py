@@ -5,6 +5,7 @@ import raven
 
 DEBUG = False
 ALLOWED_HOSTS = ['193.51.82.105']
+USE_X_FORWARDED_HOST = True
 
 SECRET_KEY = 'to_be_changed_in_to_a_random_var_on_disk'
 
