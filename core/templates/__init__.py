@@ -1,3 +1,6 @@
+from django.conf import settings
+DEBUG = settings.DEBUG
+
 import collections, csv, json, io, sys
 
 csv.field_size_limit(sys.maxsize) # http://stackoverflow.com/questions/15063936/csv-error-field-larger-than-field-limit-131072
@@ -38,7 +41,15 @@ FOOTER = L.div('.row') / (
     ),
 )
 
+SENTRY = []
+if not DEBUG:
+    SENTRY = (
+        L.script(src='/static/js/vendor/raven.min.js'),
+        L.script / raw("Raven.config('https://630be20fb2e64d309af37490c264fefa@sentry.io/142095').install()"),
+    )
+
 JS_LIBS = (
+        SENTRY,
         L.script(src='/static/js/vendor/jquery.js'),
         L.script(src='/static/js/vendor/tether.js'),
         L.script(src='/static/js/vendor/bootstrap.js'),
@@ -234,6 +245,7 @@ def login(request, message):
                     ),
                 ),
             ),
-            FOOTER
+            FOOTER,
+            SENTRY,
         ),
     ))
