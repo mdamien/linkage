@@ -32,6 +32,7 @@ def hal_to_csv(q):
     params = {
         'fl': 'authFullName_s,title_s',
         'q': q,
+        'rows': 200,
     }
     resp = requests.get('https://api.archives-ouvertes.fr/search/', params=params)
     results = resp.json()['response']['docs']
@@ -46,7 +47,7 @@ def hal_to_csv(q):
         for author in result['authFullName_s']:
             for author2 in result['authFullName_s']:
                 if author != author2:
-                    writer.writerow([author, author2, result['title_s']])
+                    writer.writerow([author, author2, result['title_s'][0]])
 
     return output.getvalue()
 
