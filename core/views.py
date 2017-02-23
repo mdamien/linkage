@@ -31,12 +31,12 @@ def index(request):
             elif 'choice_csv' in request.POST:
                 if 'csv_file' not in request.FILES:
                     messages.append(['danger', 'You must include a file to import'])
-                links = TextIOWrapper(request.FILES['csv_file'].file, encoding=request.encoding).read()
+                links = TextIOWrapper(request.FILES['csv_file'].file, encoding='utf-8').read()
                 graph = models.Graph(name='CSV import of %s' % (request.FILES['csv_file'].name), links=links, user=request.user)
             elif 'choice_mbox' in request.POST:
                 if 'mbox_file' not in request.FILES:
                     messages.append(['danger', 'You must include a file to import'])
-                mbox = TextIOWrapper(request.FILES['mbox_file'].file, encoding=request.encoding)
+                mbox = TextIOWrapper(request.FILES['mbox_file'].file, encoding='utf-8')
                 links = third_party_import.mbox_to_csv(mbox, request.POST.get('mbox_subject_only'))
                 graph = models.Graph(name='MBOX import of %s' % (request.FILES['mbox_file'].name), links=links, user=request.user)
             elif 'choice_arxiv' in request.POST:

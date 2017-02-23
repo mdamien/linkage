@@ -46,7 +46,9 @@ def mbox_to_csv(mbox, subject_only):
                         for part in message.get_payload(): 
                             yield from parse_payload(part)
                     else:
-                        yield message, message.get_payload(decode=True)
+                        cte = message.get_content_type()
+                        if 'plain' in cte or 'html' in cte:
+                            yield message, message.get_payload(decode=True)
 
                 for submsg, part in parse_payload(msg):
                     content_type = submsg.get_content_type()
