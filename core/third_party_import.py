@@ -11,7 +11,7 @@ import chardet
 import requests
 
 def arxiv_to_csv(q):
-    results = arxiv.query(q, prune=True, start=0, max_results=100)
+    results = arxiv.query(q, prune=True, start=0, max_results=50)
 
     output = io.StringIO()
     writer = csv.writer(output)
@@ -32,7 +32,7 @@ def hal_to_csv(q):
     params = {
         'fl': 'authFullName_s,title_s',
         'q': q,
-        'rows': 200,
+        'rows': 50,
     }
     resp = requests.get('https://api.archives-ouvertes.fr/search/', params=params)
     results = resp.json()['response']['docs']
