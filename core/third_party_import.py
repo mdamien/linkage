@@ -11,7 +11,7 @@ import chardet
 import requests
 
 def arxiv_to_csv(q):
-    results = arxiv.query(q, prune=True, start=0, max_results=50)
+    results = arxiv.query(q, prune=True, start=0, max_results=1000)
 
     output = io.StringIO()
     writer = csv.writer(output)
@@ -20,8 +20,9 @@ def arxiv_to_csv(q):
 
     print('arxiv search for', q, '; results:', N)
     for result in results:
-        for i, author in enumerate(result['authors']):
-            for author2 in result['authors'][i+1:]:
+        authors = result['authors'][:7]
+        for i, author in enumerate(authors):
+            for author2 in authors[i+1:]:
                 writer.writerow([author, author2, result['title']])
 
     return output.getvalue()
@@ -31,7 +32,7 @@ def hal_to_csv(q):
     params = {
         'fl': 'authFullName_s,title_s',
         'q': q,
-        'rows': 50,
+        'rows': 1000,
     }
     resp = requests.get('https://api.archives-ouvertes.fr/search/', params=params)
     results = resp.json()['response']['docs']
@@ -43,8 +44,9 @@ def hal_to_csv(q):
 
     print('HAL search for', q, '; results:', N)
     for result in results:
-        for i, author in enumerate(result['authFullName_s']):
-            for author2 in result['authFullName_s'][i+1:]:
+        authors = result['authFullName_s'][:7]
+        for i, author in enumerate(authors):
+            for author2 in authors[i+1:]:
                 writer.writerow([author, author2, result['title_s'][0]])
 
     return output.getvalue()
