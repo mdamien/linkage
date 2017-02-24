@@ -20,10 +20,9 @@ def arxiv_to_csv(q):
 
     print('arxiv search for', q, '; results:', N)
     for result in results:
-        for author in result['authors']:
-            for author2 in result['authors']:
-                if author != author2:
-                    writer.writerow([author, author2, result['title']])
+        for i, author in enumerate(result['authors']):
+            for author2 in result['authors'][i+1:]:
+                writer.writerow([author, author2, result['title']])
 
     return output.getvalue()
 
@@ -44,10 +43,9 @@ def hal_to_csv(q):
 
     print('HAL search for', q, '; results:', N)
     for result in results:
-        for author in result['authFullName_s']:
-            for author2 in result['authFullName_s']:
-                if author != author2:
-                    writer.writerow([author, author2, result['title_s'][0]])
+        for i, author in enumerate(result['authFullName_s']):
+            for author2 in result['authFullName_s'][i+1:]:
+                writer.writerow([author, author2, result['title_s'][0]])
 
     return output.getvalue()
 

@@ -9,6 +9,8 @@ class Graph(models.Model):
     # csv of [origin, dest, text]
     links = models.TextField(blank=True, default='')
 
+    directed = models.BooleanField(default=True)
+
     user = models.ForeignKey(User)
 
     created_at = models.DateTimeField(auto_now_add=True)

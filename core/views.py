@@ -43,14 +43,16 @@ def index(request):
                 q = request.POST['q']
                 if len(q) > 0:
                     links = third_party_import.arxiv_to_csv(q)
-                    graph = models.Graph(name='arXiv import of search term: %s' % (q, ), links=links, user=request.user)
+                    graph = models.Graph(name='arXiv import of search term: %s' % (q, ),
+                        links=links, user=request.user, directed=False)
                 else:
                     messages.append(['danger', 'You must include a search term to do a query'])
             elif 'choice_hal' in request.POST:
                 q = request.POST['q']
                 if len(q) > 0:
                     links = third_party_import.hal_to_csv(q)
-                    graph = models.Graph(name='HAL import of search term: %s' % (q, ), links=links, user=request.user)
+                    graph = models.Graph(name='HAL import of search term: %s' % (q, ),
+                        links=links, user=request.user, directed=False)
                 else:
                     messages.append(['danger', 'You must include a search term to do a query'])
             if graph:

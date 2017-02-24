@@ -69,6 +69,7 @@ def serialize_graph(graph, result):
         'name': graph.name,
         'links': strip_links(graph.links),
         'created_at': naturaltime(graph.created_at),
+        'directed': graph.directed,
     }
     if result:
         data['result'] = {

@@ -266,8 +266,11 @@ function get_graph_graphics(graph, links, clusters, topics) {
 
         var ui = Viva.Graph.svg('path')
                    .attr('stroke-width', 0.5)
-                   .attr('stroke', color)
-                   .attr('marker-end', 'url(#Triangle)');
+                   .attr('stroke', color);
+        
+        if (GRAPH.directed) {
+          ui = ui.attr('marker-end', 'url(#Triangle)');
+        }
 
         $(ui).hover(function() {
           ui.attr('stroke-width', 3);
