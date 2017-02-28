@@ -30,7 +30,7 @@ def process(links, n_clusters, n_topics):
             nodes.add(link[1])
             for token in word_tokenize(link[2]):
                 if token not in stopwords:
-                    terms.update([stemmer.stem(token)])
+                    terms[stemmer.stem(token)] += 1
 
     for node in nodes:
         writer.writerow([node, random.choice(all_clusters)])
@@ -60,6 +60,45 @@ def process(links, n_clusters, n_topics):
 
     return clusters.getvalue(), topics.getvalue(), topics_terms.getvalue()
 
+
+def export(links):
+    X = io.StringIO()
+    X_writer = csv.writer(open('X.csv', 'w'), delimiter=' ')
+    DTM = io.StringIO()
+    DTM_writer = csv.writer(open('DTM.csv', 'w'), delimiter=' ')
+
+    nodes = []
+    terms_per_edge = []
+    terms = []
+
+    def node_to_i(node):
+        try:
+            return nodes.index(node)
+        except ValueError:
+            nodes.append(node)
+            return len(nodes) - 1
+
+    def term_to_i(term):
+        try:
+            return terms.index(term)
+        except ValueError:
+            terms.append(term)
+            return len(terms) - 1
+
+    curr_edge = 0
+    for link in links:
+        if len(link) > 1:
+            start = node_to_i(link[0])
+            end = node_to_i(link[1])
+            X_writer.writerow([start, end, 1])
+            doc_terms = collections.Counter()
+            for token in word_tokenize(link[2]):
+                if token not in stopwords:
+                    doc_terms[stemmer.stem(token)] += 1
+            for token, count in doc_terms.items():
+                DTM_writer.writerow([curr_edge, term_to_i(token), count])
+            curr_edge += 1
+
 if __name__ == '__main__':
     links = [
         ['a', 'b', 'result.clusters = clusters.getvalue()'],
@@ -67,7 +106,9 @@ if __name__ == '__main__':
         ['d', 'e', 'result.topics = topics.getvalue()'],
         ['e', 'a', 'result.progress = 1;'],
     ]
-    clusters, topics, topics_terms, terms = process(links, 3, 3)
+    clusters, topics, topics_terms = process(links, 3, 3)
     print(clusters)
     print(topics)
     print(topics_terms)
+
+    export(links)
