@@ -16,6 +16,7 @@ function init() {
   var tdm = Papa.parse(GRAPH.tdm, {delimiter: ' ', skipEmptyLines: true}).data;
   var dictionnary = Papa.parse(GRAPH.dictionnary, {delimiter: ' ', skipEmptyLines: true}).data[0];
 
+  STATE.labels = labels;
   STATE.n_edges = X.length;
   STATE.n_nodes = labels.length;
 
@@ -35,7 +36,11 @@ function init() {
     STATE.clusterToNodes = clusterToNodes;
 
     /*
+    var termToTopics = Papa.parse(GRAPH.result.topics_mat,
+      {delimiter: '   ', dynamicTyping: true, skipEmptyLines: true}).data;
+
     var topicToEdgesPercentage = null;
+
     var topics = Papa.parse(GRAPH.result.topics, {delimiter: ','}).data;
     topics.forEach(function(line) {
       var percentages = line.slice(2).map(function(v){
@@ -128,11 +133,13 @@ function expand_clusters(graph, X, clusters) {
 function _add_clusters(graph, X, nodeToCluster) {
   var added_links = new Set();
   X.forEach(function(line) {
-    var cluster0 = nodeToCluster[line[0]] || line[0];
-    var cluster1 = nodeToCluster[line[1]] || line[1];
+    var cluster0 = nodeToCluster[line[0]];
+    var cluster1 = nodeToCluster[line[1]];
     var key = cluster0 + ',' + cluster1;
     if (added_links.has(key)) return;
     added_links.add(key);
+    graph.addNode(cluster0, {isCluster: true});
+    graph.addNode(cluster1, {isCluster: true});
     graph.addLink(cluster0, cluster1);
   });
 }
@@ -150,13 +157,15 @@ function collapse_clusters(graph, X, clusters) {
   }, 2000);
 }
 
-function get_graph_graphics(graph, links, clusters, topics) {
+function get_graph_graphics(graph, X, clusters, topics) {
     var graphics = Viva.Graph.View.svgGraphics(),
         nodeSize = 20;
 
     graphics.node(function(node) {
+      var is_cluster = node.data && node.data.isCluster;
+
       var color = hashedColor(node.id);
-      if (clusters[node.id]) {
+      if (!is_cluster && clusters && clusters[node.id] !== undefined) {
         color = hashedColor(clusters[node.id]);
       }
       var ui = Viva.Graph.svg('g'),
@@ -177,7 +186,7 @@ function get_graph_graphics(graph, links, clusters, topics) {
             .attr('height', 20)
             .attr('style', 'fill: ' + color);
       // ui.append(svgText);
-      if (STATE.clusterToNodes && node.id in STATE.clusterToNodes) {
+      if (is_cluster) {
         ui.append(square)
       } else {
         ui.append(circle);
@@ -187,13 +196,14 @@ function get_graph_graphics(graph, links, clusters, topics) {
       $(ui).hover(function() {
         // svgText.attr('visibility', 'visible');
         circle.attr('stroke-width', '1');
+
         renderGraphSidebar({
-          title: node.id,
+          title: node.data && node.data.isCluster ? ('cluster ' + node.id) : STATE.labels[node.id],
           is_node: true,
-          cluster: clusters[node.id],
+          cluster: is_cluster ? undefined : clusters[node.id],
           renderer: RENDERER,
-          // expand_clusters: expand_clusters.bind(this, graph, links, clusters),
-          // collapse_clusters: collapse_clusters.bind(this, graph, links, clusters),
+          expand_clusters: expand_clusters.bind(this, graph, X, clusters),
+          collapse_clusters: collapse_clusters.bind(this, graph, X, clusters),
         });
       }, function() {
         circle.attr('stroke-width', '0');
@@ -202,8 +212,8 @@ function get_graph_graphics(graph, links, clusters, topics) {
 
       $(ui).click(function() {
         console.log('clicked on', node);
-        if (STATE.clusterToNodes && node.id in STATE.clusterToNodes) {
-          // expand_cluster(node.id, graph, links, clusters);
+        if (is_cluster) {
+          expand_cluster(node.id, graph, X, clusters);
 
           RENDERER.resume();
           setTimeout(function() {
@@ -264,8 +274,8 @@ function get_graph_graphics(graph, links, clusters, topics) {
             title: link.data,
             topics: topics[link.fromId + ',' + link.toId],
             renderer: RENDERER,
-            // expand_clusters: expand_clusters.bind(this, graph, links, clusters),
-            // collapse_clusters: collapse_clusters.bind(this, graph, links, clusters),
+            expand_clusters: expand_clusters.bind(this, graph, X, clusters),
+            collapse_clusters: collapse_clusters.bind(this, graph, X, clusters),
           });
         }, function() {
           ui.attr('stroke-width', 0.5);

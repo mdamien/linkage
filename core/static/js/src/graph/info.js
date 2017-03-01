@@ -20,7 +20,7 @@ function render(params) {
         collapse_clusters: params.collapse_clusters,
       })}>&times;</button>
       {params.title}
-      {params.cluster ? <p> - {ColorSquare(hashedColor(params.cluster))} {params.cluster}</p> : null}
+      {params.cluster !== undefined ? <p> - {ColorSquare(hashedColor(params.cluster))} {params.cluster}</p> : null}
       {params.topics && params.topics.length > 0 ? <div>
         Topics:
         <ul>

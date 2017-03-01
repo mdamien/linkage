@@ -12,7 +12,7 @@ class Graph(models.Model):
     edges = models.TextField(blank=True, default='')
     # array of words for each term
     dictionnary = models.TextField(blank=True, default='')
-    # term count per edge as coord_ascii ( = tdm )
+    # term count per edge as raw_ascii ( = tdm )
     tdm = models.TextField(blank=True, default='')
 
     directed = models.BooleanField(default=True)
