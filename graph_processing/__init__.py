@@ -1,4 +1,4 @@
-import csv, random, io, sys
+import csv, random, io, sys, os
 import collections
 import time
 
@@ -61,54 +61,63 @@ def process(links, n_clusters, n_topics):
     return clusters.getvalue(), topics.getvalue(), topics_terms.getvalue()
 
 
-def export(links):
+def export(links, output_dir=''):
+    open()
     X = io.StringIO()
-    X_writer = csv.writer(open('X.csv', 'w'), delimiter=' ')
+    X_writer = csv.writer(open(output_dir + 'X.sp_mat', 'w'), delimiter=' ')
     DTM = io.StringIO()
-    DTM_writer = csv.writer(open('DTM.csv', 'w'), delimiter=' ')
+    DTM_writer = csv.writer(open(output_dir + 'tdm.sp_mat', 'w'), delimiter=' ')
 
-    nodes = []
-    terms_per_edge = []
-    terms = []
 
-    def node_to_i(node):
-        try:
-            return nodes.index(node)
-        except ValueError:
-            nodes.append(node)
-            return len(nodes) - 1
+def process2(X, tdm, n_clusters, n_topics):
+    NB_OF_TOPICS = 3 if n_topics == None else n_topics
+    NB_OF_CLUSTERS = 3 if n_clusters == None else n_clusters
 
-    def term_to_i(term):
-        try:
-            return terms.index(term)
-        except ValueError:
-            terms.append(term)
-            return len(terms) - 1
+    linkage_dir = '../repos/linkage-cpp/'
 
-    curr_edge = 0
-    for link in links:
-        if len(link) > 1:
-            start = node_to_i(link[0])
-            end = node_to_i(link[1])
-            X_writer.writerow([start, end, 1])
-            doc_terms = collections.Counter()
-            for token in word_tokenize(link[2]):
-                if token not in stopwords:
-                    doc_terms[stemmer.stem(token)] += 1
-            for token, count in doc_terms.items():
-                DTM_writer.writerow([curr_edge, term_to_i(token), count])
-            curr_edge += 1
+    os.system('cd %s;rm in/*' % (linkage_dir,))
+    os.system('cd %s;rm out/*' % (linkage_dir,))
+
+    open(linkage_dir + 'in/X.sp_mat', 'w').write(X)
+    open(linkage_dir + 'in/tdm.sp_mat', 'w').write(tdm)
+
+    os.system('cd %s;./build/linkage %d %d 10 0 1' % (linkage_dir, NB_OF_CLUSTERS, NB_OF_TOPICS))
+
+    clusters = open(linkage_dir + 'out/sp_clust.write.mat').read()
+
+    print('clusters:', len(clusters), clusters)
+
+    topics = open(linkage_dir + 'out/meta.write.mat').read()
+    return clusters, topics
 
 if __name__ == '__main__':
     links = [
-        ['a', 'b', 'result.clusters = clusters.getvalue()'],
-        ['b', 'c', 'clusters.getvalue(), topics.getvalue()'],
-        ['d', 'e', 'result.topics = topics.getvalue()'],
-        ['e', 'a', 'result.progress = 1;'],
+        ['a', 'b', 'AAAA AA A'],
+        ['b', 'c', 'AAAA AAAA AA A AAAA'],
+        ['d', 'e', 'BBBB BBB BBB B'],
+        ['e', 'a', 'BB BB BBBB B BB'],
+        ['a', 'f', 'CC CC BB AA'],
+        ['f', 'b', 'CC CC'],
     ]
-    clusters, topics, topics_terms = process(links, 3, 3)
+    X = """0 1 1
+1 2 1
+2 3 1
+4 5 1
+1 3 1
+5 0 1
+1 5 1
+5 5 0
+"""
+    tdm = """0 0 1
+0 1 1
+1 2 1
+2 2 1
+1 3 1
+2 3 1
+3 4 1
+3 5 1
+3 6 1
+"""
+    clusters, topics = process2(X, tdm, 3, 3)
     print(clusters)
     print(topics)
-    print(topics_terms)
-
-    export(links)

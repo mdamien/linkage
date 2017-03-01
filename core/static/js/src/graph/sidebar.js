@@ -26,7 +26,7 @@ export default state => {
             <div className='list-group'>
                 {Object.keys(state.clusterToNodes).map(key => 
                     <div className='list-group-item' key={key}>
-                        {ColorSquare(hashedColor(key))} {key} ({state.clusterToNodes[key].length})
+                        {ColorSquare(hashedColor(key))} {state.clusterToNodes[key].length}
                     </div>
                 )}
             </div>

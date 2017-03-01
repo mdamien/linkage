@@ -32,31 +32,35 @@ def index(request):
                 if 'csv_file' not in request.FILES:
                     messages.append(['danger', 'You must include a file to import'])
                 links = TextIOWrapper(request.FILES['csv_file'].file, encoding='utf-8').read()
-                graph = models.Graph(name='CSV import of %s' % (request.FILES['csv_file'].name), links=links, user=request.user)
+                data = models.graph_data_from_links(links)
+                graph = models.Graph(name='CSV import of %s' % (request.FILES['csv_file'].name), user=request.user, **data)
             elif 'choice_mbox' in request.POST:
                 if 'mbox_file' not in request.FILES:
                     messages.append(['danger', 'You must include a file to import'])
                 mbox = TextIOWrapper(request.FILES['mbox_file'].file, encoding='utf-8')
                 links = third_party_import.mbox_to_csv(mbox, request.POST.get('mbox_subject_only'))
-                graph = models.Graph(name='MBOX import of %s' % (request.FILES['mbox_file'].name), links=links, user=request.user)
+                data = models.graph_data_from_links(links)
+                graph = models.Graph(name='MBOX import of %s' % (request.FILES['mbox_file'].name), user=request.user, **data)
             elif 'choice_arxiv' in request.POST:
                 q = request.POST['q']
                 if len(q) > 0:
                     links = third_party_import.arxiv_to_csv(q)
+                    data = models.graph_data_from_links(links)
                     graph = models.Graph(name='arXiv import of search term: %s' % (q, ),
-                        links=links, user=request.user, directed=False)
+                        user=request.user, directed=False, **data)
                 else:
                     messages.append(['danger', 'You must include a search term to do a query'])
             elif 'choice_hal' in request.POST:
                 q = request.POST['q']
                 if len(q) > 0:
                     links = third_party_import.hal_to_csv(q)
+                    data = models.graph_data_from_links(links)
                     graph = models.Graph(name='HAL import of search term: %s' % (q, ),
-                        links=links, user=request.user, directed=False)
+                        user=request.user, directed=False, **data)
                 else:
                     messages.append(['danger', 'You must include a search term to do a query'])
             if graph:
-                if len(graph.links.strip()) < 2:
+                if len(graph.labels.strip()) < 2:
                     messages.append(['danger', 'There is no data for this graph'])
                 else:
                     graph.save()

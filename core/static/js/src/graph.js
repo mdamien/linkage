@@ -11,39 +11,30 @@ function init() {
   STATE = {};
   var graph = Viva.Graph.graph();
 
-  var links = Papa.parse(GRAPH.links, {delimiter: ','}).data;
-  console.log('links:', links.length);
+  var labels = Papa.parse(GRAPH.labels, {delimiter: ' ', skipEmptyLines: true}).data[0];
+  var X = Papa.parse(GRAPH.edges, {delimiter: ' ', dynamicTyping: true, skipEmptyLines: true}).data;
+  var tdm = Papa.parse(GRAPH.tdm, {delimiter: ' ', skipEmptyLines: true}).data;
+  var dictionnary = Papa.parse(GRAPH.dictionnary, {delimiter: ' ', skipEmptyLines: true}).data[0];
 
-  STATE.n_edges = links.length;
+  STATE.n_edges = X.length;
+  STATE.n_nodes = labels.length;
 
-  var nodes = new Set();
-  links.forEach(function(line) {
-    if (line[1]) { // not an empty line
-      nodes.add(line[0]);
-      nodes.add(line[1]);
-    }
-  });
-  STATE.n_nodes = nodes.size;
-
-  var nodeToCluster = {};
   var edgeToTopic = {};
 
-  if (GRAPH.result && GRAPH.result.clusters) {
-    var clusters = Papa.parse(GRAPH.result.clusters, {delimiter: ','}).data;
-    var clusterToNodes = {};
-    clusters.forEach(function(line) {
-      var cluster = line[1];
-      if (cluster) {
-        nodeToCluster[line[0]] = cluster;
+  if (GRAPH.result && GRAPH.result.clusters_mat) {
+    var nodeToCluster = Papa.parse(GRAPH.result.clusters_mat,
+      {delimiter: ' ', dynamicTyping: true, skipEmptyLines: true}).data[0].slice(1);
 
-        if (!(cluster in clusterToNodes)) {
-          clusterToNodes[cluster] = []
-        }
-        clusterToNodes[cluster].push(line[0]);      
+    var clusterToNodes = {};
+    nodeToCluster.forEach(function(cluster, node) {
+      if (!(cluster in clusterToNodes)) {
+        clusterToNodes[cluster] = []
       }
+      clusterToNodes[cluster].push(node);      
     });
     STATE.clusterToNodes = clusterToNodes;
 
+    /*
     var topicToEdgesPercentage = null;
     var topics = Papa.parse(GRAPH.result.topics, {delimiter: ','}).data;
     topics.forEach(function(line) {
@@ -62,13 +53,12 @@ function init() {
     STATE.topicToEdgesPercentage = topicToEdgesPercentage;
 
     STATE.topicToTerms = Papa.parse(GRAPH.result.topics_terms, {delimiter: ','}).data;
+    */
 
-    _add_clusters(graph, links, nodeToCluster)
+    _add_clusters(graph, X, nodeToCluster)
   } else {
-    links.forEach(function(line) {
-      if (line[1]) { // not an empty line
-        graph.addLink(line[0], line[1], line[2]);
-      }
+    X.forEach(function(line) {
+      graph.addLink(line[0], line[1]);
     });
   }
 
@@ -76,7 +66,7 @@ function init() {
 
   RENDERER = Viva.Graph.View.renderer(graph, {
       container: document.getElementById('_graph'),
-      graphics: get_graph_graphics(graph, links, nodeToCluster, edgeToTopic),
+      graphics: get_graph_graphics(graph, X, nodeToCluster, edgeToTopic),
   });
 
   var loading = document.getElementById('_loading');
@@ -92,43 +82,41 @@ function init() {
   renderSidebar(STATE);
   renderGraphSidebar({
     renderer: RENDERER,
-    expand_clusters: expand_clusters.bind(this, graph, links, nodeToCluster),
-    collapse_clusters: collapse_clusters.bind(this, graph, links, nodeToCluster),
+    expand_clusters: expand_clusters.bind(this, graph, X, nodeToCluster),
+    collapse_clusters: collapse_clusters.bind(this, graph, X, nodeToCluster),
   });
 }
 
-function expand_cluster(cluster_name, graph, links, clusters) {
+function expand_cluster(cluster_name, graph, X, clusters) {
   // remove current node
   graph.removeNode(cluster_name);
 
   // add all nodes of the cluster
-  links.forEach(function(line) {
-    if (line[1]) { // not an empty line
-      // if origin node in cluster, add it
-      if (clusters[line[0]] == cluster_name) {
-        if (graph.getNode(line[1]) || clusters[line[1]] == cluster_name) {
-          graph.addLink(line[0], line[1], line[2]);
-        } else {
-          // if target node not yet expanded, link to the cluster
-          graph.addLink(line[0], clusters[line[1]], line[2]);
-        }
+  X.forEach(function(line) {
+    // if origin node in cluster, add it
+    if (clusters[line[0]] == cluster_name) {
+      if (graph.getNode(line[1]) || clusters[line[1]] == cluster_name) {
+        graph.addLink(line[0], line[1]);
+      } else {
+        // if target node not yet expanded, link to the cluster
+        graph.addLink(line[0], clusters[line[1]]);
       }
-      // if target node in cluster, add it
-      else if (clusters[line[1]] == cluster_name) {
-        if (graph.getNode(line[0]) || clusters[line[0]] == cluster_name) {
-          graph.addLink(line[0], line[1], line[2]);
-        } else {
-          // if origin node not yet expanded, link to the cluster
-          graph.addLink(clusters[line[0]], line[1], line[2]);
-        }
+    }
+    // if target node in cluster, add it
+    else if (clusters[line[1]] == cluster_name) {
+      if (graph.getNode(line[0]) || clusters[line[0]] == cluster_name) {
+        graph.addLink(line[0], line[1]);
+      } else {
+        // if origin node not yet expanded, link to the cluster
+        graph.addLink(clusters[line[0]], line[1]);
       }
     }
   });
 }
 
-function expand_clusters(graph, links, clusters) {
+function expand_clusters(graph, X, clusters) {
   Object.keys(STATE.clusterToNodes).forEach(cluster => {
-    expand_cluster(cluster, graph, links, clusters);
+    expand_cluster(cluster, graph, X, clusters);
   })
 
   RENDERER.resume();
@@ -137,26 +125,24 @@ function expand_clusters(graph, links, clusters) {
   }, 2000);
 }
 
-function _add_clusters(graph, links, clusters) {
+function _add_clusters(graph, X, nodeToCluster) {
   var added_links = new Set();
-  links.forEach(function(line) {
-    if (line[1]) { // not an empty line
-      var cluster0 = clusters[line[0]] || line[0];
-      var cluster1 = clusters[line[1]] || line[1];
-      var key = cluster0 + ',' + cluster1;
-      if (added_links.has(key)) return;
-      added_links.add(key);
-      graph.addLink(cluster0, cluster1);
-    }
+  X.forEach(function(line) {
+    var cluster0 = nodeToCluster[line[0]] || line[0];
+    var cluster1 = nodeToCluster[line[1]] || line[1];
+    var key = cluster0 + ',' + cluster1;
+    if (added_links.has(key)) return;
+    added_links.add(key);
+    graph.addLink(cluster0, cluster1);
   });
 }
 
-function collapse_clusters(graph, links, clusters) {
+function collapse_clusters(graph, X, clusters) {
   graph.forEachNode(function(node){
     graph.removeNode(node.id);
   });
 
-  _add_clusters(graph, links, clusters);
+  _add_clusters(graph, X, clusters);
 
   RENDERER.resume();
   setTimeout(function() {
@@ -206,8 +192,8 @@ function get_graph_graphics(graph, links, clusters, topics) {
           is_node: true,
           cluster: clusters[node.id],
           renderer: RENDERER,
-          expand_clusters: expand_clusters.bind(this, graph, links, clusters),
-          collapse_clusters: collapse_clusters.bind(this, graph, links, clusters),
+          // expand_clusters: expand_clusters.bind(this, graph, links, clusters),
+          // collapse_clusters: collapse_clusters.bind(this, graph, links, clusters),
         });
       }, function() {
         circle.attr('stroke-width', '0');
@@ -217,7 +203,7 @@ function get_graph_graphics(graph, links, clusters, topics) {
       $(ui).click(function() {
         console.log('clicked on', node);
         if (STATE.clusterToNodes && node.id in STATE.clusterToNodes) {
-          expand_cluster(node.id, graph, links, clusters);
+          // expand_cluster(node.id, graph, links, clusters);
 
           RENDERER.resume();
           setTimeout(function() {
@@ -278,8 +264,8 @@ function get_graph_graphics(graph, links, clusters, topics) {
             title: link.data,
             topics: topics[link.fromId + ',' + link.toId],
             renderer: RENDERER,
-            expand_clusters: expand_clusters.bind(this, graph, links, clusters),
-            collapse_clusters: collapse_clusters.bind(this, graph, links, clusters),
+            // expand_clusters: expand_clusters.bind(this, graph, links, clusters),
+            // collapse_clusters: collapse_clusters.bind(this, graph, links, clusters),
           });
         }, function() {
           ui.attr('stroke-width', 0.5);

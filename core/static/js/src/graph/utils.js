@@ -11,7 +11,7 @@ var COLORS = [
 ];
 
 var hashIt = function(s) {
-  return Math.abs(s.split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0)*1.2;return a&a},0)) * 3423;
+  return Math.abs(s.toString().split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0)*1.2;return a&a},0)) * 3423;
 };
 
 var hashedColor = s => COLORS[hashIt(s) % COLORS.length];

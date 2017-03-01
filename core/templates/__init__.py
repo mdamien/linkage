@@ -55,28 +55,21 @@ JS_LIBS = (
         L.script(src='/static/js/vendor/bootstrap.js'),
 )
 
-def strip_links(links):
-    stripped = io.StringIO()
-    writer = csv.writer(stripped)
-    for link in csv.reader(io.StringIO(links)):
-        if len(link) > 1:
-            writer.writerow([link[0], link[1], link[2][:200]])
-    return stripped.getvalue()
-
 def serialize_graph(graph, result):
     data = {
         'id': graph.pk,
         'name': graph.name,
-        'links': strip_links(graph.links),
-        'created_at': naturaltime(graph.created_at),
+        'labels': graph.labels,
+        'edges': graph.edges,
+        'tdm': graph.tdm,
+        'dictionnary': graph.dictionnary,
         'directed': graph.directed,
+        'created_at': naturaltime(graph.created_at),
     }
     if result:
         data['result'] = {
-            'progress': result.progress,
-            'clusters': result.clusters,
-            'topics': result.topics,
-            'topics_terms': result.topics_terms,
+            'clusters_mat': result.clusters_mat,
+            'topics_mat': result.topics_mat,
         }
     return data
 

@@ -29,14 +29,11 @@ def process_graph(pk, n_clusters, n_topics):
     result = ProcessingResult(graph=graph)
     result.save()
 
-    links = list(csv.reader(io.StringIO(graph.links)))
-
-    clusters, topics, topics_terms = graph_processing.process(links, n_clusters, n_topics)
+    clusters_mat, topics_mat = graph_processing.process2(graph.edges, graph.tdm, n_clusters, n_topics)
 
     result.progress = 1;
-    result.clusters = clusters
-    result.topics = topics
-    result.topics_terms = topics_terms
+    result.clusters_mat = clusters_mat
+    result.topics_mat = topics_mat
     result.save()
 
     Group("result-%s" % pk).send({
