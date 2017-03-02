@@ -70,6 +70,7 @@ def serialize_graph(graph, result):
         data['result'] = {
             'clusters_mat': result.clusters_mat,
             'topics_mat': result.topics_mat,
+            'log': result.log,
         }
     return data
 

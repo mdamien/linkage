@@ -19,6 +19,7 @@ def basic_frame(*content):
                 L.link(rel='icon', type='image/png', href='/static/img/favicon.png'),
                 L.link(rel='stylesheet', href="/static/css/bootstrap.css"),
                 L.link(rel='stylesheet', href="/static/css/balloon.css"),
+                L.link(rel='stylesheet', href="/static/css/rc-slider.css"),
                 CSS,
             ),
             L.body / content,

@@ -29,9 +29,10 @@ def process_graph(pk, n_clusters, n_topics):
     result = ProcessingResult(graph=graph)
     result.save()
 
-    clusters_mat, topics_mat = graph_processing.process2(graph.edges, graph.tdm, n_clusters, n_topics)
+    clusters_mat, topics_mat, log = graph_processing.process(graph.edges, graph.tdm, n_clusters, n_topics)
 
     result.progress = 1;
+    result.log = log
     result.clusters_mat = clusters_mat
     result.topics_mat = topics_mat
     result.save()
