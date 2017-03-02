@@ -103,6 +103,29 @@ def api_result(request, pk):
         pass
     return JsonResponse(templates.api_result(request, graph, result))
 
+
+@login_required
+def api_cluster(request, pk):
+    graph = get_object_or_404(models.Graph, pk=pk)
+    if request.user.pk != graph.user.pk:
+        raise PermissionDenied
+    result = None
+    try:
+        result = models.ProcessingResult.objects.get(graph=graph)
+        result.delete()
+    except:
+        pass
+    clusters = int(request.POST['clusters'])
+    topics = int(request.POST['topics'])
+    if clusters <= 0 or topics <= 0:
+        return JsonResponse({'message': 'error: invalid parameters'})
+
+    from config.celery import process_graph
+    process_graph.delay(graph.pk, clusters, topics)
+
+    return JsonResponse({'message': 'ok'})
+
+
 from django.contrib.auth.views import login as login_view
 
 def login(request):

@@ -12,7 +12,7 @@ def process(X, tdm, n_clusters, n_topics):
     open(linkage_dir + 'in/X.sp_mat', 'w').write(X)
     open(linkage_dir + 'in/tdm.sp_mat', 'w').write(tdm)
 
-    log = os.popen('cd %s;./build/linkage %d %d 10 0 1' % (linkage_dir, NB_OF_CLUSTERS, NB_OF_TOPICS)).read()
+    log = os.popen('cd %s;./build/linkage %d %d 10 0 1' % (linkage_dir, NB_OF_TOPICS, NB_OF_CLUSTERS)).read()
     print(log)
 
     clusters = open(linkage_dir + 'out/sp_clust.write.mat').read()
@@ -42,7 +42,7 @@ if __name__ == '__main__':
 3 5 1
 3 6 1
 """
-    clusters, topics, log = process(X, tdm, 4, 4)
+    clusters, topics, log = process(X, tdm, 2, 4)
     print(clusters)
     print(topics)
     print(log[-100:])

@@ -1,7 +1,10 @@
+import './graph/csrf.js';
+
 import renderSidebar from './graph/sidebar';
 import renderGraphSidebar from './graph/info';
 
 import { hashedColor, COLORS } from './graph/utils';
+
 
 // TODO: STATE is here to keep computed things in memory, could be cleaned up
 var STATE = null;

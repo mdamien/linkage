@@ -10,12 +10,24 @@ class Sidebar extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
-        showLog: false
+        showLog: false,
+        clusters: 4,
+        topics: 3,
       };
       this.toggleLog = this.toggleLog.bind(this);
+      this.updateClusters = this.updateClusters.bind(this);
     }
     toggleLog() {
         this.setState({showLog: !this.state.showLog});
+    }
+    updateClusters(clusters) {
+        this.setState({clusters: clusters});
+        $.post('/result/' + GRAPH.id + '/cluster_it/', {
+            clusters: this.state.clusters,
+            topics: this.state.topics,
+        }, function(data) {
+            console.log(data);
+        });
     }
     render() {
         var state = this.props.state;
@@ -37,10 +49,10 @@ class Sidebar extends React.Component {
                     <h3 className='panel-title'>Clusters - {Object.keys(state.clusterToNodes).length}</h3>
                 </div>
                 <div className='panel-body'>
-                    <Slider steps={1} dots defaultValue={4} min={2} max={10} marks={{
+                    <Slider steps={1} dots defaultValue={this.state.clusters} min={2} max={10} marks={{
                         2: '2',
                         10: '10',
-                    }}/>
+                    }} onAfterChange={this.updateClusters}/>
                     <br/>
                 </div>
                 <div className='list-group'>
