@@ -201,9 +201,10 @@ function get_graph_graphics(graph, X, clusters, topics) {
         circle.attr('stroke-width', '1');
 
         renderGraphSidebar({
-          title: node.data && node.data.isCluster ? ('cluster ' + node.id) : STATE.labels[node.id],
+          title: node.data && node.data.isCluster ? node.id : STATE.labels[node.id],
           is_node: true,
-          cluster: is_cluster ? undefined : clusters[node.id],
+          is_cluster: is_cluster,
+          cluster: is_cluster || !clusters ? undefined : clusters[node.id],
           renderer: RENDERER,
           expand_clusters: expand_clusters.bind(this, graph, X, clusters),
           collapse_clusters: collapse_clusters.bind(this, graph, X, clusters),

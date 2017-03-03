@@ -71,6 +71,7 @@ def serialize_graph(graph, result):
             'clusters_mat': result.clusters_mat,
             'topics_mat': result.topics_mat,
             'log': result.log,
+            'progress': result.progress,
         }
     return data
 

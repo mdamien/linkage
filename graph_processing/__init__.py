@@ -1,25 +1,40 @@
 import os
 
-def process(X, tdm, n_clusters, n_topics):
-    NB_OF_TOPICS = 3 if n_topics == None else n_topics
-    NB_OF_CLUSTERS = 3 if n_clusters == None else n_clusters
-
+def process(X, tdm, n_clusters, n_topics, id=0):
     linkage_dir = '../repos/linkage-cpp/'
+    run_dir = '%sruns/%d/' % (linkage_dir, id)
+    run_dir_for_linkage = 'runs/%d/' % id
 
-    os.system('cd %s;rm in/*' % (linkage_dir,))
-    os.system('cd %s;rm out/*' % (linkage_dir,))
+    os.system('mkdir -p %s' % run_dir)
+    os.system('cd %s;rm -rf in' % (run_dir,))
+    os.system('cd %s;mkdir in' % (run_dir,))
+    os.system('cd %s;rm -rf out' % (run_dir,))
+    os.system('cd %s;mkdir out' % (run_dir,))
 
-    open(linkage_dir + 'in/X.sp_mat', 'w').write(X)
-    open(linkage_dir + 'in/tdm.sp_mat', 'w').write(tdm)
+    open(run_dir + 'in/X.sp_mat', 'w').write(X)
+    open(run_dir + 'in/tdm.sp_mat', 'w').write(tdm)
 
-    log = os.popen('cd %s;./build/linkage %d %d 10 0 1' % (linkage_dir, NB_OF_TOPICS, NB_OF_CLUSTERS)).read()
+    log = os.popen('cd %s;./build/linkage %d %d 10 0 1 %s' % (
+        linkage_dir, n_topics, n_clusters, run_dir_for_linkage)
+    ).read()
     print(log)
 
-    clusters = open(linkage_dir + 'out/sp_clust.write.mat').read()
+    try:
+        clusters = open(run_dir + 'out/sp_clust.write.mat').read()
+    except FileNotFoundError:
+        print('ERROR: NOT CLUSTERS')
+        clusters = ''
 
     print('clusters:', len(clusters), clusters)
 
-    topics = open(linkage_dir + 'out/meta.write.mat').read()
+    try:
+        topics = open(run_dir + 'out/meta.write.mat').read()
+    except FileNotFoundError:
+        print('ERROR: NOT TOPICS')
+        topics = ''
+
+    os.system('rm -rf %s' % (run_dir,))
+
     return clusters, topics, log
 
 if __name__ == '__main__':

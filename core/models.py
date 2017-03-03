@@ -31,6 +31,9 @@ class ProcessingResult(models.Model):
     log = models.TextField(blank=True, default='')
     progress = models.FloatField(default=0)
 
+    param_clusters = models.IntegerField(default=3)
+    param_topics = models.IntegerField(default=3)
+
     clusters_mat = models.TextField(blank=True, default='')
     topics_mat = models.TextField(blank=True, default='')
 

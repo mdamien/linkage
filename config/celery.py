@@ -23,19 +23,29 @@ app.config_from_object('django.conf:settings')
 @task()
 def process_graph(pk, n_clusters, n_topics):
     print('Processing graph %d' % pk)
+
+    NB_OF_TOPICS = 3 if n_topics == None else n_topics
+    NB_OF_CLUSTERS = 3 if n_clusters == None else n_clusters
+
+    print('CLUSTERS', NB_OF_CLUSTERS)
+    print('TOPICS', NB_OF_TOPICS)
     import csv, io
     from core.models import Graph, ProcessingResult
     graph = Graph.objects.get(pk=pk)
-    result = ProcessingResult(graph=graph)
+    result = ProcessingResult(graph=graph, param_clusters=NB_OF_CLUSTERS, param_topics=NB_OF_TOPICS)
     result.save()
 
-    clusters_mat, topics_mat, log = graph_processing.process(graph.edges, graph.tdm, n_clusters, n_topics)
+    clusters_mat, topics_mat, log = graph_processing.process(
+        graph.edges, graph.tdm, NB_OF_CLUSTERS, NB_OF_TOPICS, result.pk)
 
     result.progress = 1;
     result.log = log
     result.clusters_mat = clusters_mat
     result.topics_mat = topics_mat
     result.save()
+
+    import time
+    time.sleep(1)
 
     Group("result-%s" % pk).send({
         'text': '%d - DONE' % pk

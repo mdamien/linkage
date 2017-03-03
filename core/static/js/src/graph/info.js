@@ -3,14 +3,14 @@ import ReactDOM from 'react-dom';
 
 import { hashedColor } from './utils';
 
-var ColorSquare = color => <span className='label' style={{ backgroundColor: color, marginRight: 10 }}> </span>;
+var ColorSquare = (color, content=' ')  => <span className='label' style={{ backgroundColor: color, marginRight: 10 }}>{content}</span>;
 
 /*
   params = {title, is_node, topics, renderer}
 */
 function render(params) {
   var popup = <div></div>;
-  if (params.title || (params.topics && params.topics.length > 0)) {
+  if (params.title !== undefined || (params.topics && params.topics.length > 0)) {
     popup = <div
         className="alert alert-dismissible alert-info"
         style={{ position: 'absolute', top: 10, right: 10, width: '40%'}}>
@@ -19,7 +19,7 @@ function render(params) {
         expand_clusters: params.expand_clusters,
         collapse_clusters: params.collapse_clusters,
       })}>&times;</button>
-      {params.title}
+      {params.is_cluster ? ColorSquare(hashedColor(params.title), params.title) : params.title}
       {params.cluster !== undefined ? <p> - {ColorSquare(hashedColor(params.cluster))} {params.cluster}</p> : null}
       {params.topics && params.topics.length > 0 ? <div>
         Topics:

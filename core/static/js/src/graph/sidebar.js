@@ -23,7 +23,7 @@ class Sidebar extends React.Component {
     updateClusters(clusters) {
         this.setState({clusters: clusters});
         $.post('/result/' + GRAPH.id + '/cluster_it/', {
-            clusters: this.state.clusters,
+            clusters: clusters,
             topics: this.state.topics,
         }, function(data) {
             console.log(data);
@@ -44,9 +44,13 @@ class Sidebar extends React.Component {
                     imported <strong>{GRAPH.created_at}</strong>
                 </div>
             </div>
-            {state.clusterToNodes ? <div className='panel panel-default'>
+            <div className='panel panel-default'>
                 <div className='panel-heading'>
-                    <h3 className='panel-title'>Clusters - {Object.keys(state.clusterToNodes).length}</h3>
+                    <h3 className='panel-title'>Clusters 
+                        {state.clusterToNodes ?
+                            <span> - {Object.keys(state.clusterToNodes).length}</span>
+                            : null}
+                    </h3>
                 </div>
                 <div className='panel-body'>
                     <Slider steps={1} dots defaultValue={this.state.clusters} min={2} max={10} marks={{
@@ -55,19 +59,18 @@ class Sidebar extends React.Component {
                     }} onAfterChange={this.updateClusters}/>
                     <br/>
                 </div>
-                <div className='list-group'>
+                {state.clusterToNodes ? <div className='list-group'>
                     {Object.keys(state.clusterToNodes).map(key => 
                         <div className='list-group-item' key={key}>
                             {ColorSquare(hashedColor(key))} {state.clusterToNodes[key].length}
                         </div>
                     )}
-                </div>
-            </div> : <div className='alert alert-info'>
-                processing graph...
-                <div className="progress progress-striped active hide">
-                  <div className="progress-bar progress-bar-success" style={{width: '10%'}}></div>
-                </div>
-            </div>}
+                </div> : <div className='list-group-item'>
+                    {GRAPH.result && GRAPH.result.progress == 1 ?
+                        'An error occured while processing.'
+                        : 'Processing graph...'}
+                </div>}
+            </div>
             {state.topicToEdgesPercentage ? <div className='panel panel-default'>
                 <div className='panel-heading'>
                     <h3 className='panel-title'>Topics - {state.topicToEdgesPercentage.length}</h3>
