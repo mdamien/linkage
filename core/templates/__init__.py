@@ -72,6 +72,8 @@ def serialize_graph(graph, result):
             'topics_mat': result.topics_mat,
             'log': result.log,
             'progress': result.progress,
+            'param_clusters': result.param_clusters,
+            'param_topics': result.param_topics,
         }
     return data
 
@@ -99,7 +101,7 @@ def result(request, graph, result):
         L.script / raw("var GRAPH = {}".format(json.dumps(serialize_graph(graph, result)))),
         L.script(src='/static/js/dist/vendor.js?v=' + COMMIT_HASH),
         L.script(src='/static/js/dist/graph.js?v=' + COMMIT_HASH),
-    ))
+    ), title=graph.name)
 
 
 def api_result(request, graph, result):

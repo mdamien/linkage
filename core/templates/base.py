@@ -9,13 +9,13 @@ CSS = L.style / raw("""
 }
 """)
 
-def basic_frame(*content):
+def basic_frame(*content, title=''):
     return render((
         raw('<!DOCTYPE html>'),
         L.html / (
             L.head / (
                 L.meta(charset='utf-8'),
-                L.title / 'Linkage',
+                L.title / (((title + ' - ') if title else '') + 'Linkage'),
                 L.link(rel='icon', type='image/png', href='/static/img/favicon.png'),
                 L.link(rel='stylesheet', href="/static/css/bootstrap.css"),
                 L.link(rel='stylesheet', href="/static/css/balloon.css"),

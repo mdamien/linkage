@@ -62,12 +62,13 @@ def index(request):
             elif 'choice_dropdown' in request.POST:
                 filename = request.POST['sample_dropdown']
                 assert '/' not in filename
-                content = open('csv_samples/' + filename).readlines()
                 if '.mbox' in filename:
+                    content = open('csv_samples/' + filename).readlines()
                     links = third_party_import.mbox_to_csv(content, subject_only=False)
                     data = models.graph_data_from_links(links)
                     graph = models.Graph(name='MBOX import of %s' % (filename), user=request.user, **data)
                 elif '.csv' in filename:
+                    content = open('csv_samples/' + filename).read()
                     data = models.graph_data_from_links(content)
                     graph = models.Graph(name='CSV import of %s' % (filename), user=request.user, **data)                    
             if graph:
@@ -75,8 +76,15 @@ def index(request):
                     messages.append(['danger', 'There is no data for this graph'])
                 else:
                     graph.save()
+
+                    clusters = 3 if clusters == None else clusters
+                    topics = 3 if topics == None else topics
+
+                    result = models.ProcessingResult(graph=graph, param_clusters=clusters, param_topics=topics)
+                    result.save()
+
                     from config.celery import process_graph
-                    process_graph.delay(graph.pk, clusters, topics)
+                    process_graph.delay(result.pk, ws_delay=1)
                     return redirect(graph)
 
     if request.POST and request.POST['action'] == 'delete':
@@ -131,8 +139,11 @@ def api_cluster(request, pk):
     if clusters <= 0 or topics <= 0:
         return JsonResponse({'message': 'error: invalid parameters'})
 
+    result = models.ProcessingResult(graph=graph, param_clusters=clusters, param_topics=topics)
+    result.save()
+
     from config.celery import process_graph
-    process_graph.delay(graph.pk, clusters, topics)
+    process_graph.delay(result.pk, ws_delay=0)
 
     return JsonResponse({'message': 'ok'})
 
