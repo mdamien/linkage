@@ -67,6 +67,9 @@ def mbox_to_csv(mbox, subject_only):
             if not subject_only:
                 body += '\n'
 
+                text_body = ''
+                html_body = ''
+
                 def parse_payload(message):
                     if message.is_multipart():
                         for part in message.get_payload(): 
@@ -88,9 +91,16 @@ def mbox_to_csv(mbox, subject_only):
                             return part.decode(charset)
                     if 'plain' in content_type:
                         content = decode()
+                        lines = [line for line in content.split('\n') if not line.startswith('>')]
+                        text_body += '\n' + '\n'.join(lines)
                     if 'html' in content_type:
                         content = BeautifulSoup(decode()).text
-                    body += '\n' + content
+                        html_body += '\n' + content
+
+                if text_body:
+                    body += text_body
+                else:
+                    body += html_body
 
             if msg['To'] and msg['From']:
                 for _, sender in getaddresses(msg.get_all('from', [])):
@@ -104,7 +114,6 @@ def mbox_to_csv(mbox, subject_only):
 
     for line in mbox:
         if line.startswith('From '):
-            print('adding mail')
             add_mail()
             mail = ''
         if mail is not None: # ignore email without headers
