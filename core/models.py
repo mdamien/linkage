@@ -83,24 +83,26 @@ def graph_data_from_links(links):
             terms.append(term)
             return len(terms) - 1
 
-    edges = set()
-    curr_edge = 0
+    edges = collections.OrderedDict()
     for link in links:
         if len(link) > 1:
             start = node_to_i(link[0])
             end = node_to_i(link[1])
             edge_name = '%d,%d' % (start, end)
-            if edge_name in edges:
-                continue # TODO: DO NOT IGNORE DUPLICATE LINKS
-            edges.add(edge_name)
-            X_writer.writerow([start, end, 1])
-            doc_terms = collections.Counter()
+            if edge_name not in edges:
+                edges[edge_name] = collections.Counter()
+            doc_terms = edges[edge_name]
             for token in word_tokenize(link[2]):
                 if token not in stopwords:
                     doc_terms[stemmer.stem(token)] += 1
-            for token, count in doc_terms.items():
-                DTM_writer.writerow([term_to_i(token), curr_edge, count])
-            curr_edge += 1
+
+    curr_edge = 0
+    for edge, doc_terms in edges.items():
+        start, end = edge.split(',')
+        X_writer.writerow([start, end, 1])
+        for token, count in doc_terms.items():
+            DTM_writer.writerow([term_to_i(token), curr_edge, count])
+        curr_edge += 1
 
     # add empty link to make the matrix square if it's not already a square
     start = end = len(nodes) - 1
