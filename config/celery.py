@@ -45,7 +45,7 @@ def process_graph(pk, n_clusters, n_topics):
     result.save()
 
     import time
-    time.sleep(1)
+    time.sleep(0.3)
 
     Group("result-%s" % pk).send({
         'text': '%d - DONE' % pk

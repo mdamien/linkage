@@ -59,6 +59,17 @@ def index(request):
                         user=request.user, directed=False, **data)
                 else:
                     messages.append(['danger', 'You must include a search term to do a query'])
+            elif 'choice_dropdown' in request.POST:
+                filename = request.POST['sample_dropdown']
+                assert '/' not in filename
+                content = open('csv_samples/' + filename).readlines()
+                if '.mbox' in filename:
+                    links = third_party_import.mbox_to_csv(content, subject_only=False)
+                    data = models.graph_data_from_links(links)
+                    graph = models.Graph(name='MBOX import of %s' % (filename), user=request.user, **data)
+                elif '.csv' in filename:
+                    data = models.graph_data_from_links(content)
+                    graph = models.Graph(name='CSV import of %s' % (filename), user=request.user, **data)                    
             if graph:
                 if len(graph.labels.strip()) < 2:
                     messages.append(['danger', 'There is no data for this graph'])

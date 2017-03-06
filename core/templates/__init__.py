@@ -1,4 +1,4 @@
-import random, collections, csv, json, io, sys
+import random, collections, csv, json, io, sys, os
 
 from django.middleware.csrf import get_token
 from django.contrib.humanize.templatetags.humanize import naturaltime
@@ -157,6 +157,19 @@ def index(request, graphs, messages):
                                         )                                    
                                     ),                                 
                                 ),
+                            ),
+                            L.br,
+                            L.div('.row') / (
+                                L.div('.col-md-7') / (
+                                    L.select('.form-control', name='sample_dropdown') / (
+                                        (
+                                            L.option(value=filename) / filename
+                                        ) for filename in sorted(os.listdir('csv_samples/'))
+                                    )
+                                ),
+                                L.div('.col-md-5') / (
+                                    L.input('.btn.btn-primary.btn-large', name='choice_dropdown', type='submit', value='Import'),
+                                )
                             ),
                             L.div('.form-group') / (
                                 L.div('.col-md-3.control-label') / (L.strong / 'Clustering'),

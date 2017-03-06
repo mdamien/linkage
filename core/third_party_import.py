@@ -104,6 +104,7 @@ def mbox_to_csv(mbox, subject_only):
 
     for line in mbox:
         if line.startswith('From '):
+            print('adding mail')
             add_mail()
             mail = ''
         if mail is not None: # ignore email without headers

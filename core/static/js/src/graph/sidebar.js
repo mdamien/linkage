@@ -11,7 +11,8 @@ class Sidebar extends React.Component {
       super(props);
       this.state = {
         showLog: false,
-        clusters: 4,
+        clusters: props.state.clusterToNodes ?
+            Object.keys(props.state.clusterToNodes).length : 4,
         topics: 3,
       };
       this.toggleLog = this.toggleLog.bind(this);
