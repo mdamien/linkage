@@ -19,6 +19,11 @@ function init() {
   var tdm = Papa.parse(GRAPH.tdm, {delimiter: ' ', skipEmptyLines: true}).data;
   var dictionnary = Papa.parse(GRAPH.dictionnary, {delimiter: ' ', skipEmptyLines: true}).data[0];
 
+  // remove extra empty edge
+  if (X.length > 0 && X[X.length-1][2] == 0) {
+    X = X.slice(0, X.length - 1);
+  }
+
   STATE.labels = labels;
   STATE.n_edges = X.length;
   STATE.n_nodes = labels.length;
