@@ -135,9 +135,11 @@ function expand_cluster(cluster_name, graph, X, clusters) {
 }
 
 function expand_clusters(graph, X, clusters) {
-  Object.keys(STATE.clusterToNodes).forEach(cluster => {
-    expand_cluster(cluster, graph, X, clusters);
-  })
+  graph.clear()
+
+  X.forEach(function(line) {
+    graph.addLink(line[0], line[1]);
+  });
 
   RENDERER.resume();
   setTimeout(function() {

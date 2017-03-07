@@ -36,16 +36,17 @@ class TopicWords extends React.Component {
     render() {
         let {i, words, dictionnary} = this.props;
         return <div className='list-group-item'>
-            {ColorSquare(hashedColor(''+i))} {i}
+            {ColorSquare(hashedColor('t'+i))} {i}
             <br/>
-            ex: {n_best_elems(words, 5).map((t, i) =>
-                <span key={i}>
+            ex: {n_best_elems(words, 5).map((t, i) => {
+                if (t[1] < 0.001) return null;
+                return <span key={i}>
                     <span
                         className="label label-default"
                         key={i}
                     >{dictionnary[t[0]]}</span>{' '}
-                </span> : null
-            )}
+                </span>
+            })}
             <p style={{marginTop: 10}}>
                 <a className='btn btn-warning btn-xs' onClick={this.toggleShow}>
                     {this.state.showAll ? 'hide' : 'show'} details
@@ -54,6 +55,7 @@ class TopicWords extends React.Component {
             {this.state.showAll ? <table className='table table-striped table-bordered'>
                 <tbody>
                     {n_best_elems(words).map((t, i) => {
+                        if (t[1] < 0.001) return null;
                         return <tr key={i}>
                             <td>{dictionnary[t[0]]}</td>
                             <td className='text-right'>{(t[1] * 100).toFixed(2)} %</td>

@@ -84,7 +84,7 @@ def index(request):
                     result.save()
 
                     from config.celery import process_graph
-                    process_graph.delay(result.pk, ws_delay=1)
+                    process_graph.delay(result.pk, ws_delay=2)
                     return redirect(graph)
 
     if request.POST and request.POST['action'] == 'delete':
