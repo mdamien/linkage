@@ -28,7 +28,7 @@ def process(X, tdm, n_clusters, n_topics, id=0):
     print('clusters:', len(clusters), clusters)
 
     try:
-        topics = open(run_dir + 'out/meta.write.mat').read()
+        topics = open(run_dir + 'out/log_beta.write.mat').read()
     except FileNotFoundError:
         print('ERROR: NOT TOPICS')
         topics = ''

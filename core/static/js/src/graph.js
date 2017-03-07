@@ -27,6 +27,7 @@ function init() {
   STATE.labels = labels;
   STATE.n_edges = X.length;
   STATE.n_nodes = labels.length;
+  STATE.dictionnary = dictionnary;
 
   var edgeToTopic = {};
 
@@ -43,10 +44,16 @@ function init() {
     });
     STATE.clusterToNodes = clusterToNodes;
 
-    /*
-    var termToTopics = Papa.parse(GRAPH.result.topics_mat,
-      {delimiter: '   ', dynamicTyping: true, skipEmptyLines: true}).data;
+    var topics = Papa.parse(GRAPH.result.topics_mat,
+      {delimiter: '  ', dynamicTyping: true, skipEmptyLines: true}).data;
 
+    topics.forEach((v, i) => {
+      topics[i] = v.slice(1).map(x => Math.exp(x));
+    });
+
+    STATE.topicToTerms = topics;
+
+    /*
     var topicToEdgesPercentage = null;
 
     var topics = Papa.parse(GRAPH.result.topics, {delimiter: ','}).data;
