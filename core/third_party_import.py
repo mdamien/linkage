@@ -8,7 +8,9 @@ from bs4 import BeautifulSoup
 
 import arxiv
 import chardet
+from chardet.universaldetector import UniversalDetector
 import requests
+
 
 def arxiv_to_csv(q):
     results = arxiv.query(q, prune=True, start=0, max_results=1000)
@@ -87,8 +89,19 @@ def mbox_to_csv(mbox, subject_only):
                         try:
                             return part.decode(charset)
                         except UnicodeDecodeError:
-                            charset = chardet.detect(part)['encoding']
-                            return part.decode(charset)
+                            detector = UniversalDetector()
+                            detector.feed(part)
+                            detector.close()
+                            try:
+                                return part.decode(detector.result['encoding'])
+                            except UnicodeDecodeError as e:
+                                for prober in detector._charset_probers:
+                                    if prober.get_confidence() > detector.MINIMUM_THRESHOLD:
+                                        try:
+                                            return part.decode(prober.charset_name)
+                                        except UnicodeDecodeError:
+                                            pass
+                                raise e
                     if 'plain' in content_type:
                         content = decode()
                         lines = [line for line in content.split('\n') if not line.startswith('>')]
