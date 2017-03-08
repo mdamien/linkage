@@ -7,6 +7,6 @@ nltk
 channels
 asgi_redis
 beautifulsoup4
-chardet
+https://github.com/chardet/chardet/archive/master.zip
 raven
 requests

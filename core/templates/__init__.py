@@ -37,7 +37,7 @@ FOOTER = L.div('.row') / (
         SPACER,
         L.a(href='http://samm.univ-paris1.fr/') / L.img(src='/static/img/samm.png', height='60'),
         SPACER,
-        L.a(href='http://univ-paris1.fr/') / L.img(src='/static/img/paris1.png', height='60'),
+        L.a(href='https://www.univ-paris1.fr/') / L.img(src='/static/img/paris1.png', height='60'),
     ),
 )
 
