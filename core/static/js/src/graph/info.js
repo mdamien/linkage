@@ -27,6 +27,12 @@ function render(params) {
         {params.topics.map((v, i) => <li key={i}>{i}: {v.toFixed(2)} %</li>)}
         </ul>
       </div> : null}
+      {params.words && params.words.length > 0 ? <div>
+        Sample words: {params.words.slice(0, 10).map((v, i) => <span key={i}>
+                      <span className="label label-default">{v}</span>{' '}
+                    </span>
+                )}
+      </div> : null}
     </div>;
   }
 

@@ -16,7 +16,21 @@ var hashIt = function(s) {
 
 var hashedColor = s => COLORS[hashIt(s) % COLORS.length];
 
+var edgesArr = X => {
+  var edges = [];
+
+  X.forEach(function(line, i) {
+    var edge = line[0] + ',' + line[1];
+    if (edges.indexOf(edge) === -1) {
+      edges.push(edge);
+    }
+  });
+
+  return edges;
+}
+
 export {
   hashedColor,
-  COLORS
+  COLORS,
+  edgesArr,
 }

@@ -3,7 +3,7 @@ import './graph/csrf.js';
 import renderSidebar from './graph/sidebar';
 import renderGraphSidebar from './graph/info';
 
-import { hashedColor, COLORS } from './graph/utils';
+import { hashedColor, COLORS, edgesArr } from './graph/utils';
 
 
 // TODO: STATE is here to keep computed things in memory, could be cleaned up
@@ -28,8 +28,8 @@ function init() {
   STATE.n_edges = X.length;
   STATE.n_nodes = labels.length;
   STATE.dictionnary = dictionnary;
-
-  var edgeToTopic = {};
+  STATE.edges = edgesArr(X);
+  STATE.tdm = tdm;
 
   if (GRAPH.result && GRAPH.result.clusters_mat) {
     var nodeToCluster = Papa.parse(GRAPH.result.clusters_mat,
@@ -53,32 +53,10 @@ function init() {
 
     STATE.topicToTerms = topics;
 
-    /*
-    var topicToEdgesPercentage = null;
-
-    var topics = Papa.parse(GRAPH.result.topics, {delimiter: ','}).data;
-    topics.forEach(function(line) {
-      var percentages = line.slice(2).map(function(v){
-        return parseFloat(v);
-      });
-      edgeToTopic[line[0]+','+line[1]] = percentages;
-      if (topicToEdgesPercentage == null) {
-        topicToEdgesPercentage = percentages;
-      } else {
-        percentages.forEach((v, i) => {
-          topicToEdgesPercentage[i] += v;
-        });
-      }
-    });
-    STATE.topicToEdgesPercentage = topicToEdgesPercentage;
-
-    STATE.topicToTerms = Papa.parse(GRAPH.result.topics_terms, {delimiter: ','}).data;
-    */
-
     _add_clusters(graph, X, nodeToCluster)
   } else {
-    X.forEach(function(line) {
-      graph.addLink(line[0], line[1]);
+    X.forEach(function(line, i) {
+      graph.addLink(line[0], line[1], {link_id: i});
     });
   }
 
@@ -86,7 +64,7 @@ function init() {
 
   RENDERER = Viva.Graph.View.renderer(graph, {
       container: document.getElementById('_graph'),
-      graphics: get_graph_graphics(graph, X, nodeToCluster, edgeToTopic),
+      graphics: get_graph_graphics(graph, X, nodeToCluster),
   });
 
   var loading = document.getElementById('_loading');
@@ -112,11 +90,11 @@ function expand_cluster(cluster_name, graph, X, clusters) {
   graph.removeNode(cluster_name);
 
   // add all nodes of the cluster
-  X.forEach(function(line) {
+  X.forEach(function(line, i) {
     // if origin node in cluster, add it
     if (clusters[line[0]] == cluster_name) {
       if (graph.getNode(line[1]) || clusters[line[1]] == cluster_name) {
-        graph.addLink(line[0], line[1]);
+        graph.addLink(line[0], line[1], {link_id: i});
       } else {
         // if target node not yet expanded, link to the cluster
         graph.addLink(line[0], clusters[line[1]]);
@@ -125,7 +103,7 @@ function expand_cluster(cluster_name, graph, X, clusters) {
     // if target node in cluster, add it
     else if (clusters[line[1]] == cluster_name) {
       if (graph.getNode(line[0]) || clusters[line[0]] == cluster_name) {
-        graph.addLink(line[0], line[1]);
+        graph.addLink(line[0], line[1], {link_id: i});
       } else {
         // if origin node not yet expanded, link to the cluster
         graph.addLink(clusters[line[0]], line[1]);
@@ -137,8 +115,8 @@ function expand_cluster(cluster_name, graph, X, clusters) {
 function expand_clusters(graph, X, clusters) {
   graph.clear()
 
-  X.forEach(function(line) {
-    graph.addLink(line[0], line[1]);
+  X.forEach(function(line, i) {
+    graph.addLink(line[0], line[1], {link_id: i});
   });
 
   RENDERER.resume();
@@ -174,7 +152,7 @@ function collapse_clusters(graph, X, clusters) {
   }, 2000);
 }
 
-function get_graph_graphics(graph, X, clusters, topics) {
+function get_graph_graphics(graph, X, clusters) {
     var graphics = Viva.Graph.View.svgGraphics(),
         nodeSize = 20;
 
@@ -272,7 +250,7 @@ function get_graph_graphics(graph, X, clusters, topics) {
     var geom = Viva.Graph.geom();
     graphics.link(function(link) {
         var color = hashedColor('nopepp');
-        var topic = topics[link.fromId + ',' + link.toId];
+        var topic = null; // topics[link.fromId + ',' + link.toId];
         if (topic) {
           var idx_max = topic.indexOf(Math.max.apply(Math, topic))
           color = hashedColor(''+idx_max);
@@ -287,10 +265,21 @@ function get_graph_graphics(graph, X, clusters, topics) {
         }
 
         $(ui).hover(function() {
+          var link_id = STATE.edges.indexOf(link.fromId + ',' + link.toId);
+          var words = [];
+          if (link_id !== -1) {
+            STATE.tdm.forEach(row => {
+              row = row.map(x => parseInt(x));
+              if (row[1] === link_id) {
+                words.push(STATE.dictionnary[row[0]])
+              }
+            });
+          }
+
           ui.attr('stroke-width', 3);
           renderGraphSidebar({
-            title: link.data,
-            topics: topics[link.fromId + ',' + link.toId],
+            title: link_id + ' ',
+            words,
             renderer: RENDERER,
             expand_clusters: expand_clusters.bind(this, graph, X, clusters),
             collapse_clusters: collapse_clusters.bind(this, graph, X, clusters),
