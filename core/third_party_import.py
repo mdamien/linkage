@@ -11,6 +11,7 @@ import chardet
 from chardet.universaldetector import UniversalDetector
 import requests
 
+from raven.contrib.django.raven_compat.models import client
 
 def arxiv_to_csv(q):
     results = arxiv.query(q, prune=True, start=0, max_results=1000)
@@ -64,7 +65,11 @@ def mbox_to_csv(mbox, subject_only):
         if mail:
             msg = email.message_from_string(mail)
 
-            subject = header.make_header(header.decode_header(msg['Subject']))
+            subject = ''
+            try:
+                subject = header.make_header(header.decode_header(msg['Subject']))
+            except TypeError:
+                client.captureException('Invalid subject: {}'.format(msg['Subject']))
             body = str(subject)
             if not subject_only:
                 body += '\n'
