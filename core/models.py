@@ -48,16 +48,16 @@ def graph_data_from_links(links):
     import csv, random, io, sys, os
     import collections
     import time
+    import string
 
     csv.field_size_limit(sys.maxsize) # http://stackoverflow.com/questions/15063936/csv-error-field-larger-than-field-limit-131072
 
     from nltk.tokenize import word_tokenize
     from nltk.stem.snowball import SnowballStemmer
-    from nltk.corpus import stopwords
-
 
     stemmer = SnowballStemmer("english")
-    stopwords = stopwords.words('english')
+    # stopwords = stopwords.words('english')
+    punc_table = dict((ord(char), None) for char in string.punctuation)
 
     X = io.StringIO()
     X_writer = csv.writer(X, delimiter=' ')
@@ -92,9 +92,9 @@ def graph_data_from_links(links):
             if edge_name not in edges:
                 edges[edge_name] = collections.Counter()
             doc_terms = edges[edge_name]
-            for token in word_tokenize(link[2]):
-                if token not in stopwords:
-                    doc_terms[stemmer.stem(token)] += 1
+            for token in word_tokenize(link[2].translate(punc_table)): # remove punctuation and translate
+                #if token not in stopwords:
+                doc_terms[stemmer.stem(token)] += 1
 
     curr_edge = 0
     for edge, doc_terms in edges.items():
