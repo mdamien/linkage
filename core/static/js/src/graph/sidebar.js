@@ -2,23 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Slider from 'rc-slider';
 
-import { hashedColor } from './utils';
+import { hashedColor, n_best_elems } from './utils';
 
 var ColorSquare = color => <span className='label' style={{ backgroundColor: color, marginRight: 10 }}> </span>;
 
-const n_best_elems = (arr, n) => {
-    var keyed_arr = arr.map((v, i) => [i, v]);
-    var result = keyed_arr.sort((a, b) => {
-      if (a[1] < b[1]) {
-        return 1;
-      }
-      if (a[1] > b[1]) {
-        return -1;
-      }
-      return 0;
-    });
-    return n ? result.slice(0, n) : result;
-};
 
 
 
@@ -36,8 +23,7 @@ class TopicWords extends React.Component {
     render() {
         let {i, words, dictionnary} = this.props;
         return <div className='list-group-item'>
-            {ColorSquare(hashedColor('t'+i))} {i}
-            <br/>
+            {ColorSquare(hashedColor('t'+i))}
             ex: {n_best_elems(words, 5).map((t, i) => {
                 if (t[1] < 0.001) return null;
                 return <span key={i}>

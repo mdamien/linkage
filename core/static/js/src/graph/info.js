@@ -21,17 +21,15 @@ function render(params) {
       })}>&times;</button>
       {params.is_cluster ? ColorSquare(hashedColor(params.title), params.title) : params.title}
       {params.cluster !== undefined ? <p> - {ColorSquare(hashedColor(params.cluster))} {params.cluster}</p> : null}
-      {params.topics && params.topics.length > 0 ? <div>
-        Topics:
-        <ul>
-        {params.topics.map((v, i) => <li key={i}>{i}: {v.toFixed(2)} %</li>)}
-        </ul>
-      </div> : null}
       {params.words && params.words.length > 0 ? <div>
-        Sample words: {params.words.slice(0, 10).map((v, i) => <span key={i}>
-                      <span className="label label-default">{v}</span>{' '}
-                    </span>
-                )}
+        {params.words.slice(0, 10).map((v, i) => <span key={i}>
+              <span className="label label-default">{v}</span>{' '}
+            </span>
+        )}
+      </div> : null}
+      {params.topics && params.topics.length > 0 ? <div>
+        <br/>
+        {params.topics.map((v, i) => <span key={i}>{ColorSquare(hashedColor('t'+i), (v * 100).toFixed(2) + ' %')} </span>)}
       </div> : null}
     </div>;
   }

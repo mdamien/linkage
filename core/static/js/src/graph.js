@@ -3,7 +3,7 @@ import './graph/csrf.js';
 import renderSidebar from './graph/sidebar';
 import renderGraphSidebar from './graph/info';
 
-import { hashedColor, COLORS, edgesArr } from './graph/utils';
+import { hashedColor, COLORS, edgesArr, n_best_elems } from './graph/utils';
 
 
 // TODO: STATE is here to keep computed things in memory, could be cleaned up
@@ -250,11 +250,6 @@ function get_graph_graphics(graph, X, clusters) {
     var geom = Viva.Graph.geom();
     graphics.link(function(link) {
         var color = hashedColor('nopepp');
-        var topic = null; // topics[link.fromId + ',' + link.toId];
-        if (topic) {
-          var idx_max = topic.indexOf(Math.max.apply(Math, topic))
-          color = hashedColor(''+idx_max);
-        }
 
         var ui = Viva.Graph.svg('path')
                    .attr('stroke-width', 0.5)
@@ -267,19 +262,44 @@ function get_graph_graphics(graph, X, clusters) {
         $(ui).hover(function() {
           var link_id = STATE.edges.indexOf(link.fromId + ',' + link.toId);
           var words = [];
+          var topics_perc = [];
+
+          /*
+          goal: go from words to % of each topics
+
+          for each word in document:
+            for each topic:
+              topics_perc[topic] += word_count*topic_word_perc
+          */
+
           if (link_id !== -1) {
             STATE.tdm.forEach(row => {
               row = row.map(x => parseInt(x));
               if (row[1] === link_id) {
-                words.push(STATE.dictionnary[row[0]])
+                words.push(STATE.dictionnary[row[0]]);
+                STATE.topicToTerms.forEach((terms, topic) => {
+                  if (!topics_perc[topic]) {
+                    topics_perc[topic] = 0;
+                  }
+                  topics_perc[topic] += row[2]*terms[row[0]];
+                })
               }
             });
+
+            // normalize topics_perc
+            var sum = topics_perc.reduce(function(a, b) { return a + b; }, 0);
+            topics_perc = topics_perc.map(x => x/sum);
+            
+            // TODO: proper topic color is too slow for now
+            // var idx_max = topics_perc.indexOf(Math.max.apply(Math, topics_perc))
+            // color = hashedColor('t'+idx_max);
           }
 
           ui.attr('stroke-width', 3);
           renderGraphSidebar({
-            title: link_id + ' ',
+            title: ' ',
             words,
+            topics: topics_perc,
             renderer: RENDERER,
             expand_clusters: expand_clusters.bind(this, graph, X, clusters),
             collapse_clusters: collapse_clusters.bind(this, graph, X, clusters),
