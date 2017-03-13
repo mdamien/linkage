@@ -277,12 +277,14 @@ function get_graph_graphics(graph, X, clusters) {
               row = row.map(x => parseInt(x));
               if (row[1] === link_id) {
                 words.push(STATE.dictionnary[row[0]]);
-                STATE.topicToTerms.forEach((terms, topic) => {
-                  if (!topics_perc[topic]) {
-                    topics_perc[topic] = 0;
-                  }
-                  topics_perc[topic] += row[2]*terms[row[0]];
-                })
+                if (STATE.topicToTerms) {
+                  STATE.topicToTerms.forEach((terms, topic) => {
+                    if (!topics_perc[topic]) {
+                      topics_perc[topic] = 0;
+                    }
+                    topics_perc[topic] += row[2]*terms[row[0]];
+                  })
+                }
               }
             });
 

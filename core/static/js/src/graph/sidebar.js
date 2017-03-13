@@ -2,12 +2,61 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Slider from 'rc-slider';
 
+import { styles } from 'react-autocomplete/lib/utils'
+import Autocomplete from 'react-autocomplete'
+
 import { hashedColor, n_best_elems } from './utils';
 
 var ColorSquare = color => <span className='label' style={{ backgroundColor: color, marginRight: 10 }}> </span>;
 
 
+export function sortStates (a, b, value) {
+  return (
+    a.toLowerCase().indexOf(value.toLowerCase()) >
+    b.toLowerCase().indexOf(value.toLowerCase()) ? 1 : -1
+  )
+}
 
+let App = React.createClass({
+  getInitialState() {
+    return { value: '' }
+  },
+  render () {
+    return (
+      <div className='panel panel-default panel-body'>
+        <label htmlFor="states-autocomplete">Search</label>{' '}
+        <Autocomplete
+          value={this.state.value}
+          inputProps={{name: "US state", id: "states-autocomplete"}}
+          items={this.props.choices}
+          getItemValue={(item) => item}
+          shouldItemRender={(item, value) => 
+            item.toLowerCase().indexOf(value.toLowerCase()) !== -1
+          }
+          onChange={(event, value) => this.setState({ value })}
+          onSelect={value => this.setState({ value })}
+          renderItem={(item, isHighlighted) => (
+            <div
+              style={isHighlighted ? styles.highlightedItem : styles.item}
+              key={item}
+            >{item}</div>
+          )}
+          menuStyle={{
+              borderRadius: '3px',
+              boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)',
+              background: 'rgba(255, 255, 255, 0.9)',
+              padding: '2px 0',
+              fontSize: '90%',
+              position: 'fixed',
+              overflow: 'auto',
+              maxHeight: '50%',
+              zIndex: 100,
+            }}
+        />
+      </div>
+    )
+  }
+})
 
 class TopicWords extends React.Component {
     constructor(props) {
@@ -89,6 +138,7 @@ class Sidebar extends React.Component {
     render() {
         var state = this.props.state;
         return <div>
+            <App choices={state.labels} />
             <div className='panel panel-primary'>
                 <div className='panel-heading'>
                     <h3 className='panel-title'>{GRAPH.name}</h3>
