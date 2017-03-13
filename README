@@ -1,0 +1,40 @@
+Linkage
+=======
+
+How to install
+-----
+
+python3
+
+virtualenv -p python3 venv
+
+pip install -r requirements.txt
+
+./manage.py migrate
+
+(redis run, "redis-server")
+
+./manage.py runserver
+
+in other terminal
+
+. ./scripts/dev_celery
+
+[TODO: linkage binary to put in right location]
+
+compile js: webpack --progress --watch
+
+
+Run production server
+-----
+
+install nginx python3 virtualenv python3-dev build-essential
+
+pip install -r requirements_prod.txt
+
+nginx config: TODO
+
+./prod_server.sh
+./prod_app.sh
+./prod_celery.sh
+webpack
