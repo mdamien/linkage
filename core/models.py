@@ -57,7 +57,7 @@ def graph_data_from_links(links):
 
     stemmer = SnowballStemmer("english")
     # stopwords = stopwords.words('english')
-    punc_table = dict((ord(char), None) for char in string.punctuation)
+    punc_table = dict((ord(char), ' ') for char in string.punctuation)
 
     X = io.StringIO()
     X_writer = csv.writer(X, delimiter=' ')
@@ -92,9 +92,15 @@ def graph_data_from_links(links):
             if edge_name not in edges:
                 edges[edge_name] = collections.Counter()
             doc_terms = edges[edge_name]
-            for token in word_tokenize(link[2].translate(punc_table)): # remove punctuation and translate
+            text = link[2] if len(link) > 1 else ''
+            for token in word_tokenize(text.translate(punc_table)): # remove punctuation and tokenize
                 #if token not in stopwords:
-                doc_terms[stemmer.stem(token)] += 1
+                if len(token) > 2:
+                    # remove numbers
+                    try:
+                        int(token)
+                    except:
+                        doc_terms[stemmer.stem(token)] += 1
 
     curr_edge = 0
     for edge, doc_terms in edges.items():
