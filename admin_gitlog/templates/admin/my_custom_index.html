@@ -1,0 +1,9 @@
+{% extends "admin/index.html" %}
+
+{% block sidebar %}
+    {{block.super}}
+    <div>
+        <h1>Last 5 commits</h1>
+        <pre>{{gitlog}}</pre>
+    </div>
+{% endblock %}
