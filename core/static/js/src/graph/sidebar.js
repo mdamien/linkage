@@ -138,7 +138,7 @@ class Sidebar extends React.Component {
     render() {
         var state = this.props.state;
         return <div>
-            <App choices={state.labels} />
+            {/*<App choices={state.labels} />*/}
             <div className='panel panel-primary'>
                 <div className='panel-heading'>
                     <h3 className='panel-title'>{GRAPH.name}</h3>

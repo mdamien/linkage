@@ -77,14 +77,14 @@ def index(request):
                 else:
                     graph.save()
 
-                    clusters = 3 if clusters == None else clusters
-                    topics = 3 if topics == None else topics
-
-                    result = models.ProcessingResult(graph=graph, param_clusters=clusters, param_topics=topics)
-                    result.save()
+                    result_pk = None
+                    if clusters is not None:
+                        result = models.ProcessingResult(graph=graph, param_clusters=clusters, param_topics=topics)
+                        result.save()
+                        result_pk = result.pk
 
                     from config.celery import process_graph
-                    process_graph.delay(result.pk, ws_delay=2)
+                    process_graph.delay(graph.pk, result_pk, ws_delay=2)
                     return redirect(graph)
 
     if request.POST and request.POST['action'] == 'delete':
@@ -143,7 +143,7 @@ def api_cluster(request, pk):
     result.save()
 
     from config.celery import process_graph
-    process_graph.delay(result.pk, ws_delay=0)
+    process_graph.delay(graph.pk, result.pk, ws_delay=0)
 
     return JsonResponse({'message': 'ok'})
 

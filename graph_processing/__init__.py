@@ -1,6 +1,6 @@
 import os
 
-def process(X, tdm, n_clusters, n_topics, id=0):
+def process(X, tdm, n_clusters, n_topics, id=0, n_clusters_max=None, n_topics_max=None):
     linkage_dir = '../repos/linkage-cpp/'
     run_dir = '%sruns/%d/' % (linkage_dir, id)
     run_dir_for_linkage = 'runs/%d/' % id
@@ -20,11 +20,12 @@ def process(X, tdm, n_clusters, n_topics, id=0):
             + '{Kmin} {Kmax} {Qmin} {Qmax} 10 0 1 100 0.0001 100 100 {dir}').format(
                 link_dir=linkage_dir,
                 Kmin=n_topics,
-                Kmax=n_topics + 1,
+                Kmax=n_topics if n_topics_max is None else n_topics_max,
                 Qmin=n_clusters,
-                Qmax=n_clusters + 1,
+                Qmax=n_clusters if n_clusters_max is None else n_clusters_max,
                 dir=run_dir_for_linkage),
         ).read()
+    print('processing done')
     print(log)
 
     groups = {}
@@ -38,6 +39,9 @@ def process(X, tdm, n_clusters, n_topics, id=0):
         print('ERROR: NO )?,?) RESULTS FOUND')
 
     for group, result in groups.items():
+        n_topics, n_clusters = [int(x) for x in group.split(',')]
+        result['n_topics'] = n_topics
+        result['n_clusters'] = n_clusters
         try:
             clusters = open(run_dir + 'out/cluster(%s)' % group).read()
         except FileNotFoundError:
@@ -53,11 +57,16 @@ def process(X, tdm, n_clusters, n_topics, id=0):
             topics = ''
         result['topics'] = topics
 
+        try:
+            crit = float(open(run_dir + 'out/crit(%s)' % group).read())
+        except FileNotFoundError:
+            print('ERROR: NO CRIT')
+            crit = 0
+        result['crit'] = crit
+
     os.system('rm -rf %s' % (run_dir,))
 
-    result = groups['%d,%d' % (n_topics, n_clusters)]
-
-    return result['clusters'], result['topics'], log
+    return groups, log
 
 if __name__ == '__main__':
     X = """0 1 1
@@ -1334,7 +1343,11 @@ if __name__ == '__main__':
 163 121 1
 3 121 1
 """
-    clusters, topics, log = process(X, tdm, 2, 2)
-    print(clusters)
-    print(topics)
+    groups, log = process(X, tdm, 2, 2)
+
+    for group in groups:
+        print(group)
+        print('score:', groups[group]['crit'])
+        print(groups[group]['clusters'])
+
     print(log[-100:])

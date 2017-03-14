@@ -1,50 +1,64 @@
 import os
 from celery import Celery, task
-
 from channels import Group
-
 
 import graph_processing
 
-# set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings_dev')
 
 app = Celery('linkage')
-
-# Using a string here means the worker don't have to serialize
-# the configuration object to child processes.
-# - namespace='CELERY' means all celery-related configuration keys
-#   should have a `CELERY_` prefix.
 app.config_from_object('django.conf:settings')
 
-# Load task modules from all registered Django app configs.
-# app.autodiscover_tasks()
-
 @task()
-def process_graph(result_pk, ws_delay=0):
-    print('Processing result %d' % result_pk)
+def process_graph(graph_pk, result_pk=None, ws_delay=0):
+    """
+    if a result is specified, we don't do do range clustering
+    """
 
-    import csv, io
+    print('Processing graph {} with result={}'.format(graph_pk, result_pk))
+
+    import csv, io, random
     from core.models import Graph, ProcessingResult
 
-    result = ProcessingResult.objects.get(pk=result_pk)
-    graph = result.graph
+    param_clusters = 2
+    param_topics = 2
+    param_max_clusters = 5
+    param_max_topics = 5
+    if result_pk is not None:
+        result = ProcessingResult.objects.get(pk=result_pk)
+        print('requested clusters', result.param_clusters)
+        print('requested topics', result.param_topics)
+        param_clusters = result.param_clusters
+        param_topics = result.param_topics
+        param_max_topics = None
+        param_max_clusters = None
 
-    print('Processing graph %d' % graph.pk)
+    graph = Graph.objects.get(pk=graph_pk)
 
-    print('CLUSTERS', result.param_clusters)
-    print('TOPICS', result.param_topics)
-
-    clusters_mat, topics_mat, log = graph_processing.process(
+    results, log = graph_processing.process(
         graph.edges, graph.tdm,
-        result.param_clusters, result.param_topics,
-        result.pk)
+        param_clusters, param_topics,
+        result_pk if result_pk else random.randint(0, 10000),
+        param_max_clusters, param_max_topics)
 
-    result.progress = 1;
-    result.log = log
-    result.clusters_mat = clusters_mat
-    result.topics_mat = topics_mat
-    result.save()
+    for result in results:
+        try:
+            db_result = ProcessingResult.objects.get(
+                pk=result_pk,
+                param_clusters=result['n_clusters'],
+                param_topics=result['n_topics'],
+            )
+        except:
+            result = ProcessingResult(
+                graph=graph,
+                param_clusters=result['n_clusters'],
+                param_topics=result['n_topics']
+            )
+        result.progress = 1;
+        result.log = log # TODO: review db model to store this only once
+        result.clusters_mat = result['clusters']
+        result.topics_mat = result['topics']
+        result.save()
 
     import time
     time.sleep(ws_delay)
