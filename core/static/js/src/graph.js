@@ -359,3 +359,7 @@ socket.onopen = function() {
 if (socket.readyState == WebSocket.OPEN) socket.onopen();
 
 init();
+
+export {
+  init,
+};

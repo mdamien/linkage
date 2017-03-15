@@ -67,14 +67,7 @@ def serialize_graph(graph, result):
         'created_at': naturaltime(graph.created_at),
     }
     if result:
-        data['result'] = {
-            'clusters_mat': result.clusters_mat,
-            'topics_mat': result.topics_mat,
-            'log': result.log,
-            'progress': result.progress,
-            'param_clusters': result.param_clusters,
-            'param_topics': result.param_topics,
-        }
+        data['result'] = result.serialize()
     return data
 
 def result(request, graph, result):

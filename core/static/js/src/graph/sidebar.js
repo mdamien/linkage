@@ -6,6 +6,7 @@ import { styles } from 'react-autocomplete/lib/utils'
 import Autocomplete from 'react-autocomplete'
 
 import { hashedColor, n_best_elems } from './utils';
+import { init } from '../graph.js';
 
 var ColorSquare = color => <span className='label' style={{ backgroundColor: color, marginRight: 10 }}> </span>;
 
@@ -107,8 +108,8 @@ class Sidebar extends React.Component {
       super(props);
       this.state = {
         showLog: false,
-        clusters: GRAPH.result.param_clusters,
-        topics: GRAPH.result.param_topics,
+        clusters: GRAPH.result ? GRAPH.result.param_clusters : 3,
+        topics: GRAPH.result ? GRAPH.result.param_topics : 3,
       };
       this.toggleLog = this.toggleLog.bind(this);
       this.updateClusters = this.updateClusters.bind(this);
@@ -124,6 +125,10 @@ class Sidebar extends React.Component {
             topics: this.state.topics,
         }, function(data) {
             console.log(data);
+            if (data.result) {
+              GRAPH.result = data.result
+              init();
+            }
         });
     }
     updateTopics(topics) {
@@ -133,6 +138,10 @@ class Sidebar extends React.Component {
             topics: topics,
         }, function(data) {
             console.log(data);
+            if (data.result) {
+              GRAPH.result = data.result
+              init();
+            }
         });
     }
     render() {
@@ -148,7 +157,12 @@ class Sidebar extends React.Component {
                     <br/>
                     <strong>{state.n_nodes}</strong> nodes
                     <br/>
-                    imported <strong>{GRAPH.created_at}</strong>
+                    imported <strong>{GRAPH.created_at}</strong><br/>
+                    {GRAPH.result && false ? 
+                      <span>
+                        clustering score: <strong>{GRAPH.result.crit}</strong>
+                      </span>
+                      : null}
                 </div>
             </div>
             <div className='panel panel-default'>

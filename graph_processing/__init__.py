@@ -1,4 +1,4 @@
-import os
+import os, subprocess
 
 def process(X, tdm, n_clusters, n_topics, id=0, n_clusters_max=None, n_topics_max=None):
     linkage_dir = '../repos/linkage-cpp/'
@@ -14,7 +14,8 @@ def process(X, tdm, n_clusters, n_topics, id=0, n_clusters_max=None, n_topics_ma
     open(run_dir + 'in/X.sp_mat', 'w').write(X)
     open(run_dir + 'in/tdm.sp_mat', 'w').write(tdm)
 
-    log = os.popen(('cd {link_dir};'
+    log = []
+    for line in os.popen(('cd {link_dir};'
             + 'export LD_LIBRARY_PATH="build/arma/";'
             + './build/linkage ' \
             + '{Kmin} {Kmax} {Qmin} {Qmax} 10 0 1 100 0.0001 100 100 {dir}').format(
@@ -24,9 +25,11 @@ def process(X, tdm, n_clusters, n_topics, id=0, n_clusters_max=None, n_topics_ma
                 Qmin=n_clusters,
                 Qmax=n_clusters if n_clusters_max is None else n_clusters_max,
                 dir=run_dir_for_linkage),
-        ).read()
+        ):
+        print(line.strip())
+        log += [line]
+    log = ''.join(log)
     print('processing done')
-    print(log)
 
     groups = {}
     for file in os.listdir(run_dir + 'out'):
@@ -1350,4 +1353,4 @@ if __name__ == '__main__':
         print('score:', groups[group]['crit'])
         print(groups[group]['clusters'])
 
-    print(log[-100:])
+    print('log:', log[-100:])

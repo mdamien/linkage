@@ -41,7 +41,7 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
         result_pk if result_pk else random.randint(0, 10000),
         param_max_clusters, param_max_topics)
 
-    for result in results:
+    for group, result in results.items():
         try:
             db_result = ProcessingResult.objects.get(
                 pk=result_pk,
@@ -49,16 +49,17 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
                 param_topics=result['n_topics'],
             )
         except:
-            result = ProcessingResult(
+            db_result = ProcessingResult(
                 graph=graph,
                 param_clusters=result['n_clusters'],
                 param_topics=result['n_topics']
             )
-        result.progress = 1;
-        result.log = log # TODO: review db model to store this only once
-        result.clusters_mat = result['clusters']
-        result.topics_mat = result['topics']
-        result.save()
+        db_result.progress = 1;
+        db_result.log = log # TODO: review db model to store this only once
+        db_result.clusters_mat = result['clusters']
+        db_result.topics_mat = result['topics']
+        db_result.crit = result['crit']
+        db_result.save()
 
     import time
     time.sleep(ws_delay)

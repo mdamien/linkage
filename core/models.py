@@ -36,12 +36,23 @@ class ProcessingResult(models.Model):
 
     clusters_mat = models.TextField(blank=True, default='')
     topics_mat = models.TextField(blank=True, default='')
+    crit = models.FloatField(default=0)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return '{} ({})'.format(naturaltime(self.created_at), self.graph)
 
+    def serialize(self):
+        return {
+            'clusters_mat': self.clusters_mat,
+            'topics_mat': self.topics_mat,
+            'log': self.log,
+            'progress': self.progress,
+            'param_clusters': self.param_clusters,
+            'param_topics': self.param_topics,
+            'crit': self.crit,
+        }
 
 
 def graph_data_from_links(links):

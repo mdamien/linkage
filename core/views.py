@@ -1,3 +1,4 @@
+
 from io import TextIOWrapper
 
 from django.shortcuts import render
@@ -105,7 +106,10 @@ def result(request, pk):
         raise PermissionDenied
     result = None
     try:
-        result = models.ProcessingResult.objects.get(graph=graph)
+        result = models.ProcessingResult.objects \
+            .filter(graph=graph) \
+            .order_by('-crit') \
+            .first()
     except:
         pass
     return HttpResponse(templates.result(request, graph, result))
@@ -117,7 +121,10 @@ def api_result(request, pk):
         raise PermissionDenied
     result = None
     try:
-        result = models.ProcessingResult.objects.get(graph=graph)
+        result = models.ProcessingResult.objects \
+            .filter(graph=graph) \
+            .order_by('-crit') \
+            .first()
     except:
         pass
     return JsonResponse(templates.api_result(request, graph, result))
@@ -128,16 +135,26 @@ def api_cluster(request, pk):
     graph = get_object_or_404(models.Graph, pk=pk)
     if request.user.pk != graph.user.pk:
         raise PermissionDenied
-    result = None
-    try:
-        result = models.ProcessingResult.objects.get(graph=graph)
-        result.delete()
-    except:
-        pass
+
     clusters = int(request.POST['clusters'])
     topics = int(request.POST['topics'])
     if clusters <= 0 or topics <= 0:
         return JsonResponse({'message': 'error: invalid parameters'})
+
+    result = None
+    try:
+        result = models.ProcessingResult.objects.get(graph=graph, param_clusters=clusters, param_topics=topics)
+        if result.progress > 0:
+            return JsonResponse({
+                'message': 'ok [already-clustered]',
+                'result': result.serialize(),
+            })
+        else:
+            return JsonResponse({
+                'message': 'ok [clustering-in-progress]',
+            })
+    except:
+        pass
 
     result = models.ProcessingResult(graph=graph, param_clusters=clusters, param_topics=topics)
     result.save()
@@ -145,7 +162,7 @@ def api_cluster(request, pk):
     from config.celery import process_graph
     process_graph.delay(graph.pk, result.pk, ws_delay=0)
 
-    return JsonResponse({'message': 'ok'})
+    return JsonResponse({'message': 'ok [clustering-launched]'})
 
 
 from django.contrib.auth.views import login as login_view
