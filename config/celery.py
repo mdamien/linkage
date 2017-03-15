@@ -58,6 +58,7 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
         db_result.log = log # TODO: review db model to store this only once
         db_result.clusters_mat = result['clusters']
         db_result.topics_mat = result['topics']
+        db_result.topics_per_edges_mat = result['topics_per_edges']
         db_result.crit = result['crit']
         db_result.save()
 

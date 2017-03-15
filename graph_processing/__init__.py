@@ -61,6 +61,13 @@ def process(X, tdm, n_clusters, n_topics, id=0, n_clusters_max=None, n_topics_ma
         result['topics'] = topics
 
         try:
+            topics_per_edges = open(run_dir + 'out/phi_sum(%s)' % group).read()
+        except FileNotFoundError:
+            print('ERROR: NO TOPICS')
+            topics_per_edges = ''
+        result['topics_per_edges'] = topics_per_edges
+
+        try:
             crit = float(open(run_dir + 'out/crit(%s)' % group).read())
         except FileNotFoundError:
             print('ERROR: NO CRIT')
