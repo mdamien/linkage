@@ -153,6 +153,14 @@ class Sidebar extends React.Component {
         this.props.state.current_selected_topics = topics;
         this.props.state.current_selected_clusters = this.state.clusters;
     }
+    componentWillReceiveProps(props) {
+      if (props.state.force_use_result_param) {
+        this.setState({
+            clusters: GRAPH.result.param_clusters,
+            topics: GRAPH.result.param_topics,
+        })
+      }
+    }
     render() {
         var state = this.props.state;
         return <div>

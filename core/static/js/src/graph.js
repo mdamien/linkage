@@ -369,6 +369,9 @@ socket.onmessage = function(e) {
     clusters: STATE.current_selected_clusters,
     topics: STATE.current_selected_topics,
   }, function(data) {
+    if (!STATE.current_selected_clusters && STATE.result) { // follow auto-clustering
+      STATE.force_use_result_param = true;
+    }
     GRAPH = data;
     init();
   });
