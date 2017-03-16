@@ -119,14 +119,28 @@ def api_result(request, pk):
     graph = get_object_or_404(models.Graph, pk=pk)
     if request.user.pk != graph.user.pk:
         raise PermissionDenied
+
     result = None
+
     try:
+        clusters = int(request.GET['clusters'])
+        topics = int(request.GET['topics'])
         result = models.ProcessingResult.objects \
-            .filter(graph=graph) \
-            .order_by('-crit') \
-            .first()
+            .get(graph=graph,
+                param_clusters=clusters,
+                param_topics=topics)
     except:
-        pass
+        print('no match for clusters/topics')
+
+    if not result:
+        try:
+            result = models.ProcessingResult.objects \
+                .filter(graph=graph) \
+                .order_by('-crit') \
+                .first()
+        except:
+            print('no match for graph')
+    
     return JsonResponse(templates.api_result(request, graph, result))
 
 

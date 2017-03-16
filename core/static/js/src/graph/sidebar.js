@@ -114,6 +114,9 @@ class Sidebar extends React.Component {
       this.toggleLog = this.toggleLog.bind(this);
       this.updateClusters = this.updateClusters.bind(this);
       this.updateTopics = this.updateTopics.bind(this);
+
+      this.props.state.current_selected_topics = this.state.topics;
+      this.props.state.current_selected_clusters = this.state.clusters;
     }
     toggleLog() {
         this.setState({showLog: !this.state.showLog});
@@ -130,6 +133,8 @@ class Sidebar extends React.Component {
               init();
             }
         });
+        this.props.state.current_selected_topics = this.state.topics;
+        this.props.state.current_selected_clusters = clusters;
     }
     updateTopics(topics) {
         this.setState({topics: topics});
@@ -143,6 +148,8 @@ class Sidebar extends React.Component {
               init();
             }
         });
+        this.props.state.current_selected_topics = topics;
+        this.props.state.current_selected_clusters = this.state.clusters;
     }
     render() {
         var state = this.props.state;

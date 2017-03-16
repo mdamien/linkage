@@ -346,7 +346,10 @@ function get_graph_graphics(graph, X, clusters) {
 var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
 var socket = new WebSocket(ws_scheme + "://" + window.location.host + '/result/' + GRAPH.id + '/');
 socket.onmessage = function(e) {
-  $.getJSON('/result/' + GRAPH.id + '/data/', function(data) {
+  $.getJSON('/result/' + GRAPH.id + '/data/', {
+    clusters: STATE.current_selected_clusters,
+    topics: STATE.current_selected_topics,
+  }, function(data) {
     GRAPH = data;
     init();
   });
