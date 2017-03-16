@@ -48,7 +48,7 @@ function init() {
       {delimiter: '  ', dynamicTyping: true, skipEmptyLines: true}).data;
 
     topics.forEach((v, i) => {
-      topics[i] = v.slice(1).map(x => Math.exp(x));
+      topics[i] = v.slice(1);
     });
 
     STATE.topicToTerms = topics;
