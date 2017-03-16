@@ -14,6 +14,9 @@ def process(X, tdm, n_clusters, n_topics, id=0, n_clusters_max=None, n_topics_ma
     open(run_dir + 'in/X.sp_mat', 'w').write(X)
     open(run_dir + 'in/tdm.sp_mat', 'w').write(tdm)
 
+    n_topics_max = n_topics if n_topics_max is None else n_topics_max
+    n_clusters_max = n_clusters if n_clusters_max is None else n_clusters_max
+
     log = []
     for line in os.popen(('cd {link_dir};'
             + 'export LD_LIBRARY_PATH="build/arma/";'
@@ -21,9 +24,9 @@ def process(X, tdm, n_clusters, n_topics, id=0, n_clusters_max=None, n_topics_ma
             + '{Kmin} {Kmax} {Qmin} {Qmax} 10 0 1 100 0.0001 100 100 {dir}').format(
                 link_dir=linkage_dir,
                 Kmin=n_topics,
-                Kmax=n_topics if n_topics_max is None else n_topics_max,
+                Kmax=n_topics_max,
                 Qmin=n_clusters,
-                Qmax=n_clusters if n_clusters_max is None else n_clusters_max,
+                Qmax=n_clusters_max,
                 dir=run_dir_for_linkage),
         ):
         print(line.strip())
@@ -32,14 +35,12 @@ def process(X, tdm, n_clusters, n_topics, id=0, n_clusters_max=None, n_topics_ma
     print('processing done')
 
     groups = {}
-    for file in os.listdir(run_dir + 'out'):
-        if len(file.split('(')) > 1:
-            group = file.split('(')[1].replace(')', '')
-            if group not in groups:
-                groups[group] = {}
+    for q in range(n_clusters, n_clusters_max + 1):
+        for k in range(n_topics, n_topics + 1):
+            groups['%d,%d' % (k, q)] = {}
 
     if len(groups.keys()) == 0:
-        print('ERROR: NO )?,?) RESULTS FOUND')
+        print('ERROR: NO (?,?) RESULTS FOUND')
 
     for group, result in groups.items():
         n_topics, n_clusters = [int(x) for x in group.split(',')]
@@ -48,7 +49,7 @@ def process(X, tdm, n_clusters, n_topics, id=0, n_clusters_max=None, n_topics_ma
         try:
             clusters = open(run_dir + 'out/cluster(%s)' % group).read()
         except FileNotFoundError:
-            print('ERROR: NO CLUSTERS FOR %s' % clusters)
+            print('ERROR: NO CLUSTERS FOR %s' % group)
             clusters = ''
         print('clusters:', len(clusters), clusters)
         result['clusters'] = clusters
@@ -56,21 +57,21 @@ def process(X, tdm, n_clusters, n_topics, id=0, n_clusters_max=None, n_topics_ma
         try:
             topics = open(run_dir + 'out/beta(%s)' % group).read()
         except FileNotFoundError:
-            print('ERROR: NO TOPICS')
+            print('ERROR: NO TOPICS FOR %s' % group)
             topics = ''
         result['topics'] = topics
 
         try:
             topics_per_edges = open(run_dir + 'out/phi_sum(%s)' % group).read()
         except FileNotFoundError:
-            print('ERROR: NO TOPICS')
+            print('ERROR: NO TOPICS FOR %s' % group)
             topics_per_edges = ''
         result['topics_per_edges'] = topics_per_edges
 
         try:
             crit = float(open(run_dir + 'out/crit(%s)' % group).read())
         except FileNotFoundError:
-            print('ERROR: NO CRIT')
+            print('ERROR: NO CRIT FOR %s' % group)
             crit = 0
         result['crit'] = crit
 
