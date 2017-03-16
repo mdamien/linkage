@@ -37,7 +37,7 @@ class ProcessingResult(models.Model):
     clusters_mat = models.TextField(blank=True, default='')
     topics_mat = models.TextField(blank=True, default='')
     topics_per_edges_mat = models.TextField(blank=True, default='')
-    crit = models.FloatField(default=0)
+    crit = models.FloatField(default=-100000000000)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -48,6 +48,7 @@ class ProcessingResult(models.Model):
         return {
             'clusters_mat': self.clusters_mat,
             'topics_mat': self.topics_mat,
+            'topics_per_edges_mat': self.topics_per_edges_mat,
             'log': self.log,
             'progress': self.progress,
             'param_clusters': self.param_clusters,

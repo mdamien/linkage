@@ -53,6 +53,15 @@ function init() {
 
     STATE.topicToTerms = topics;
 
+    var topics_per_edges = Papa.parse(GRAPH.result.topics_per_edges_mat,
+      {delimiter: '  ', dynamicTyping: true, skipEmptyLines: true}).data;
+
+    topics_per_edges.forEach((v, i) => {
+      topics_per_edges[i] = v.slice(1);
+    });
+
+    STATE.topics_per_edges = topics_per_edges;
+
     _add_clusters(graph, X, nodeToCluster)
   } else {
     X.forEach(function(line, i) {
@@ -251,6 +260,20 @@ function get_graph_graphics(graph, X, clusters) {
     graphics.link(function(link) {
         var color = hashedColor('nopepp');
 
+        var link_id = STATE.edges.indexOf(link.fromId + ',' + link.toId);
+        if (STATE.topics_per_edges && link_id !== -1) {
+          var topic_max = -1;
+          var topic_max_value = null;
+          STATE.topics_per_edges.forEach((row, topic) => {
+            var v = row[link_id];
+            if (topic_max_value === null || v > topic_max_value) {
+              topic_max_value = v;
+              topic_max = topic;
+            }
+          });
+          color = hashedColor('t'+topic_max);
+        }
+
         var ui = Viva.Graph.svg('path')
                    .attr('stroke-width', 0.5)
                    .attr('stroke', color);
@@ -260,7 +283,6 @@ function get_graph_graphics(graph, X, clusters) {
         }
 
         $(ui).hover(function() {
-          var link_id = STATE.edges.indexOf(link.fromId + ',' + link.toId);
           var words = [];
           var topics_perc = [];
 
@@ -292,9 +314,6 @@ function get_graph_graphics(graph, X, clusters) {
             var sum = topics_perc.reduce(function(a, b) { return a + b; }, 0);
             topics_perc = topics_perc.map(x => x/sum);
             
-            // TODO: proper topic color is too slow for now
-            // var idx_max = topics_perc.indexOf(Math.max.apply(Math, topics_perc))
-            // color = hashedColor('t'+idx_max);
           }
 
           ui.attr('stroke-width', 3);

@@ -115,8 +115,10 @@ class Sidebar extends React.Component {
       this.updateClusters = this.updateClusters.bind(this);
       this.updateTopics = this.updateTopics.bind(this);
 
-      this.props.state.current_selected_topics = this.state.topics;
-      this.props.state.current_selected_clusters = this.state.clusters;
+      if (GRAPH.result) {
+        this.props.state.current_selected_topics = this.state.topics;
+        this.props.state.current_selected_clusters = this.state.clusters;
+      }
     }
     toggleLog() {
         this.setState({showLog: !this.state.showLog});
