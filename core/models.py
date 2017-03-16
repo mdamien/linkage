@@ -37,7 +37,7 @@ class ProcessingResult(models.Model):
     clusters_mat = models.TextField(blank=True, default='')
     topics_mat = models.TextField(blank=True, default='')
     topics_per_edges_mat = models.TextField(blank=True, default='')
-    crit = models.FloatField(default=-100000000000)
+    crit = models.FloatField(null=True, blank=True, default=None)
 
     created_at = models.DateTimeField(auto_now_add=True)
 

@@ -10,8 +10,8 @@ import { hashedColor, COLORS, edgesArr, n_best_elems } from './graph/utils';
 var STATE = null;
 var RENDERER = null;
 
-function init() {
-  STATE = {};
+function init(state_init = {}) {
+  STATE = state_init;
   var graph = Viva.Graph.graph();
 
   var labels = Papa.parse(GRAPH.labels, {delimiter: ' ', skipEmptyLines: true}).data[0];
@@ -369,11 +369,12 @@ socket.onmessage = function(e) {
     clusters: STATE.current_selected_clusters,
     topics: STATE.current_selected_topics,
   }, function(data) {
-    if (!STATE.current_selected_clusters && STATE.result) { // follow auto-clustering
-      STATE.force_use_result_param = true;
-    }
     GRAPH = data;
-    init();
+    if (!STATE.current_selected_clusters && data.result) { // follow auto-clustering
+      init({force_use_result_param: true})
+    } else {
+      init();
+    }
   });
 }
 

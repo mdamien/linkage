@@ -159,6 +159,7 @@ class Sidebar extends React.Component {
             clusters: GRAPH.result.param_clusters,
             topics: GRAPH.result.param_topics,
         })
+        props.state.force_use_result_param = false;
       }
     }
     render() {
