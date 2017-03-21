@@ -18,7 +18,9 @@ def header(request):
             L.a(href='/') / (L.h2 / 'Linkage'),
         ),
         L.div('.col-md-6.text-right') / (
-            L.a('.btn.btn-link', href='/admin/', style='margin-top: 20px;display:inline-block') / 'admin',
+            (
+                L.a('.btn.btn-link', href='/admin/', style='margin-top: 20px;display:inline-block') / 'admin'
+            ) if request.user.is_staff else None,
             L.a('.btn.btn-link', href='/accounts/logout/', style='margin-top: 20px;display:inline-block') / 'logout',
         ) if request.user.is_authenticated else None,
     ), L.hr
@@ -225,8 +227,7 @@ def index(request, graphs, messages):
         L.script(src='/static/js/src/import.js?v=' + COMMIT_HASH),
     ))
 
-
-def login(request, message):
+def login(request):
     return base((
         L.div('.container') / (
             header(request),
@@ -249,6 +250,24 @@ def login(request, message):
                             L.button('.btn.btn-primary', type='submit') / 'Login'
                         )
                     ),
+                ),
+            ),
+            FOOTER,
+            SENTRY,
+        ),
+    ))
+
+
+def landing(request):
+    return base((
+        L.div('.container') / (
+            header(request),
+            L.div('.row') / (
+                L.div('.col-md-3.center-block.text-center', style='float:none') / (
+                    L.p / (
+                        'Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet.'
+                    ),
+                    L.a('.btn.btn-primary.btn-large', href='/') / 'Try Linkage'
                 ),
             ),
             FOOTER,

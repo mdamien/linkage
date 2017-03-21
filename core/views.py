@@ -114,6 +114,9 @@ def result(request, pk):
         pass
     return HttpResponse(templates.result(request, graph, result))
 
+def landing(request):
+    return HttpResponse(templates.landing(request))
+
 @login_required
 def api_result(request, pk):
     graph = get_object_or_404(models.Graph, pk=pk)
