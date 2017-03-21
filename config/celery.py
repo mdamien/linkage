@@ -59,6 +59,9 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
         db_result.clusters_mat = result['clusters']
         db_result.topics_mat = result['topics']
         db_result.topics_per_edges_mat = result['topics_per_edges']
+        db_result.rho_mat = result['rho_mat']
+        db_result.pi_mat = result['pi_mat']
+        db_result.theta_qr_mat = result['theta_qr_mat']
         db_result.crit = result['crit']
         db_result.save()
 

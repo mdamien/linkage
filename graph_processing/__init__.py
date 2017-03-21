@@ -69,13 +69,34 @@ def process(X, tdm, n_clusters, n_topics, id=0, n_clusters_max=None, n_topics_ma
         result['topics_per_edges'] = topics_per_edges
 
         try:
+            rho_mat = open(run_dir + 'out/rho(%s)' % group).read()
+        except FileNotFoundError:
+            print('ERROR: NO TOPICS FOR %s' % group)
+            rho_mat = ''
+        result['rho_mat'] = rho_mat
+
+        try:
+            pi_mat = open(run_dir + 'out/PI(%s)' % group).read()
+        except FileNotFoundError:
+            print('ERROR: NO TOPICS FOR %s' % group)
+            pi_mat = ''
+        result['pi_mat'] = pi_mat
+
+        try:
+            theta_qr_mat = open(run_dir + 'out/thetaQR(%s)' % group).read()
+        except FileNotFoundError:
+            print('ERROR: NO TOPICS FOR %s' % group)
+            theta_qr_mat = ''
+        result['theta_qr_mat'] = theta_qr_mat
+
+        try:
             crit = float(open(run_dir + 'out/crit(%s)' % group).read())
         except FileNotFoundError:
             print('ERROR: NO CRIT FOR %s' % group)
             crit = 0
         result['crit'] = crit
 
-    os.system('rm -rf %s' % (run_dir,))
+    # os.system('rm -rf %s' % (run_dir,))
 
     return groups, log
 

@@ -39,6 +39,13 @@ class ProcessingResult(models.Model):
     topics_per_edges_mat = models.TextField(blank=True, default='')
     crit = models.FloatField(null=True, blank=True, default=None)
 
+    # clust %
+    rho_mat = models.TextField(blank=True, default='')
+    # clust to clust %
+    pi_mat = models.TextField(blank=True, default='')
+    # topics in clust => clust
+    theta_qr_mat = models.TextField(blank=True, default='')
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -49,6 +56,9 @@ class ProcessingResult(models.Model):
             'clusters_mat': self.clusters_mat,
             'topics_mat': self.topics_mat,
             'topics_per_edges_mat': self.topics_per_edges_mat,
+            'rho_mat': self.rho_mat,
+            'pi_mat': self.pi_mat,
+            'theta_qr_mat': self.theta_qr_mat,
             'log': self.log,
             'progress': self.progress,
             'param_clusters': self.param_clusters,
