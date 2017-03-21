@@ -12,14 +12,18 @@ csv.field_size_limit(sys.maxsize) # http://stackoverflow.com/questions/15063936/
 DEBUG = settings.DEBUG
 COMMIT_HASH = settings.COMMIT_HASH
 
+SPACER = raw('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;') # dat spacer
+SHORT_SPACER = raw('&nbsp;&nbsp;')
+
 def header(request):
     return L.div('.row') / (
         L.div('.col-md-2') / (
             L.a(href='/') / (L.h2 / 'Linkage'),
         ),
-        L.div('.col-md-2') / (
-            L.a('.btn.btn-link', href='/jobs/add/', style='margin-top: 20px;display:inline-block') / 'new job',
-            L.a('.btn.btn-link', href='/jobs/', style='margin-top: 20px;display:inline-block') / 'jobs',
+        L.div('.col-md-5') / (
+            L.a('.btn.btn-primary', href='/jobs/add/', style='margin-top: 20px;display:inline-block') / 'New Job',
+            SHORT_SPACER,
+            L.a('.btn.btn-primary', href='/jobs/', style='margin-top: 20px;display:inline-block') / 'Jobs',
         ) if request.user.is_authenticated else None,
         L.div('.col-md-5.text-right') / (
             (
@@ -29,7 +33,6 @@ def header(request):
         ) if request.user.is_authenticated else None,
     ), L.hr
 
-SPACER = raw('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;') # dat spacer
 FOOTER = L.div('.row') / (
     L.div('.col-md-12 text-center') / (
         L.hr,
@@ -107,18 +110,34 @@ def api_result(request, graph, result):
     return serialize_graph(graph, result)
 
 
-def index(request, messages):
+def index(request, messages, import_type_selected='coauth'):
+    if not import_type_selected:
+        import_type_selected = 'coauth'
     return base((
         L.div('.container') / (
             header(request),
             L.div('.row') / (
-                L.div('.col-md-6') / (
+                L.h4 / 'Import',
+            ),
+            L.div('.row') / (
+                L.div('.col-md-3') / (
+                    L.div('.list-group') / (
+                        L.a('.list-group-item' + ('.active' if import_type_selected == 'coauth' else ''),
+                            href='?import_type=coauth') / 'Co-authorship network',
+                        L.a('.list-group-item' + ('.active' if import_type_selected == 'mbox' else ''),
+                            href='?import_type=mbox') / 'MBox',
+                        L.a('.list-group-item' + ('.active' if import_type_selected == 'csv' else ''),
+                            href='?import_type=csv') / 'CSV',
+                        L.a('.list-group-item' + ('.active' if import_type_selected == 'sample' else ''),
+                            href='?import_type=sample') / 'Sample',
+                    ),
+                ),
+                L.div('.col-md-9') / (
                     (L.div('.alert.alert-' + msgtype) / msg for msgtype, msg in messages),
                     L.form('.row.form-horizontal', method="post", enctype="multipart/form-data") / (
                         L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
                         L.input(type='hidden', name='action', value='import'),
-                        L.p / (
-                            L.h4 / 'Import a graph via a search request',
+                        (
                             L.div('.row') / (
                                 L.div('.col-md-5') / L.input('.form-control', type='text', name='q', placeholder="'security', 'defense', 'weapons', 'deep learning',.."),
                                 L.div('.col-md-7') / (
@@ -127,7 +146,8 @@ def index(request, messages):
                                     L.input('.btn.btn-primary.btn-large', name='choice_hal', type='submit', value='search HAL'),
                                 )
                             ),
-                            L.h4 / 'Or via a file',
+                        ) if import_type_selected == 'coauth' else None,
+                        (
                             L.div('.row') / (
                                 L.div('.col-md-7') / L.input('form-control', type='file', name='csv_file'),
                                 L.div('.col-md-5') / (
@@ -141,7 +161,8 @@ def index(request, messages):
                                         data_balloon="A list of edges formatted like this: 'node1,node2,text'") / '?',
                                 )
                             ),
-                            L.br,
+                        ) if import_type_selected == 'csv' else None,
+                        (
                             L.div('.row') / (
                                 L.div('.col-md-7') / L.input('form-control', type='file', name='mbox_file'),
                                 L.div('.col-md-5') / (
@@ -159,7 +180,8 @@ def index(request, messages):
                                     ),                                 
                                 ),
                             ),
-                            L.br,
+                        ) if import_type_selected == 'mbox' else None,
+                        (
                             L.div('.row') / (
                                 L.div('.col-md-7') / (
                                     L.select('.form-control', name='sample_dropdown') / (
@@ -172,34 +194,35 @@ def index(request, messages):
                                     L.input('.btn.btn-primary.btn-large', name='choice_dropdown', type='submit', value='Import'),
                                 )
                             ),
-                            L.div('.form-group') / (
-                                L.div('.col-md-3.control-label') / (L.strong / 'Clustering'),
-                                L.div('.col-md-9') / (
-                                    L.div('.radio') / (
-                                        L.label / (
-                                            L.input(name='clustering', value='auto', checked='', type='radio'), 'Auto',
-                                        ),
+                        ) if import_type_selected == 'sample' else None,
+                        L.hr,
+                        L.div('.form-group') / (
+                            L.div('.col-md-3.control-label') / (L.strong / 'Clustering'),
+                            L.div('.col-md-9') / (
+                                L.div('.radio') / (
+                                    L.label / (
+                                        L.input(name='clustering', value='auto', checked='', type='radio'), 'Auto',
                                     ),
-                                    L.div('.radio') / (
-                                        L.label / (
-                                            L.input(name='clustering', value='manual', type='radio'), 'Manual',
-                                        ),
-                                    )
                                 ),
+                                L.div('.radio') / (
+                                    L.label / (
+                                        L.input(name='clustering', value='manual', type='radio'), 'Manual',
+                                    ),
+                                )
                             ),
-                            L.div('.form-group._clustering-options') / (
-                                L.div('.col-md-3.control-label') / (L.strong / 'Clusters (Q)'),
-                                L.div('.col-md-9') / (
-                                    L.input(name='clusters', value='10', type='number'),
-                                ),
+                        ),
+                        L.div('.form-group._clustering-options.hide') / (
+                            L.div('.col-md-3.control-label') / (L.strong / 'Clusters (Q)'),
+                            L.div('.col-md-9') / (
+                                L.input(name='clusters', value='10', type='number'),
                             ),
-                            L.div('.form-group._clustering-options') / (
-                                L.div('.col-md-3.control-label') / (L.strong / 'Topics (K)'),
-                                L.div('.col-md-9') / (
-                                    L.input(name='topics', value='10', type='number'),
-                                ),
+                        ),
+                        L.div('.form-group._clustering-options.hide') / (
+                            L.div('.col-md-3.control-label') / (L.strong / 'Topics (K)'),
+                            L.div('.col-md-9') / (
+                                L.input(name='topics', value='10', type='number'),
                             ),
-                        )
+                        ),
                     )
                 ),
             ),
@@ -265,7 +288,6 @@ def jobs(request, graphs):
             L.div('.row') / (
                 (
                     L.div('.col-md-6') / (
-                        L.h4 / 'Uploaded graphs',
                         L.div('.list-group') / (
                             L.a('.list-group-item', href=graph.get_absolute_url()) / (
                                 L.div('.row') / (
@@ -282,9 +304,12 @@ def jobs(request, graphs):
                                     )
                                 )
                                 
-                            ) for graph in graphs),
+                            ) for graph in graphs
+                        ),
                     ),
-                ) if len(graphs) > 0 else None,
+                ) if len(graphs) > 0 else (
+                    L.div('.alert.alert-warning') / 'No jobs yet'
+                ),
             ),
             FOOTER
         ),

@@ -96,6 +96,7 @@ def index(request):
     return HttpResponse(templates.index(
         request,
         messages,
+        request.GET.get('import_type')
     ))
 
 @login_required
