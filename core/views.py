@@ -198,7 +198,7 @@ def login(request):
     if request.POST:
         login_view(request)
         if request.user.is_authenticated():
-            return redirect('/')
+            return redirect('/jobs/add/')
         else:
             message = "Please enter a correct username and password"
     return HttpResponse(templates.login(request, message))

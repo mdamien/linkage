@@ -209,7 +209,7 @@ def index(request, messages):
         L.script(src='/static/js/src/import.js?v=' + COMMIT_HASH),
     ))
 
-def login(request):
+def login(request, message):
     return base((
         L.div('.container') / (
             header(request),
@@ -249,7 +249,7 @@ def landing(request):
                     L.p / (
                         'Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet.'
                     ),
-                    L.a('.btn.btn-primary.btn-large', href='/') / 'Try Linkage'
+                    L.a('.btn.btn-primary.btn-large', href='/jobs/add/') / 'Try Linkage'
                 ),
             ),
             FOOTER,
