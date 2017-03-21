@@ -14,10 +14,14 @@ COMMIT_HASH = settings.COMMIT_HASH
 
 def header(request):
     return L.div('.row') / (
-        L.div('.col-md-6') / (
+        L.div('.col-md-2') / (
             L.a(href='/') / (L.h2 / 'Linkage'),
         ),
-        L.div('.col-md-6.text-right') / (
+        L.div('.col-md-2') / (
+            L.a('.btn.btn-link', href='/jobs/add/', style='margin-top: 20px;display:inline-block') / 'new job',
+            L.a('.btn.btn-link', href='/jobs/', style='margin-top: 20px;display:inline-block') / 'jobs',
+        ) if request.user.is_authenticated else None,
+        L.div('.col-md-5.text-right') / (
             (
                 L.a('.btn.btn-link', href='/admin/', style='margin-top: 20px;display:inline-block') / 'admin'
             ) if request.user.is_staff else None,
@@ -103,7 +107,7 @@ def api_result(request, graph, result):
     return serialize_graph(graph, result)
 
 
-def index(request, graphs, messages):
+def index(request, messages):
     return base((
         L.div('.container') / (
             header(request),
@@ -198,28 +202,6 @@ def index(request, graphs, messages):
                         )
                     )
                 ),
-                (
-                    L.div('.col-md-6') / (
-                        L.h4 / 'Uploaded graphs',
-                        L.div('.list-group') / (
-                            L.a('.list-group-item', href=graph.get_absolute_url()) / (
-                                L.div('.row') / (
-                                    L.div('.col-md-10') / (
-                                        str(graph)
-                                    ),
-                                    L.div('.col-md-2') / (
-                                        L.form(method='post') / (
-                                            L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
-                                            L.input(type='hidden', name='action', value='delete'),
-                                            L.input(type='hidden', name='graph_id', value=str(graph.pk)),
-                                            L.button('.btn.btn-primary.btn-xs', type='submit') / 'delete', # L.span('.glyphicon.glyphicon-remove'),
-                                        )
-                                    )
-                                )
-                                
-                            ) for graph in graphs),
-                    ),
-                ) if len(graphs) > 0 else None,
             ),
             FOOTER
         ),
@@ -273,4 +255,39 @@ def landing(request):
             FOOTER,
             SENTRY,
         ),
+    ))
+
+
+def jobs(request, graphs):
+    return base((
+        L.div('.container') / (
+            header(request),
+            L.div('.row') / (
+                (
+                    L.div('.col-md-6') / (
+                        L.h4 / 'Uploaded graphs',
+                        L.div('.list-group') / (
+                            L.a('.list-group-item', href=graph.get_absolute_url()) / (
+                                L.div('.row') / (
+                                    L.div('.col-md-10') / (
+                                        str(graph)
+                                    ),
+                                    L.div('.col-md-2') / (
+                                        L.form(method='post') / (
+                                            L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
+                                            L.input(type='hidden', name='action', value='delete'),
+                                            L.input(type='hidden', name='graph_id', value=str(graph.pk)),
+                                            L.button('.btn.btn-primary.btn-xs', type='submit') / 'delete', # L.span('.glyphicon.glyphicon-remove'),
+                                        )
+                                    )
+                                )
+                                
+                            ) for graph in graphs),
+                    ),
+                ) if len(graphs) > 0 else None,
+            ),
+            FOOTER
+        ),
+        JS_LIBS,
+        L.script(src='/static/js/src/import.js?v=' + COMMIT_HASH),
     ))

@@ -95,7 +95,6 @@ def index(request):
 
     return HttpResponse(templates.index(
         request,
-        models.Graph.objects.filter(user=request.user).order_by('-created_at'),
         messages,
     ))
 
@@ -116,6 +115,16 @@ def result(request, pk):
 
 def landing(request):
     return HttpResponse(templates.landing(request))
+
+@login_required
+def jobs(request):
+    return HttpResponse(templates.jobs(
+        request,
+        models.Graph.objects.filter(user=request.user).order_by('-created_at'),
+    ))
+
+def addjob(request):
+    return index(request)
 
 @login_required
 def api_result(request, pk):
