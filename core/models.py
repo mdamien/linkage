@@ -99,12 +99,7 @@ def graph_data_from_links(links):
     edges = collections.OrderedDict()
     for link in links:
         if len(link) > 1:
-            start = node_to_i(link[0])
-            end = node_to_i(link[1])
-            edge_name = '%d,%d' % (start, end)
-            if edge_name not in edges:
-                edges[edge_name] = collections.Counter()
-            doc_terms = edges[edge_name]
+            tokens = []
             text = link[2] if len(link) > 1 else ''
             for token in word_tokenize(text.translate(punc_table)): # remove punctuation and tokenize
                 #if token not in stopwords:
@@ -113,6 +108,16 @@ def graph_data_from_links(links):
                     try:
                         int(token)
                     except:
+                        tokens.append(token)
+            if len(tokens) > 0: # filter empty links
+                start = node_to_i(link[0])
+                end = node_to_i(link[1])
+                if start != end:
+                    edge_name = '%d,%d' % (start, end)
+                    if edge_name not in edges:
+                        edges[edge_name] = collections.Counter()
+                    doc_terms = edges[edge_name]
+                    for token in tokens:
                         doc_terms[stemmer.stem(token)] += 1
 
     curr_edge = 0
