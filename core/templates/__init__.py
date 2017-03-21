@@ -33,20 +33,30 @@ def header(request):
         ) if request.user.is_authenticated else None,
     ), L.hr
 
-FOOTER = L.div('.row') / (
-    L.div('.col-md-12 text-center') / (
-        L.hr,
-        L.a(href='http://www.parisdescartes.fr/') / L.img(src='/static/img/descartes.png', height='60'),
-        SPACER,
-        L.a(href='http://map5.mi.parisdescartes.fr/') / L.img(src='/static/img/map5.jpg', height='60'),
-        SPACER,
-        L.a(href='http://www.cnrs.fr/') / L.img(src='/static/img/cnrs.png', height='60'),
-        SPACER,
-        L.a(href='http://www.idfinnov.com/') / L.img(src='/static/img/idfinnov.jpg', height='60'),
-        SPACER,
-        L.a(href='http://samm.univ-paris1.fr/') / L.img(src='/static/img/samm.png', height='60'),
-        SPACER,
-        L.a(href='https://www.univ-paris1.fr/') / L.img(src='/static/img/paris1.png', height='60'),
+FOOTER = (
+    L.div('.row') / (
+        L.div('.col-md-12 text-center') / (
+            L.div / (
+                L.hr,
+                L.a(href='http://www.parisdescartes.fr/') / L.img(src='/static/img/descartes.png', height='60'),
+                SPACER,
+                L.a(href='http://map5.mi.parisdescartes.fr/') / L.img(src='/static/img/map5.jpg', height='60'),
+                SPACER,
+                L.a(href='http://www.cnrs.fr/') / L.img(src='/static/img/cnrs.png', height='60'),
+                SPACER,
+                L.a(href='http://www.idfinnov.com/') / L.img(src='/static/img/idfinnov.jpg', height='60'),
+                SPACER,
+                L.a(href='http://samm.univ-paris1.fr/') / L.img(src='/static/img/samm.png', height='60'),
+                SPACER,
+                L.a(href='https://www.univ-paris1.fr/') / L.img(src='/static/img/paris1.png', height='60'),
+            ),
+            L.br,
+            L.div / (
+                L.a(href='/privacy_policy/') / 'Privacy Policy',
+                SPACER,
+                L.a(href='/terms/') / 'Terms and conditions'
+            ),
+        ),
     ),
 )
 
@@ -255,6 +265,10 @@ def login(request, message):
                             L.button('.btn.btn-primary', type='submit') / 'Login'
                         )
                     ),
+                    L.p / (
+                        'No account yet ? you can ',
+                        L.a(href='/accounts/signup/') / 'sign up here',
+                    )
                 ),
             ),
             FOOTER,
