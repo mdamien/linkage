@@ -83,7 +83,7 @@ JS_LIBS = (
         L.script(src='/static/js/vendor/bootstrap.js'),
 )
 
-def serialize_graph(graph, result):
+def serialize_graph(graph, result, simple=False):
     data = {
         'id': graph.pk,
         'name': graph.name,
@@ -93,7 +93,13 @@ def serialize_graph(graph, result):
         'dictionnary': graph.dictionnary,
         'directed': graph.directed,
         'created_at': naturaltime(graph.created_at),
+        'url': graph.get_absolute_url(),
     }
+    if simple:
+        del data['tdm']
+        del data['dictionnary']
+        del data['labels']
+        del data['edges']
     if result:
         data['result'] = result.serialize()
     return data
@@ -110,7 +116,7 @@ def result(request, graph, result):
                     L.div('.panel.panel-default', style='position:relative') / (
                         L.div('#_graph-sidebar'),
                         L.div('#_graph.panel-body') / (
-                            L.h3('#_loading.text-center') / 'Loading...'
+                            L.h3('#_loading.text-center') / 'Loading…'
                         ),
                     )
                 ),
@@ -120,7 +126,7 @@ def result(request, graph, result):
         JS_LIBS,
         L.script(src='/static/js/vendor/vivagraph.js'),
         L.script(src='/static/js/vendor/papaparse.js'),
-        L.script / raw("var GRAPH = {}".format(json.dumps(serialize_graph(graph, result)))),
+        L.script / raw("var GRAPH = {};".format(json.dumps(serialize_graph(graph, result)))),
         L.script(src='/static/js/dist/vendor.js?v=' + COMMIT_HASH),
         L.script(src='/static/js/dist/graph.js?v=' + COMMIT_HASH),
     ), title=graph.name)
@@ -302,8 +308,8 @@ def landing(request):
                 ),
             ),
             FOOTER,
-            SENTRY,
         ),
+        SENTRY,
     ))
 
 
@@ -340,37 +346,7 @@ def jobs(request, graphs):
             header(request, 'jobs'),
             L.div('.row') / (
                 (
-                    L.div('.col-md-12') / (
-                        L.br,
-                        (
-                            L.div('.panel.panel-default') / (
-                                L.div('.panel-heading') / graph.name,
-                                L.div('.panel-body') / (
-                                    L.div('.row') / (
-                                        L.div('.col-md-1') / (
-                                            L.a('.btn.btn.btn-primary',
-                                                href=graph.get_absolute_url()) / 'View'
-                                        ),
-                                        L.div('.col-md-10') / (
-                                            'Estimated time to process: ',
-                                            L.strong / '4h00',
-                                            L.br,
-                                            'Time Left: ',
-                                            L.strong / '3h03',
-                                        ),
-                                        L.div('.col-md-1.text-right') / (
-                                            L.form(method='post') / (
-                                                L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
-                                                L.input(type='hidden', name='action', value='delete'),
-                                                L.input(type='hidden', name='graph_id', value=str(graph.pk)),
-                                                L.button('.btn.btn-primary.btn-xs', type='submit') / 'delete', # L.span('.glyphicon.glyphicon-remove'),
-                                            )
-                                        )
-                                    )
-                                )
-                            ) for graph in graphs
-                        ),
-                    ),
+                    L.div('#_jobs.col-md-12') / 'loading…',
                 ) if len(graphs) > 0 else (
                     L.div('.alert.alert-warning') / 'No jobs yet'
                 ),
@@ -378,5 +354,9 @@ def jobs(request, graphs):
             FOOTER
         ),
         JS_LIBS,
-        L.script(src='/static/js/src/import.js?v=' + COMMIT_HASH),
+        L.script / raw("var JOBS = {};".format(json.dumps(
+            [serialize_graph(g, None, simple=True) for g in graphs]
+        ))),
+        L.script(src='/static/js/dist/vendor.js?v=' + COMMIT_HASH),
+        L.script(src='/static/js/dist/jobs.js?v=' + COMMIT_HASH),
     ))

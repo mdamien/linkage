@@ -86,7 +86,7 @@ def index(request):
 
                     from config.celery import process_graph
                     process_graph.delay(graph.pk, result_pk, ws_delay=2)
-                    return redirect(graph)
+                    return redirect('/jobs/')
 
     if request.POST and request.POST['action'] == 'delete':
         graph = get_object_or_404(models.Graph, pk=request.POST['graph_id'])

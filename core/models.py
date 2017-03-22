@@ -3,8 +3,17 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.urls import reverse
 from django.contrib.auth.models import User
 
-class Graph(models.Model):
+class Graph(models.Model): # = Job
     name = models.CharField(max_length=100)
+
+    # job stuff
+    job_time = models.FloatField(default=0)
+    job_log = models.TextField(blank=True, default='')
+    job_progress = models.FloatField(default=0)
+    job_param_clusters = models.IntegerField(default=3)
+    job_param_topics = models.IntegerField(default=3)
+    job_param_clusters_max = models.IntegerField(default=3)
+    job_param_topics_max = models.IntegerField(default=3)
 
     # array of labels for each node
     labels = models.TextField(blank=True, default='')
@@ -28,12 +37,6 @@ class Graph(models.Model):
 
 class ProcessingResult(models.Model):
     graph = models.ForeignKey(Graph)
-    time = models.FloatField(default=0)
-    log = models.TextField(blank=True, default='')
-    progress = models.FloatField(default=0)
-
-    param_clusters = models.IntegerField(default=3)
-    param_topics = models.IntegerField(default=3)
 
     clusters_mat = models.TextField(blank=True, default='')
     topics_mat = models.TextField(blank=True, default='')
@@ -60,12 +63,7 @@ class ProcessingResult(models.Model):
             'rho_mat': self.rho_mat,
             'pi_mat': self.pi_mat,
             'theta_qr_mat': self.theta_qr_mat,
-            'log': self.log,
-            'progress': self.progress,
-            'param_clusters': self.param_clusters,
-            'param_topics': self.param_topics,
             'crit': self.crit,
-            'time': self.time,
         }
 
 
