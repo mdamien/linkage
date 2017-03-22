@@ -15,7 +15,7 @@ COMMIT_HASH = settings.COMMIT_HASH
 SPACER = raw('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;') # dat spacer
 SHORT_SPACER = raw('&nbsp;&nbsp;')
 
-def header(request):
+def header(request, page_name=''):
     return L.div('.row') / (
         L.div('.col-md-2') / (
             L.a(href='/') / (
@@ -23,9 +23,16 @@ def header(request):
             ),
         ),
         L.div('.col-md-5') / (
-            L.a('.btn.btn-primary', href='/jobs/add/', style='margin-top: 20px;display:inline-block') / 'New Job',
-            SHORT_SPACER,
-            L.a('.btn.btn-primary', href='/jobs/', style='margin-top: 20px;display:inline-block') / 'Jobs',
+            L.ul('.nav.nav-pills') / (
+                L.li('.active' if page_name == 'addjob' else '',
+                        style='margin-top: 20px;margin-right: 20px;display:inline-block') / (
+                    L.a(href='/jobs/add/') / 'New Job',
+                ),
+                L.li('.active' if page_name == 'jobs' else '',
+                        style='margin-top: 20px;display:inline-block') / (
+                    L.a(href='/jobs/') / 'Jobs',
+                ),
+            ),
         ) if request.user.is_authenticated else None,
         L.div('.col-md-5.text-right') / (
             (
@@ -128,9 +135,11 @@ def index(request, messages, import_type_selected='coauth'):
         import_type_selected = 'coauth'
     return base((
         L.div('.container') / (
-            header(request),
+            header(request, 'addjob'),
             L.div('.row') / (
-                L.h4 / 'Import',
+                L.div('.col-md-12') / (
+                    L.h4 / 'Import',
+                ),
             ),
             L.div('.row') / (
                 L.div('.col-md-3') / (
@@ -328,26 +337,37 @@ def terms(request):
 def jobs(request, graphs):
     return base((
         L.div('.container') / (
-            header(request),
+            header(request, 'jobs'),
             L.div('.row') / (
                 (
-                    L.div('.col-md-6') / (
-                        L.div('.list-group') / (
-                            L.a('.list-group-item', href=graph.get_absolute_url()) / (
-                                L.div('.row') / (
-                                    L.div('.col-md-10') / (
-                                        str(graph)
-                                    ),
-                                    L.div('.col-md-2') / (
-                                        L.form(method='post') / (
-                                            L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
-                                            L.input(type='hidden', name='action', value='delete'),
-                                            L.input(type='hidden', name='graph_id', value=str(graph.pk)),
-                                            L.button('.btn.btn-primary.btn-xs', type='submit') / 'delete', # L.span('.glyphicon.glyphicon-remove'),
+                    L.div('.col-md-12') / (
+                        L.br,
+                        (
+                            L.div('.panel.panel-default') / (
+                                L.div('.panel-heading') / graph.name,
+                                L.div('.panel-body') / (
+                                    L.div('.row') / (
+                                        L.div('.col-md-1') / (
+                                            L.a('.btn.btn.btn-primary',
+                                                href=graph.get_absolute_url()) / 'View'
+                                        ),
+                                        L.div('.col-md-10') / (
+                                            'Estimated time to process: ',
+                                            L.strong / '4h00',
+                                            L.br,
+                                            'Time Left: ',
+                                            L.strong / '3h03',
+                                        ),
+                                        L.div('.col-md-1.text-right') / (
+                                            L.form(method='post') / (
+                                                L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
+                                                L.input(type='hidden', name='action', value='delete'),
+                                                L.input(type='hidden', name='graph_id', value=str(graph.pk)),
+                                                L.button('.btn.btn-primary.btn-xs', type='submit') / 'delete', # L.span('.glyphicon.glyphicon-remove'),
+                                            )
                                         )
                                     )
                                 )
-                                
                             ) for graph in graphs
                         ),
                     ),
