@@ -108,8 +108,8 @@ def result(request, graph, result):
                     )
                 ),
             ),
+            FOOTER,
         ),
-        FOOTER,
         JS_LIBS,
         L.script(src='/static/js/vendor/vivagraph.js'),
         L.script(src='/static/js/vendor/papaparse.js'),

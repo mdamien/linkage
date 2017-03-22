@@ -189,7 +189,16 @@ class Sidebar extends React.Component {
                 </div>
                 {GRAPH.result ? <div className='panel-body'>
                     time taken <strong>{(GRAPH.result.time).toFixed(2)}s</strong><br/>
-                    clustering score: <strong>{GRAPH.result.crit}</strong>
+                    clustering score: <strong>{GRAPH.result.crit}</strong><br/>
+                    {GRAPH.result.log ? <div>
+                        <a className='btn btn-info btn-xs' onClick={this.toggleLog}>
+                            {this.state.showLog ? 'hide' : 'show'} log
+                        </a>
+                        {this.state.showLog ? <div>
+                            <br/>
+                            <pre>{GRAPH.result.log}</pre>
+                        </div> : null}
+                    </div> : null}
                 </div> : <div className='panel-body'>
                     {GRAPH.result && GRAPH.result.progress == 1 ?
                         'An error occured while processing.'
@@ -240,15 +249,6 @@ class Sidebar extends React.Component {
                     )}
                 </div> : null}
             </div>
-            {GRAPH.result && GRAPH.result.log ? <div>
-                <a className='btn btn-info btn-xs' onClick={this.toggleLog}>
-                    {this.state.showLog ? 'hide' : 'show'} log
-                </a>
-                {this.state.showLog ? <div>
-                    <br/>
-                    <pre>{GRAPH.result.log}</pre>
-                </div> : null}
-            </div> : null}
         </div>;
     }
 }

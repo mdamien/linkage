@@ -5,7 +5,7 @@ module.exports = {
   devtool: 'source-map',
   entry: {
     graph: './src/graph.js',
-    vendor: ['react', 'react-dom'],
+    vendor: ['react', 'react-dom', 'rc-slider', 'react-autocomplete'],
   },
   output: {
     filename: '[name].js',
