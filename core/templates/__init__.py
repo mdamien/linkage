@@ -94,6 +94,9 @@ def serialize_graph(graph, result, simple=False):
         'directed': graph.directed,
         'created_at': naturaltime(graph.created_at),
         'url': graph.get_absolute_url(),
+        'log': graph.job_log,
+        'time': graph.job_time,
+        'progress': graph.job_progress,
     }
     if simple:
         del data['tdm']
@@ -306,6 +309,43 @@ def landing(request):
                     ),
                     L.a('.btn.btn-primary.btn-large', href='/jobs/add/') / 'Try Linkage'
                 ),
+            ),
+            FOOTER,
+        ),
+        SENTRY,
+    ))
+
+
+def details(request, graph, results):
+    return base((
+        L.div('.container') / (
+            header(request),
+            L.div('.row') / (
+                L.h3 / 'Details',
+                L.code / graph.name,
+                L.h4 / 'Results',
+                L.table('.table') / (
+                    L.thead / (
+                        L.tr / (
+                            L.th / 'topics Q',
+                            L.th / 'clusters K',
+                            L.th / 'crit',
+                            L.th / 'clusters result',
+                        ),
+                    ),
+                    (
+                        (
+                            L.tbody / (
+                                L.tr / (
+                                    L.td / str(result.param_topics),
+                                    L.td / str(result.param_clusters),
+                                    L.td / str(result.crit),
+                                    L.td / result.clusters_mat,
+                                )
+                            )
+                        ) for result in results
+                    ),
+                )
             ),
             FOOTER,
         ),

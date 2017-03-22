@@ -38,6 +38,9 @@ class Graph(models.Model): # = Job
 class ProcessingResult(models.Model):
     graph = models.ForeignKey(Graph)
 
+    param_clusters = models.IntegerField(default=3)
+    param_topics = models.IntegerField(default=3)
+
     clusters_mat = models.TextField(blank=True, default='')
     topics_mat = models.TextField(blank=True, default='')
     topics_per_edges_mat = models.TextField(blank=True, default='')

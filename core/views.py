@@ -88,11 +88,6 @@ def index(request):
                     process_graph.delay(graph.pk, result_pk, ws_delay=2)
                     return redirect('/jobs/')
 
-    if request.POST and request.POST['action'] == 'delete':
-        graph = get_object_or_404(models.Graph, pk=request.POST['graph_id'])
-        graph.delete()
-        return redirect('/')
-
     return HttpResponse(templates.index(
         request,
         messages,
@@ -114,14 +109,32 @@ def result(request, pk):
         pass
     return HttpResponse(templates.result(request, graph, result))
 
+
+@login_required
+def details(request, pk):
+    graph = get_object_or_404(models.Graph, pk=pk)
+    if request.user.pk != graph.user.pk:
+        raise PermissionDenied
+    results = models.ProcessingResult.objects \
+            .filter(graph=graph) \
+            .order_by('-crit')
+    return HttpResponse(templates.details(request, graph, results))
+
+
 def landing(request):
     return HttpResponse(templates.landing(request))
+
 
 def terms(request):
     return HttpResponse(templates.terms(request))
 
+
 @login_required
 def jobs(request):
+    if request.POST and request.POST['action'] == 'delete':
+        graph = get_object_or_404(models.Graph, pk=request.POST['graph_id'])
+        graph.delete()
+
     return HttpResponse(templates.jobs(
         request,
         models.Graph.objects.filter(user=request.user).order_by('-created_at'),
