@@ -169,6 +169,11 @@ function get_graph_graphics(graph, X, clusters) {
       var is_cluster = node.data && node.data.isCluster;
 
       var color = '#aaa';
+
+      if (is_cluster) {
+        color = hashedColor(node.id);
+      }
+
       if (!is_cluster && clusters && clusters[node.id] !== undefined) {
         color = hashedColor(clusters[node.id]);
       }
