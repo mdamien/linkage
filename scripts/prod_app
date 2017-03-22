@@ -1,2 +1,2 @@
-./manage.py runworker --settings config.settings_dev
+./manage.py runworker --settings config.settings_prod
 

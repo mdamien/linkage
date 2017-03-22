@@ -1,5 +1,5 @@
 
 begin
     set -lx DJANGO_SETTINGS_MODULE config.settings_prod
-		celery -A config worker -l info --autoreload
+		celery -A config worker -l info --autoreload -c 4
 end
