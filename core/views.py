@@ -117,6 +117,9 @@ def result(request, pk):
 def landing(request):
     return HttpResponse(templates.landing(request))
 
+def terms(request):
+    return HttpResponse(templates.terms(request))
+
 @login_required
 def jobs(request):
     return HttpResponse(templates.jobs(

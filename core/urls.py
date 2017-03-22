@@ -12,4 +12,5 @@ urlpatterns = [
     url(r'^result/(?P<pk>\d+)/cluster_it/$', views.api_cluster),
     url(r'^accounts/login/$', views.login, name='login'),
     url(r'^accounts/logout/$', views.logout, name='logout'),
+    url(r'^about/terms/$', views.terms),
 ]

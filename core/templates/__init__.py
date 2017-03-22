@@ -54,9 +54,9 @@ FOOTER = (
             ),
             L.br,
             L.div / (
-                L.a(href='/privacy_policy/') / 'Privacy Policy',
+                L.a(href='/about/terms/') / 'Privacy Policy',
                 SPACER,
-                L.a(href='/terms/') / 'Terms and conditions',
+                L.a(href='/about/terms/') / 'Terms and conditions',
             ),
         ),
     ),
@@ -290,6 +290,33 @@ def landing(request):
                         'Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet.'
                     ),
                     L.a('.btn.btn-primary.btn-large', href='/jobs/add/') / 'Try Linkage'
+                ),
+            ),
+            FOOTER,
+            SENTRY,
+        ),
+    ))
+
+
+def terms(request):
+    return base((
+        L.div('.container') / (
+            header(request),
+            L.div('.row') / (
+                L.div('.col-md-12') / (
+                    L.h3 / 'Terms and conditions',
+                    L.p / (
+                        'Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet.'
+                    ),
+                    L.p / (
+                        'Lorem. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet.'
+                    ),
+                    L.p / (
+                        'Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet.'
+                    ),
+                    L.p / (
+                        'Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet.'
+                    ),
                 ),
             ),
             FOOTER,
