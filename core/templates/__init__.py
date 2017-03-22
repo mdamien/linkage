@@ -18,7 +18,9 @@ SHORT_SPACER = raw('&nbsp;&nbsp;')
 def header(request):
     return L.div('.row') / (
         L.div('.col-md-2') / (
-            L.a(href='/') / (L.h2 / 'Linkage'),
+            L.a(href='/') / (
+                L.h2 / ('Linkage' + ('*' if DEBUG else None)),
+            ),
         ),
         L.div('.col-md-5') / (
             L.a('.btn.btn-primary', href='/jobs/add/', style='margin-top: 20px;display:inline-block') / 'New Job',
@@ -54,7 +56,7 @@ FOOTER = (
             L.div / (
                 L.a(href='/privacy_policy/') / 'Privacy Policy',
                 SPACER,
-                L.a(href='/terms/') / 'Terms and conditions'
+                L.a(href='/terms/') / 'Terms and conditions',
             ),
         ),
     ),
@@ -107,6 +109,7 @@ def result(request, graph, result):
                 ),
             ),
         ),
+        FOOTER,
         JS_LIBS,
         L.script(src='/static/js/vendor/vivagraph.js'),
         L.script(src='/static/js/vendor/papaparse.js'),

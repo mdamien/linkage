@@ -185,6 +185,19 @@ class Sidebar extends React.Component {
             </div>
             <div className='panel panel-default'>
                 <div className='panel-heading'>
+                    <h3 className='panel-title'>Result</h3>
+                </div>
+                {GRAPH.result ? <div className='panel-body'>
+                    time taken <strong>{(GRAPH.result.time).toFixed(2)}s</strong><br/>
+                    clustering score: <strong>{GRAPH.result.crit}</strong>
+                </div> : <div className='panel-body'>
+                    {GRAPH.result && GRAPH.result.progress == 1 ?
+                        'An error occured while processing.'
+                        : 'Processing graph...'}
+                </div>}
+            </div>
+            <div className='panel panel-default'>
+                <div className='panel-heading'>
                     <h3 className='panel-title'>Clusters 
                         {state.clusterToNodes ?
                             <span> - {Object.keys(state.clusterToNodes).length}</span>
@@ -204,11 +217,7 @@ class Sidebar extends React.Component {
                             {ColorSquare(hashedColor(key))} {state.clusterToNodes[key].length}
                         </div>
                     )}
-                </div> : <div className='list-group-item'>
-                    {GRAPH.result && GRAPH.result.progress == 1 ?
-                        'An error occured while processing.'
-                        : 'Processing graph...'}
-                </div>}
+                </div> : null}
             </div>
             <div className='panel panel-default'>
                 <div className='panel-heading'>

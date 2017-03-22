@@ -28,6 +28,7 @@ class Graph(models.Model):
 
 class ProcessingResult(models.Model):
     graph = models.ForeignKey(Graph)
+    time = models.FloatField(default=0)
     log = models.TextField(blank=True, default='')
     progress = models.FloatField(default=0)
 
@@ -64,6 +65,7 @@ class ProcessingResult(models.Model):
             'param_clusters': self.param_clusters,
             'param_topics': self.param_topics,
             'crit': self.crit,
+            'time': self.time,
         }
 
 

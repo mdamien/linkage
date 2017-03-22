@@ -17,8 +17,10 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
 
     print('Processing graph {} with result={}'.format(graph_pk, result_pk))
 
-    import csv, io, random
+    import csv, io, random, time
     from core.models import Graph, ProcessingResult
+
+    t = time.process_time()
 
     param_clusters = 2
     param_topics = 2
@@ -63,9 +65,9 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
         db_result.pi_mat = result['pi_mat']
         db_result.theta_qr_mat = result['theta_qr_mat']
         db_result.crit = result['crit']
+        db_result.time = time.process_time() - t
         db_result.save()
 
-    import time
     time.sleep(ws_delay)
 
     Group("result-%d" % graph.pk).send({
