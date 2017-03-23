@@ -1,0 +1,6 @@
+git pull --rebase
+cd core/static/js;webpack;cd ~/linkage
+vf activate linkage
+python manage.py collectstatic --noinput
+python manage.py migrate
+cowsay 'restart celery and app server plz :)' | lolcat

@@ -20,7 +20,7 @@ def header(request, page_name=''):
     return L.div('.row') / (
         L.div('.col-md-2') / (
             L.a(href='/') / (
-                L.h2 / ('Linkage' + ('*' if DEBUG else None)),
+                L.h2 / ('Linkage', ('*' if DEBUG else None)),
             ),
         ),
         L.div('.col-md-5') / (
