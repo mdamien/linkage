@@ -38,7 +38,7 @@ def process(X, tdm, n_clusters, n_topics, id=0, n_clusters_max=None, n_topics_ma
 
     groups = {}
     for q in range(n_clusters, n_clusters_max + 1):
-        for k in range(n_topics, n_topics + 1):
+        for k in range(n_topics, n_topics_max + 1):
             groups['%d,%d' % (k, q)] = {}
 
     if len(groups.keys()) == 0:

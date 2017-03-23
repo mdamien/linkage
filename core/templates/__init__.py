@@ -355,7 +355,9 @@ def details(request, graph, results):
                             )
                         ) for result in results
                     ),
-                )
+                ),
+                L.h4 / 'Log',
+                L.pre / graph.job_log,
             ),
             FOOTER,
         ),
