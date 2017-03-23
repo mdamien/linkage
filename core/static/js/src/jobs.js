@@ -45,7 +45,7 @@ class Job extends React.Component {
               </div>
               <div>Created: {job.created_at}</div>
               {finished ?
-                <div>Took <strong>{job.time.toFixed(2)}s</strong></div> :
+                <div>Took <strong>{(job.time*10).toFixed(2)}s</strong></div> :
                 null // <div>Est. time to process: <strong>3h30</strong> (~<strong>1h05</strong> left)</div>
               }
             </div>
