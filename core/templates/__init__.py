@@ -2,6 +2,7 @@ import random, collections, csv, json, io, sys, os
 
 from django.middleware.csrf import get_token
 from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.template.defaultfilters import filesizeformat
 from django.conf import settings
 
 from lys import L, raw
@@ -221,7 +222,12 @@ def index(request, messages, import_type_selected='coauth'):
                                 L.div('.col-md-7') / (
                                     L.select('.form-control', name='sample_dropdown') / (
                                         (
-                                            L.option(value=filename) / filename
+                                            L.option(value=filename) / (
+                                                filename,
+                                                ' (',
+                                                filesizeformat(os.stat('csv_samples/' + filename).st_size),
+                                                ')',
+                                            )
                                         ) for filename in sorted(os.listdir('csv_samples/'))
                                     )
                                 ),
