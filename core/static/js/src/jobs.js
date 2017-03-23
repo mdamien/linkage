@@ -25,7 +25,7 @@ function render() {
             <div>Created: {job.created_at}</div>
             {finished ?
               <div>Took <strong>{job.time.toFixed(2)}s</strong></div> :
-              <div>Est. time to process: <strong>3h30</strong> (~<strong>1h05</strong> left)</div>
+              null // <div>Est. time to process: <strong>3h30</strong> (~<strong>1h05</strong> left)</div>
             }
           </div>
           <div className='col-md-7 text-right'>
@@ -51,7 +51,7 @@ function render() {
               </div>}
               <div>Log:</div>
               <pre style={{maxHeight: 100}}>{job.log}</pre>
-              <pre style={{maxHeight: 100}}>{JSON.stringify(job, null, 2)}</pre>
+              {/*<pre style={{maxHeight: 100}}>{JSON.stringify(job, null, 2)}</pre>*/}
           </div>
         </div>
       </div>

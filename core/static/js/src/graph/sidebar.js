@@ -164,6 +164,15 @@ class Sidebar extends React.Component {
     }
     render() {
         var state = this.props.state;
+
+        var marks_clusters = {};
+        marks_clusters[GRAPH.job_param_clusters] = GRAPH.job_param_clusters;
+        marks_clusters[GRAPH.job_param_clusters_max] = GRAPH.job_param_clusters_max;
+
+        var marks_topics = {};
+        marks_topics[GRAPH.job_param_topics] = GRAPH.job_param_topics;
+        marks_topics[GRAPH.job_param_topics_max] = GRAPH.job_param_topics_max;
+
         return <div>
             {/*<App choices={state.labels} />*/}
             <div className='panel panel-primary'>
@@ -190,17 +199,17 @@ class Sidebar extends React.Component {
                 {GRAPH.result ? <div className='panel-body'>
                     time taken <strong>{(GRAPH.time).toFixed(2)}s</strong><br/>
                     clustering score: <strong>{GRAPH.result.crit}</strong><br/>
-                    {GRAPH.result.log ? <div>
+                    {GRAPH.log ? <div>
                         <a className='btn btn-info btn-xs' onClick={this.toggleLog}>
                             {this.state.showLog ? 'hide' : 'show'} log
                         </a>
                         {this.state.showLog ? <div>
                             <br/>
-                            <pre>{GRAPH.result.log}</pre>
+                            <pre>{GRAPH.log}</pre>
                         </div> : null}
                     </div> : null}
                 </div> : <div className='panel-body'>
-                    {GRAPH.result && GRAPH.result.progress == 1 ?
+                    {GRAPH.result && GRAPH.progress == 1 ?
                         'An error occured while processing.'
                         : 'Processing graph...'}
                 </div>}
@@ -213,13 +222,14 @@ class Sidebar extends React.Component {
                             : null}
                     </h3>
                 </div>
-                <div className='panel-body'>
-                    <Slider steps={1} dots defaultValue={this.state.clusters} min={2} max={10} marks={{
-                        2: '2',
-                        10: '10',
-                    }} onAfterChange={this.updateClusters}/>
+                {GRAPH.job_param_clusters != GRAPH.job_param_clusters_max ? <div className='panel-body'>
+                    <Slider steps={1} dots defaultValue={this.state.clusters}
+                      min={GRAPH.job_param_clusters}
+                      max={GRAPH.job_param_clusters_max}
+                      marks={marks_clusters}
+                      onAfterChange={this.updateClusters}/>
                     <br/>
-                </div>
+                </div> : null}
                 {state.clusterToNodes ? <div className='list-group'>
                     {Object.keys(state.clusterToNodes).map(key => 
                         <div className='list-group-item' key={key}>
@@ -236,13 +246,14 @@ class Sidebar extends React.Component {
                             : null}
                     </h3>
                 </div>
-                <div className='panel-body'>
-                    <Slider steps={1} dots defaultValue={this.state.topics} min={2} max={10} marks={{
-                        2: '2',
-                        10: '10',
-                    }} onAfterChange={this.updateTopics}/>
+                {GRAPH.job_param_topics != GRAPH.job_param_topics_max ? <div className='panel-body'>
+                    <Slider steps={1} dots defaultValue={this.state.topics}
+                      min={GRAPH.job_param_topics}
+                      max={GRAPH.job_param_topics_max}
+                      marks={marks_topics}
+                      onAfterChange={this.updateTopics}/>
                     <br/>
-                </div>
+                </div> : null}
                 {state.topicToTerms ? <div className='list-group'>
                     {state.topicToTerms.map((v, i) => 
                         <TopicWords words={v} i={i} key={i} dictionnary={state.dictionnary}/>

@@ -337,9 +337,9 @@ def details(request, graph, results):
                             L.th / 'clusters result',
                         ),
                     ),
-                    (
+                    L.tbody / (
                         (
-                            L.tbody / (
+                            (
                                 L.tr / (
                                     L.td / str(result.param_topics),
                                     L.td / str(result.param_clusters),

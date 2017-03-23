@@ -190,18 +190,16 @@ def api_cluster(request, pk):
 
     result = None
     try:
-        result = models.ProcessingResult.objects.get(graph=graph, param_clusters=clusters, param_topics=topics)
-        if result.progress > 0:
+        result = models.ProcessingResult.objects.get(graph=graph,
+            param_clusters=clusters,
+            param_topics=topics)
+        if result:
             return JsonResponse({
                 'message': 'ok [already-clustered]',
                 'result': result.serialize(),
             })
-        else:
-            return JsonResponse({
-                'message': 'ok [clustering-in-progress]',
-            })
-    except:
-        pass
+    except Exception as e: 
+        print(e)
 
     return JsonResponse({'message': 'nok [dynamic-clustering-disabled]'})
 
