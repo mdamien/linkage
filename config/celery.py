@@ -23,7 +23,7 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
     param_clusters = graph.job_param_clusters
     param_topics = graph.job_param_topics
     param_max_clusters = graph.job_param_clusters_max
-    param_max_topics = graph.job_param_clusters_max
+    param_max_topics = graph.job_param_topics_max
 
 
     Group("jobs-%d" % graph.user.pk).send({

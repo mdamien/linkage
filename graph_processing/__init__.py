@@ -18,17 +18,19 @@ def process(X, tdm, n_clusters, n_topics, id=0, n_clusters_max=None, n_topics_ma
     n_clusters_max = n_clusters if n_clusters_max is None else n_clusters_max
 
     log = []
-    for line in os.popen(('cd {link_dir};'
-            + 'export LD_LIBRARY_PATH="build/arma/";'
-            + './build/linkage ' \
+
+    cmd_cd = 'cd {link_dir};'.format(link_dir=linkage_dir) + 'export LD_LIBRARY_PATH="build/arma/";'
+    cmd_base = ('./build/linkage ' \
             + '{Kmin} {Kmax} {Qmin} {Qmax} 10 0 1 100 0.0001 100 100 {dir}').format(
-                link_dir=linkage_dir,
                 Kmin=n_topics,
                 Kmax=n_topics_max,
                 Qmin=n_clusters,
                 Qmax=n_clusters_max,
-                dir=run_dir_for_linkage),
-        ):
+                dir=run_dir_for_linkage)
+
+    log.append(cmd_base+'\n')
+    print(cmd_base)
+    for line in os.popen(cmd_cd + cmd_base):
         print(line.strip())
         log += [line]
     log = ''.join(log)

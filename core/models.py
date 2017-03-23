@@ -82,9 +82,10 @@ def graph_data_from_links(links):
 
     from nltk.tokenize import word_tokenize
     from nltk.stem.snowball import SnowballStemmer
+    from nltk.corpus import stopwords
 
     stemmer = SnowballStemmer("english")
-    # stopwords = stopwords.words('english')
+    stopwords = stopwords.words('english')
     punc_table = dict((ord(char), ' ') for char in string.punctuation)
 
     X = io.StringIO()
@@ -117,13 +118,13 @@ def graph_data_from_links(links):
             tokens = []
             text = link[2] if len(link) > 1 else ''
             for token in word_tokenize(text.translate(punc_table)): # remove punctuation and tokenize
-                #if token not in stopwords:
-                if len(token) > 2:
-                    # remove numbers
-                    try:
-                        int(token)
-                    except:
-                        tokens.append(token)
+                if token not in stopwords:
+                    if len(token) > 2:
+                        # remove numbers
+                        try:
+                            int(token)
+                        except:
+                            tokens.append(token)
             if len(tokens) > 0: # filter empty links
                 start = node_to_i(link[0])
                 end = node_to_i(link[1])

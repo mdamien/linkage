@@ -33,7 +33,11 @@ function init(state_init = {}) {
 
   if (GRAPH.result && GRAPH.result.clusters_mat) {
     var nodeToCluster = Papa.parse(GRAPH.result.clusters_mat,
-      {delimiter: ' ', dynamicTyping: true, skipEmptyLines: true}).data[0].slice(1);
+      {delimiter: ' ', dynamicTyping: true, skipEmptyLines: true}).data[0];
+
+    if (nodeToCluster[0] === "") {
+      nodeToCluster = nodeToCluster.slice(1);
+    }
 
     var clusterToNodes = {};
     nodeToCluster.forEach(function(cluster, node) {
@@ -142,6 +146,14 @@ function _add_clusters(graph, X, nodeToCluster) {
     var key = cluster0 + ',' + cluster1;
     if (added_links.has(key)) return;
     added_links.add(key);
+    if (cluster0 === undefined) {
+      console.log('invalid cluster0', cluster0, 'for', line);
+      return;
+    }
+    if (cluster1 === undefined) {
+      console.log('invalid cluster1', cluster1, 'for', line);
+      return;
+    }
     graph.addNode(cluster0, {isCluster: true});
     graph.addNode(cluster1, {isCluster: true});
     graph.addLink(cluster0, cluster1);
@@ -366,28 +378,6 @@ function get_graph_graphics(graph, X, clusters) {
     });
   return graphics;
 }
-
-var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-var socket = new WebSocket(ws_scheme + "://" + window.location.host + '/result/' + GRAPH.id + '/');
-socket.onmessage = function(e) {
-  $.getJSON('/result/' + GRAPH.id + '/data/', {
-    clusters: STATE.current_selected_clusters,
-    topics: STATE.current_selected_topics,
-  }, function(data) {
-    GRAPH = data;
-    if (!STATE.current_selected_clusters && data.result) { // follow auto-clustering
-      init({force_use_result_param: true})
-    } else {
-      init();
-    }
-  });
-}
-
-socket.onopen = function() {
-
-}
-// Call onopen directly if socket is already open
-if (socket.readyState == WebSocket.OPEN) socket.onopen();
 
 init();
 
