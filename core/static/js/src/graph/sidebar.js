@@ -188,7 +188,7 @@ class Sidebar extends React.Component {
                     <h3 className='panel-title'>Result</h3>
                 </div>
                 {GRAPH.result ? <div className='panel-body'>
-                    time taken <strong>{(GRAPH.result.time).toFixed(2)}s</strong><br/>
+                    time taken <strong>{(GRAPH.time).toFixed(2)}s</strong><br/>
                     clustering score: <strong>{GRAPH.result.crit}</strong><br/>
                     {GRAPH.result.log ? <div>
                         <a className='btn btn-info btn-xs' onClick={this.toggleLog}>

@@ -67,6 +67,8 @@ class ProcessingResult(models.Model):
             'pi_mat': self.pi_mat,
             'theta_qr_mat': self.theta_qr_mat,
             'crit': self.crit,
+            'param_clusters': self.param_clusters,
+            'param_topics': self.param_topics,
         }
 
 

@@ -203,6 +203,8 @@ def api_cluster(request, pk):
     except:
         pass
 
+    return JsonResponse({'message': 'nok [dynamic-clustering-disabled]'})
+
     result = models.ProcessingResult(graph=graph, param_clusters=clusters, param_topics=topics)
     result.save()
 
