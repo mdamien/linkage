@@ -18,12 +18,17 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
 
     t = time.process_time()
 
-    param_clusters = 2
-    param_topics = 2
-    param_max_clusters = 5
-    param_max_topics = 5
-
     graph = Graph.objects.get(pk=graph_pk)
+
+    param_clusters = graph.job_param_clusters
+    param_topics = graph.job_param_topics
+    param_max_clusters = graph.job_param_clusters_max
+    param_max_topics = graph.job_param_clusters_max
+
+
+    Group("jobs-%d" % graph.user.pk).send({
+        'text': '%d - STARTED' % graph.pk
+    })
 
     results, log = graph_processing.process(
         graph.edges, graph.tdm,
@@ -53,7 +58,7 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
 
     time.sleep(ws_delay)
 
-    Group("result-%d" % graph.pk).send({
+    Group("jobs-%d" % graph.user.pk).send({
         'text': '%d - DONE' % graph.pk
     })
 

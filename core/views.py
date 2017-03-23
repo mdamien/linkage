@@ -76,16 +76,15 @@ def index(request):
                 if len(graph.labels.strip()) < 2:
                     messages.append(['danger', 'There is no data for this graph'])
                 else:
+                    if clusters:
+                        graph.job_param_clusters = clusters
+                        graph.job_param_clusters_max = clusters
+                        graph.job_param_topics = topics
+                        graph.job_param_topics_max = topics
                     graph.save()
 
-                    result_pk = None
-                    if clusters is not None:
-                        result = models.ProcessingResult(graph=graph, param_clusters=clusters, param_topics=topics)
-                        result.save()
-                        result_pk = result.pk
-
                     from config.celery import process_graph
-                    process_graph.delay(graph.pk, result_pk, ws_delay=2)
+                    process_graph.delay(graph.pk, ws_delay=2)
                     return redirect('/jobs/')
 
     return HttpResponse(templates.index(
@@ -134,6 +133,11 @@ def jobs(request):
     if request.POST and request.POST['action'] == 'delete':
         graph = get_object_or_404(models.Graph, pk=request.POST['graph_id'])
         graph.delete()
+
+    jobs = models.Graph.objects.filter(user=request.user).order_by('-created_at')
+
+    if request.GET.get('as_json'):
+        return JsonResponse(templates.api_jobs(jobs), safe=False) # TODO: review safe=False
 
     return HttpResponse(templates.jobs(
         request,

@@ -2,11 +2,11 @@ from channels.routing import route, include
 
 from core.consumers import ws_add, ws_disconnect
 
-result_routing = [
-    route("websocket.connect", ws_add, path=r"^/(?P<graph_pk>\d+)/$"),
+job_routing = [
+    route("websocket.connect", ws_add),
     route("websocket.disconnect", ws_disconnect),
 ]
 
 routing = [
-    include(result_routing, path=r"^/result"),
+    include(job_routing, path=r"^/jobs/"),
 ]

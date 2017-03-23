@@ -97,6 +97,10 @@ def serialize_graph(graph, result, simple=False):
         'log': graph.job_log,
         'time': graph.job_time,
         'progress': graph.job_progress,
+        'job_param_clusters': graph.job_param_clusters,
+        'job_param_topics': graph.job_param_topics,
+        'job_param_clusters_max': graph.job_param_clusters_max,
+        'job_param_topics_max': graph.job_param_topics_max,
     }
     if simple:
         del data['tdm']
@@ -394,9 +398,13 @@ def jobs(request, graphs):
             FOOTER
         ),
         JS_LIBS,
+        L.script / raw("var USER_ID = %d;" % (request.user.pk,)),
         L.script / raw("var JOBS = {};".format(json.dumps(
             [serialize_graph(g, None, simple=True) for g in graphs]
         ))),
         L.script(src='/static/js/dist/vendor.js?v=' + COMMIT_HASH),
         L.script(src='/static/js/dist/jobs.js?v=' + COMMIT_HASH),
     ))
+
+def api_jobs(graphs):
+    return [serialize_graph(g, None, simple=True) for g in graphs]
