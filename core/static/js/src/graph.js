@@ -68,6 +68,9 @@ function init(state_init = {}) {
 
     STATE.topics_per_edges = topics_per_edges;
 
+    STATE.rho = Papa.parse(GRAPH.result.rho_mat,
+      {delimiter: ',', dynamicTyping: true, skipEmptyLines: true}).data;
+
     _add_clusters(graph, X, nodeToCluster)
   } else {
     X.forEach(function(line, i) {
@@ -210,7 +213,12 @@ function get_graph_graphics(graph, X, clusters) {
             .attr('style', 'fill: ' + color);
       // ui.append(svgText);
       if (is_cluster) {
-        ui.append(square)
+        var size = 20 + Math.exp(STATE.rho[node.id][0]*15);
+        square.attr('x', -size/2);
+        square.attr('y', -size/2);
+        square.attr('width', size);
+        square.attr('height', size);
+        ui.append(square);
       } else {
         ui.append(circle);
       }
@@ -219,6 +227,7 @@ function get_graph_graphics(graph, X, clusters) {
       $(ui).hover(function() {
         // svgText.attr('visibility', 'visible');
         circle.attr('stroke-width', '1');
+        square.attr('stroke-width', '1');
 
         renderGraphSidebar({
           title: node.data && node.data.isCluster ? node.id : STATE.labels[node.id],
@@ -231,6 +240,7 @@ function get_graph_graphics(graph, X, clusters) {
         });
       }, function() {
         circle.attr('stroke-width', '0');
+        square.attr('stroke-width', '0');
         // svgText.attr('visibility', 'hidden');
       });
 
