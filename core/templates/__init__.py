@@ -123,7 +123,7 @@ def result(request, graph, result):
                 L.div('.col-md-9') / (
                     L.div('.panel.panel-default', style='position:relative') / (
                         L.div('#_graph-sidebar'),
-                        L.div('#_graph.panel-body') / (
+                        L.div('#_graph.panel-body', style='padding:0') / (
                             L.h3('#_loading.text-center') / 'Loading…'
                         ),
                     )
@@ -309,6 +309,21 @@ def login(request, message):
                         'No account yet ? you can ',
                         L.a(href='/accounts/signup/') / 'sign up here',
                     )
+                ),
+            ),
+            FOOTER,
+            SENTRY,
+        ),
+    ))
+
+
+def signup(request):
+    return base((
+        L.div('.container') / (
+            header(request),
+            L.div('.row') / (
+                L.div('.col-md-3.center-block', style='float:none') / (
+                    L.div('.alert.alert-warning') / 'Sign up is not yet available',
                 ),
             ),
             FOOTER,

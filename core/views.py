@@ -28,6 +28,7 @@ def index(request):
                 valid_parameters = False
         try:
             limit = int(request.POST.get('limit', limit))
+            limit = min(limit, 1000)
         except ValueError:
             messages.append(['danger', 'Invalid limit']) # todo: proper form validation
             valid_parameters = False
@@ -237,6 +238,9 @@ def login(request):
         else:
             message = "Please enter a correct username and password"
     return HttpResponse(templates.login(request, message))
+
+def signup(request):
+    return HttpResponse(templates.signup(request))
 
 from django.contrib.auth import logout as auth_logout
 

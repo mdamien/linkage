@@ -12,3 +12,4 @@ raven
 requests
 django-admin-gitlog
 xmltodict
+langdetect
