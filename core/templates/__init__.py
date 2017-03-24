@@ -184,6 +184,13 @@ def index(request, messages, import_type_selected='coauth'):
                                     L.input('.btn.btn-primary.btn-large', name='choice_pubmed', type='submit', value='search PubMed'),
                                 )
                             ),
+                            L.br,
+                            L.div('.form-group') / (
+                                L.div('.col-md-3.control-label') / (L.strong / 'Limit'),
+                                L.div('.col-md-2') / (
+                                    L.input('.form-control', name='limit', value='500', type='number'),
+                                ),
+                            ),
                         ) if import_type_selected == 'coauth' else None,
                         (
                             L.div('.row') / (
@@ -256,14 +263,14 @@ def index(request, messages, import_type_selected='coauth'):
                         ),
                         L.div('.form-group._clustering-options.hide') / (
                             L.div('.col-md-3.control-label') / (L.strong / 'Clusters (Q)'),
-                            L.div('.col-md-9') / (
-                                L.input(name='clusters', value='10', type='number'),
+                            L.div('.col-md-2') / (
+                                L.input('.form-control', name='clusters', value='10', type='number'),
                             ),
                         ),
                         L.div('.form-group._clustering-options.hide') / (
                             L.div('.col-md-3.control-label') / (L.strong / 'Topics (K)'),
-                            L.div('.col-md-9') / (
-                                L.input(name='topics', value='10', type='number'),
+                            L.div('.col-md-2') / (
+                                L.input('.form-control', name='topics', value='10', type='number'),
                             ),
                         ),
                     )

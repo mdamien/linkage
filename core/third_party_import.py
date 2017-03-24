@@ -14,8 +14,8 @@ import xmltodict
 
 from raven.contrib.django.raven_compat.models import client
 
-def arxiv_to_csv(q):
-    results = arxiv.query(q, prune=True, start=0, max_results=1000)
+def arxiv_to_csv(q, limit=500):
+    results = arxiv.query(q, prune=True, start=0, max_results=limit)
 
     output = io.StringIO()
     writer = csv.writer(output)
@@ -32,11 +32,11 @@ def arxiv_to_csv(q):
     return output.getvalue()
 
 
-def hal_to_csv(q):
+def hal_to_csv(q, limit=500):
     params = {
         'fl': 'authFullName_s,title_s',
         'q': q,
-        'rows': 1000,
+        'rows': limit,
     }
     resp = requests.get('https://api.archives-ouvertes.fr/search/', params=params)
     results = resp.json()['response']['docs']
@@ -55,7 +55,7 @@ def hal_to_csv(q):
 
     return output.getvalue()
 
-def pubmed_to_csv(q):
+def pubmed_to_csv(q, limit=500):
     output = io.StringIO()
     writer = csv.writer(output)
 
@@ -65,7 +65,7 @@ def pubmed_to_csv(q):
     params = {
         'db': 'pubmed',
         'retmode': 'json',
-        'retmax': 20,
+        'retmax': limit,
         'sort': 'relevance',
         'term': q,
     }

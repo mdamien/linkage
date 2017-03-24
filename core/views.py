@@ -15,7 +15,7 @@ def index(request):
     messages = []
     graph = None
     if request.POST and request.POST['action'] == 'import':
-        clusters, topics, valid_parameters = None, None, True
+        clusters, topics, limit, valid_parameters = None, None, 200, True
         if request.POST['clustering'] == 'manual':
             try:
                 clusters = int(request.POST['clusters'])
@@ -26,6 +26,11 @@ def index(request):
             except ValueError:
                 messages.append(['danger', 'Invalid cluster parameters']) # todo: proper form validation
                 valid_parameters = False
+        try:
+            limit = int(request.POST.get('limit', limit))
+        except ValueError:
+            messages.append(['danger', 'Invalid limit']) # todo: proper form validation
+            valid_parameters = False
         if valid_parameters:
             if ('choice_csv' in request.POST or 'choice_mbox' in request.POST) and not request.FILES:
                 messages.append(['danger', 'You must include a file to import'])
@@ -45,7 +50,7 @@ def index(request):
             elif 'choice_arxiv' in request.POST:
                 q = request.POST['q']
                 if len(q) > 0:
-                    links = third_party_import.arxiv_to_csv(q)
+                    links = third_party_import.arxiv_to_csv(q, limit)
                     data = models.graph_data_from_links(links)
                     graph = models.Graph(name='arXiv import of search term: %s' % (q, ),
                         user=request.user, directed=False, **data)
@@ -54,7 +59,7 @@ def index(request):
             elif 'choice_hal' in request.POST:
                 q = request.POST['q']
                 if len(q) > 0:
-                    links = third_party_import.hal_to_csv(q)
+                    links = third_party_import.hal_to_csv(q, limit)
                     data = models.graph_data_from_links(links)
                     graph = models.Graph(name='HAL import of search term: %s' % (q, ),
                         user=request.user, directed=False, **data)
@@ -63,7 +68,7 @@ def index(request):
             elif 'choice_pubmed' in request.POST:
                 q = request.POST['q']
                 if len(q) > 0:
-                    links = third_party_import.pubmed_to_csv(q)
+                    links = third_party_import.pubmed_to_csv(q, limit)
                     data = models.graph_data_from_links(links)
                     graph = models.Graph(name='PubMed import of search term: %s' % (q, ),
                         user=request.user, directed=False, **data)
