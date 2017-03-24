@@ -180,6 +180,8 @@ def index(request, messages, import_type_selected='coauth'):
                                     L.input('.btn.btn-primary.btn-large', name='choice_arxiv', type='submit', value='search arXiv'),
                                     SPACER,
                                     L.input('.btn.btn-primary.btn-large', name='choice_hal', type='submit', value='search HAL'),
+                                    SPACER,
+                                    L.input('.btn.btn-primary.btn-large', name='choice_pubmed', type='submit', value='search PubMed'),
                                 )
                             ),
                         ) if import_type_selected == 'coauth' else None,

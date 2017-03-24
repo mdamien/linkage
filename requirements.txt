@@ -11,3 +11,4 @@ https://github.com/chardet/chardet/archive/master.zip
 raven
 requests
 django-admin-gitlog
+xmltodict

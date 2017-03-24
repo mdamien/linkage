@@ -10,6 +10,7 @@ import arxiv
 import chardet
 from chardet.universaldetector import UniversalDetector
 import requests
+import xmltodict
 
 from raven.contrib.django.raven_compat.models import client
 
@@ -51,6 +52,59 @@ def hal_to_csv(q):
         for i, author in enumerate(authors):
             for author2 in authors[i+1:]:
                 writer.writerow([author, author2, result['title_s'][0]])
+
+    return output.getvalue()
+
+def pubmed_to_csv(q):
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    BASE = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/'
+    url = BASE + 'esearch.fcgi?db=pubmed&retmode=json&retmax=20&sort=relevance&term=fever'
+
+    params = {
+        'db': 'pubmed',
+        'retmode': 'json',
+        'retmax': 20,
+        'sort': 'relevance',
+        'term': q,
+    }
+    resp = requests.get(BASE + 'esearch.fcgi', params=params)
+    ids = resp.json()['esearchresult']['idlist']
+    print('PUBMED search for', q, ':', len(ids), 'papers found')
+
+    params = {
+        'db': 'pubmed',
+        'retmode': 'xml',
+        'id': ','.join(ids),
+    }
+    resp = requests.get(BASE + 'efetch.fcgi', params=params)
+    xml = xmltodict.parse(resp.text)
+
+    for pubarticle in xml['PubmedArticleSet']['PubmedArticle']:
+        article = pubarticle['MedlineCitation']['Article']
+        authors = []
+        raw_authors = article['AuthorList']['Author']
+        if type(raw_authors) is not list:
+            raw_authors = [raw_authors]
+        for author in raw_authors:
+            if 'CollectiveName' in author:
+                authors.append(author['CollectiveName'])
+            else:
+                authors.append(author['LastName'] + ' ' + author['ForeName'])
+        abstract = []
+        if 'Abstract' in article:
+            abstract = article['Abstract']['AbstractText']
+            if type(abstract) is not list:
+                abstract = [abstract]
+            abstract = [x['#text'] if '#text' in x else x for x in abstract]
+        title = []
+        if 'ArticleTitle' in article:
+            title = [article['ArticleTitle']]
+        text = '\n'.join(title + abstract)
+        for i, author in enumerate(authors):
+            for author2 in authors[i+1:]:
+                writer.writerow([author, author2, text])
 
     return output.getvalue()
 

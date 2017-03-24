@@ -60,6 +60,15 @@ def index(request):
                         user=request.user, directed=False, **data)
                 else:
                     messages.append(['danger', 'You must include a search term to do a query'])
+            elif 'choice_pubmed' in request.POST:
+                q = request.POST['q']
+                if len(q) > 0:
+                    links = third_party_import.pubmed_to_csv(q)
+                    data = models.graph_data_from_links(links)
+                    graph = models.Graph(name='PubMed import of search term: %s' % (q, ),
+                        user=request.user, directed=False, **data)
+                else:
+                    messages.append(['danger', 'You must include a search term to do a query'])
             elif 'choice_dropdown' in request.POST:
                 filename = request.POST['sample_dropdown']
                 assert '/' not in filename
