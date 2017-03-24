@@ -30,13 +30,13 @@ var edgesArr = X => {
 }
 
 
-const n_best_elems = (arr, n) => {
+const n_best_elems = (arr, n, key=v => v) => {
     var keyed_arr = arr.map((v, i) => [i, v]);
     var result = keyed_arr.sort((a, b) => {
-      if (a[1] < b[1]) {
+      if (key(a[1]) < key(b[1])) {
         return 1;
       }
-      if (a[1] > b[1]) {
+      if (key(a[1]) > key(b[1])) {
         return -1;
       }
       return 0;

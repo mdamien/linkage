@@ -4,7 +4,7 @@ import renderSidebar from './graph/sidebar';
 import renderGraphSidebar from './graph/info';
 
 import { hashedColor, COLORS, edgesArr, n_best_elems } from './graph/utils';
-
+import tfidf from './graph/tf_idf';
 
 // TODO: STATE is here to keep computed things in memory, could be cleaned up
 var STATE = null;
@@ -56,6 +56,8 @@ function init(state_init = {}) {
     });
 
     STATE.topicToTerms = topics;
+
+    STATE.topicToTermsTFIDF = tfidf(topics);
 
     var topics_per_edges = Papa.parse(GRAPH.result.topics_per_edges_mat,
       {delimiter: '  ', dynamicTyping: true, skipEmptyLines: true}).data;

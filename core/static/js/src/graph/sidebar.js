@@ -6,7 +6,7 @@ import { styles } from 'react-autocomplete/lib/utils'
 import Autocomplete from 'react-autocomplete'
 
 import { hashedColor, n_best_elems } from './utils';
-import { init } from '../graph.js';
+import { init } from '../graph';
 
 var ColorSquare = color => <span className='label' style={{ backgroundColor: color, marginRight: 10 }}> </span>;
 
@@ -74,8 +74,8 @@ class TopicWords extends React.Component {
         let {i, words, dictionnary} = this.props;
         return <div className='list-group-item'>
             {ColorSquare(hashedColor('t'+i))}
-            ex: {n_best_elems(words, 5).map((t, i) => {
-                if (t[1] < 0.001) return null;
+            ex: {n_best_elems(words, 5, v => v.tfidf).map((t, i) => {
+                if (t[1].freq < 0.001) return null;
                 return <span key={i}>
                     <span
                         className="label label-default"
@@ -90,11 +90,12 @@ class TopicWords extends React.Component {
             </p>
             {this.state.showAll ? <table className='table table-striped table-bordered'>
                 <tbody>
-                    {n_best_elems(words).map((t, i) => {
-                        if (t[1] < 0.001) return null;
+                    {n_best_elems(words, false, v => v.tfidf).map((t, i) => {
+                        if (t[1].freq < 0.001) return null;
                         return <tr key={i}>
                             <td>{dictionnary[t[0]]}</td>
-                            <td className='text-right'>{(t[1] * 100).toFixed(2)} %</td>
+                            <td className='text-right'>{(t[1].freq * 100).toFixed(2)} %</td>
+                            {/*<td className='text-right'>{(t[1].tfidf * 100).toFixed(2)}</td>*/}
                         </tr>;
                     })}
                 </tbody>
@@ -254,8 +255,8 @@ class Sidebar extends React.Component {
                       onAfterChange={this.updateTopics}/>
                     <br/>
                 </div> : null}
-                {state.topicToTerms ? <div className='list-group'>
-                    {state.topicToTerms.map((v, i) => 
+                {state.topicToTermsTFIDF ? <div className='list-group'>
+                    {state.topicToTermsTFIDF.map((v, i) => 
                         <TopicWords words={v} i={i} key={i} dictionnary={state.dictionnary}/>
                     )}
                 </div> : null}
