@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { hashedColor } from './utils';
+import { get_color, hashedColor } from './utils';
 
 var ColorSquare = (color, content=' ')  => <span className='label' style={{ backgroundColor: color, marginRight: 10 }}>{content}</span>;
 
@@ -19,8 +19,8 @@ function render(params) {
         expand_clusters: params.expand_clusters,
         collapse_clusters: params.collapse_clusters,
       })}>&times;</button>
-      {params.is_cluster ? ColorSquare(hashedColor(params.title), params.title) : params.title}
-      {params.cluster !== undefined ? <p> - {ColorSquare(hashedColor(params.cluster))} {params.cluster}</p> : null}
+      {params.is_cluster ? ColorSquare(get_color(params.title), params.title) : params.title}
+      {params.cluster !== undefined ? <p> - {ColorSquare(get_color(params.cluster))} {params.cluster}</p> : null}
       {params.words && params.words.length > 0 ? <div>
         {params.words.slice(0, 10).map((v, i) => <span key={i}>
               <span className="label label-default">{v}</span>{' '}
@@ -29,7 +29,7 @@ function render(params) {
       </div> : null}
       {params.topics && params.topics.length > 0 ? <div>
         <br/>
-        {params.topics.map((v, i) => <span key={i}>{ColorSquare(hashedColor('t'+i), (v * 100).toFixed(2) + ' %')} </span>)}
+        {params.topics.map((v, i) => <span key={i}>{ColorSquare(get_color(i, 'Paired'), (v * 100).toFixed(2) + ' %')} </span>)}
       </div> : null}
     </div>;
   }

@@ -66,6 +66,8 @@ FOOTER = (
                 SPACER,
                 L.a(href='/about/terms/') / 'Terms and conditions',
             ),
+            L.br,
+            L.br,
         ),
     ),
 )

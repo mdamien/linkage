@@ -3,7 +3,7 @@ import './graph/csrf.js';
 import renderSidebar from './graph/sidebar';
 import renderGraphSidebar from './graph/info';
 
-import { hashedColor, COLORS, edgesArr, n_best_elems } from './graph/utils';
+import { get_color, hashedColor, COLORS, edgesArr, n_best_elems } from './graph/utils';
 import tfidf from './graph/tf_idf';
 
 // TODO: STATE is here to keep computed things in memory, could be cleaned up
@@ -70,6 +70,10 @@ function init(state_init = {}) {
 
     STATE.rho = Papa.parse(GRAPH.result.rho_mat,
       {delimiter: ',', dynamicTyping: true, skipEmptyLines: true}).data;
+
+    STATE.theta_qr = Papa.parse(GRAPH.result.theta_qr_mat,
+      {delimiter: '   ', dynamicTyping: true, skipEmptyLines: true}).data
+      .map(v => v.slice(1));
 
     _add_clusters(graph, X, nodeToCluster)
   } else {
@@ -188,11 +192,11 @@ function get_graph_graphics(graph, X, clusters) {
       var color = '#aaa';
 
       if (is_cluster) {
-        color = hashedColor(node.id);
+        color = get_color(node.id, 'Paired');
       }
 
       if (!is_cluster && clusters && clusters[node.id] !== undefined) {
-        color = hashedColor(clusters[node.id]);
+        color = get_color(clusters[node.id], 'Paired');
       }
       var ui = Viva.Graph.svg('g'),
           svgText = Viva.Graph.svg('text').attr('y', '-6px').text(node.id),
@@ -294,9 +298,20 @@ function get_graph_graphics(graph, X, clusters) {
     defs.append(marker);
     var geom = Viva.Graph.geom();
     graphics.link(function(link) {
+        var prev = graph.getNode(link.fromId);
+        var prev_is_cluster = prev.data && prev.data.isCluster;
+        var to = graph.getNode(link.toId);
+        var to_is_cluster = to.data && to.data.isCluster;
+        var linked_to_cluster = prev_is_cluster || to_is_cluster;
+        var cluster_to_cluster = prev_is_cluster && to_is_cluster;
+
         var color = hashedColor('nopepp');
 
         var link_id = STATE.edges.indexOf(link.fromId + ',' + link.toId);
+        if (linked_to_cluster) {
+          link_id = -1;
+        }
+
         if (STATE.topics_per_edges && link_id !== -1) {
           var topic_max = -1;
           var topic_max_value = null;
@@ -307,11 +322,17 @@ function get_graph_graphics(graph, X, clusters) {
               topic_max = topic;
             }
           });
-          color = hashedColor('t'+topic_max);
+          color = get_color(topic_max);
+        }
+
+        var strokeWidth = 1;
+        if (cluster_to_cluster) {
+
+          strokeWidth = 3;
         }
 
         var ui = Viva.Graph.svg('path')
-                   .attr('stroke-width', 0.5)
+                   .attr('stroke-width', strokeWidth)
                    .attr('stroke', color);
         
         if (GRAPH.directed) {
@@ -349,10 +370,9 @@ function get_graph_graphics(graph, X, clusters) {
             // normalize topics_perc
             var sum = topics_perc.reduce(function(a, b) { return a + b; }, 0);
             topics_perc = topics_perc.map(x => x/sum);
-            
           }
 
-          ui.attr('stroke-width', 3);
+          ui.attr('stroke-width', strokeWidth + 2);
           renderGraphSidebar({
             title: ' ',
             words,
@@ -362,7 +382,7 @@ function get_graph_graphics(graph, X, clusters) {
             collapse_clusters: collapse_clusters.bind(this, graph, X, clusters),
           });
         }, function() {
-          ui.attr('stroke-width', 0.5);
+          ui.attr('stroke-width', strokeWidth);
         });
 
         return ui;
