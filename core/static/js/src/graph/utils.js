@@ -1,3 +1,5 @@
+import colorbrewer from './colorbrewer';
+
 var COLORS = [
   '#1f77b4', '#aec7e8',
   '#ff7f0e', '#ffbb78',
@@ -10,11 +12,18 @@ var COLORS = [
   '#bcbd22', '#dbdb8d'
 ];
 
+colorbrewer['bonus'] = {12:COLORS}
+
 var hashIt = function(s) {
   return Math.abs(s.toString().split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0)*1.2;return a&a},0)) * 3423;
 };
 
-var hashedColor = s => COLORS[hashIt(s) % COLORS.length];
+var get_color = (i, set='bonus') => {
+  var colors = colorbrewer[set][12];
+  return colors[i % colors.length];
+};
+
+var hashedColor = s => get_color(hashIt(s));
 
 var edgesArr = X => {
   var edges = [];
@@ -47,6 +56,7 @@ const n_best_elems = (arr, n, key=v => v) => {
 export {
   hashedColor,
   COLORS,
+  get_color,
   edgesArr,
   n_best_elems,
 }

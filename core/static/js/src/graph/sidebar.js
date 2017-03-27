@@ -5,7 +5,7 @@ import Slider from 'rc-slider';
 import { styles } from 'react-autocomplete/lib/utils'
 import Autocomplete from 'react-autocomplete'
 
-import { hashedColor, n_best_elems } from './utils';
+import { get_color, hashedColor, n_best_elems } from './utils';
 import { init } from '../graph';
 
 var ColorSquare = color => <span className='label' style={{ backgroundColor: color, marginRight: 10 }}> </span>;
@@ -73,7 +73,7 @@ class TopicWords extends React.Component {
     render() {
         let {i, words, dictionnary} = this.props;
         return <div className='list-group-item'>
-            {ColorSquare(hashedColor('t'+i))}
+            {ColorSquare(get_color(i))}
             ex: {n_best_elems(words, 5, v => v.tfidf).map((t, i) => {
                 if (t[1].freq < 0.001) return null;
                 return <span key={i}>
@@ -234,7 +234,7 @@ class Sidebar extends React.Component {
                 {state.clusterToNodes ? <div className='list-group'>
                     {Object.keys(state.clusterToNodes).map(key => 
                         <div className='list-group-item' key={key}>
-                            {ColorSquare(hashedColor(key))} {state.clusterToNodes[key].length}
+                            {ColorSquare(get_color(key, 'Paired'))} {state.clusterToNodes[key].length}
                         </div>
                     )}
                 </div> : null}
