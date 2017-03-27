@@ -98,10 +98,34 @@ function init(state_init = {}) {
     document.getElementById('_loading').outerHTML = '';
   }
 
+  var timeout = false;
+  var running = false;
+  RENDERER.pause_in = (time) => {
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+    if (time != 0 && !running) {
+      RENDERER.resume();
+      running = true;
+    }
+    timeout = setTimeout(function() {
+      RENDERER.pause();
+      running = false;
+    }, time);
+  };
+
+  RENDERER.clear_pause_in = () => {
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+    if (!running) {
+      RENDERER.run();
+    }
+  }
+
+  running = true;
   RENDERER.run();
-  setTimeout(function() {
-    RENDERER.pause();
-  }, 2000);
+  RENDERER.pause_in(2000);
 
   renderSidebar(STATE);
   renderGraphSidebar({
@@ -145,10 +169,7 @@ function expand_clusters(graph, X, clusters) {
     graph.addLink(line[0], line[1], {link_id: i});
   });
 
-  RENDERER.resume();
-  setTimeout(function() {
-    RENDERER.pause();
-  }, 2000);
+  RENDERER.pause_in(2000);
 }
 
 function _add_clusters(graph, X, nodeToCluster) {
@@ -180,10 +201,7 @@ function collapse_clusters(graph, X, clusters) {
 
   _add_clusters(graph, X, clusters);
 
-  RENDERER.resume();
-  setTimeout(function() {
-    RENDERER.pause();
-  }, 2000);
+  RENDERER.pause_in(2000);
 }
 
 function get_graph_graphics(graph, X, clusters) {
@@ -264,10 +282,7 @@ function get_graph_graphics(graph, X, clusters) {
         if (is_cluster) {
           expand_cluster(node.id, graph, X, clusters);
 
-          RENDERER.resume();
-          setTimeout(function() {
-            RENDERER.pause();
-          }, 2000);
+          RENDERER.pause_in(2000);
         }
       });
 

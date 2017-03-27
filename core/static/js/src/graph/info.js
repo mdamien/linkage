@@ -35,9 +35,9 @@ function render(params) {
   }
 
   var buttons = <div style={{ position: 'absolute', bottom: 10, right: 10}}>
-    <button className="btn btn-primary btn-xs" onClick={() => params.renderer.resume()}>resume auto-layout</button>
+    <button className="btn btn-primary btn-xs" onClick={() => params.renderer.clear_pause_in()}>resume auto-layout</button>
     &nbsp;
-    <button href="#" className="btn btn-primary btn-xs" onClick={() => params.renderer.pause()}>pause auto-layout</button>
+    <button href="#" className="btn btn-primary btn-xs" onClick={() => params.renderer.pause_in(0)}>pause auto-layout</button>
     &nbsp;
     <button href="#" className="btn btn-primary btn-xs" onClick={() => params.expand_clusters()}>expand clusters</button>
     &nbsp;
