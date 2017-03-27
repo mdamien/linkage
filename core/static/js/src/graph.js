@@ -75,7 +75,11 @@ function init(state_init = {}) {
       {delimiter: '   ', dynamicTyping: true, skipEmptyLines: true}).data
       .map(v => v.slice(1));
 
-    _add_clusters(graph, X, nodeToCluster)
+    STATE.pi = Papa.parse(GRAPH.result.pi_mat,
+      {delimiter: '   ', dynamicTyping: true, skipEmptyLines: true}).data
+      .map(v => v.slice(1));
+
+    _add_clusters(graph, X, nodeToCluster);
   } else {
     X.forEach(function(line, i) {
       graph.addLink(line[0], line[1], {link_id: i});
@@ -305,7 +309,7 @@ function get_graph_graphics(graph, X, clusters) {
         var linked_to_cluster = prev_is_cluster || to_is_cluster;
         var cluster_to_cluster = prev_is_cluster && to_is_cluster;
 
-        var color = hashedColor('nopepp');
+        var color = '#aaa';
 
         var link_id = STATE.edges.indexOf(link.fromId + ',' + link.toId);
         if (linked_to_cluster) {
@@ -326,9 +330,19 @@ function get_graph_graphics(graph, X, clusters) {
         }
 
         var strokeWidth = 1;
+        var cluster_topic_perc = false;
         if (cluster_to_cluster) {
 
-          strokeWidth = 3;
+          // BEST TOPIC
+          cluster_topic_perc = STATE.theta_qr[
+            prev.id * Object.keys(STATE.clusterToNodes).length + to.id];
+          var topic_max = n_best_elems(cluster_topic_perc, 1)[0][0];
+          color = get_color(topic_max);
+
+          // WIDTH IN PI()
+          var width = STATE.pi[prev.id][to.id];
+
+          strokeWidth = 1 + 30*width;
         }
 
         var ui = Viva.Graph.svg('path')
@@ -341,7 +355,7 @@ function get_graph_graphics(graph, X, clusters) {
 
         $(ui).hover(function() {
           var words = [];
-          var topics_perc = [];
+          var topics_perc = false;
 
           /*
           goal: go from words to % of each topics
@@ -352,6 +366,7 @@ function get_graph_graphics(graph, X, clusters) {
           */
 
           if (link_id !== -1) {
+            topics_perc = [];
             STATE.tdm.forEach(row => {
               row = row.map(x => parseInt(x));
               if (row[1] === link_id) {
@@ -376,7 +391,7 @@ function get_graph_graphics(graph, X, clusters) {
           renderGraphSidebar({
             title: ' ',
             words,
-            topics: topics_perc,
+            topics: topics_perc || cluster_topic_perc,
             renderer: RENDERER,
             expand_clusters: expand_clusters.bind(this, graph, X, clusters),
             collapse_clusters: collapse_clusters.bind(this, graph, X, clusters),
