@@ -213,7 +213,14 @@ function get_graph_graphics(graph, X, clusters) {
             .attr('style', 'fill: ' + color);
       // ui.append(svgText);
       if (is_cluster) {
-        var size = 20 + Math.exp(STATE.rho[node.id][0]*15);
+        var sorted = n_best_elems(STATE.rho, false, v => v[0]);
+        var max = sorted[0][1][0];
+        var min = sorted.slice(-1)[0][1][0];
+        var normalized = (STATE.rho[node.id][0] - min) / (max - min);
+        if (!normalized) {
+          normalized = 0;
+        }
+        var size = 20 + Math.exp(normalized * 3);
         square.attr('x', -size/2);
         square.attr('y', -size/2);
         square.attr('width', size);
