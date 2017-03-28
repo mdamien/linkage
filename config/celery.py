@@ -33,12 +33,9 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
     def update(log, kq_done, msg):
         graph.job_log = log
         kq_todo = (
-            (param_max_clusters - param_clusters)
-                * (param_max_topics - param_topics)
+            (param_max_clusters - param_clusters + 1)
+                * (param_max_topics - param_topics + 1)
         )
-        if kq_todo == 0:
-            print('ERROR: kq_todo == 0 but job update()')
-            return
         graph.job_progress = kq_done / kq_todo
         graph.save()
         Group("jobs-%d" % graph.user.pk).send({

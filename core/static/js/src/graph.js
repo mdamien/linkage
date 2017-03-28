@@ -332,17 +332,24 @@ function get_graph_graphics(graph, X, clusters) {
           link_id = -1;
         }
 
+        var topics_perc = false;
         if (STATE.topics_per_edges && link_id !== -1) {
           var topic_max = -1;
           var topic_max_value = null;
+          topics_perc = [];
           STATE.topics_per_edges.forEach((row, topic) => {
             var v = row[link_id];
             if (topic_max_value === null || v > topic_max_value) {
               topic_max_value = v;
               topic_max = topic;
             }
+            topics_perc.push(v);
           });
           color = get_color(topic_max);
+
+          // normalize topics_perc
+          var sum = topics_perc.reduce(function(a, b) { return a + b; }, 0);
+          topics_perc = topics_perc.map(x => x/sum);
         }
 
         var strokeWidth = 1;
@@ -371,36 +378,14 @@ function get_graph_graphics(graph, X, clusters) {
 
         $(ui).hover(function() {
           var words = [];
-          var topics_perc = false;
-
-          /*
-          goal: go from words to % of each topics
-
-          for each word in document:
-            for each topic:
-              topics_perc[topic] += word_count*topic_word_perc
-          */
 
           if (link_id !== -1) {
-            topics_perc = [];
             STATE.tdm.forEach(row => {
               row = row.map(x => parseInt(x));
               if (row[1] === link_id) {
                 words.push(STATE.dictionnary[row[0]]);
-                if (STATE.topicToTerms) {
-                  STATE.topicToTerms.forEach((terms, topic) => {
-                    if (!topics_perc[topic]) {
-                      topics_perc[topic] = 0;
-                    }
-                    topics_perc[topic] += row[2]*terms[row[0]];
-                  })
-                }
               }
             });
-
-            // normalize topics_perc
-            var sum = topics_perc.reduce(function(a, b) { return a + b; }, 0);
-            topics_perc = topics_perc.map(x => x/sum);
           }
 
           ui.attr('stroke-width', strokeWidth + 2);
