@@ -56,7 +56,8 @@ class ProcessingResult(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return '{} ({})'.format(naturaltime(self.created_at), self.graph)
+        return '{} ({}) K={}, Q={}'.format(naturaltime(self.created_at), self.graph.name,
+            self.param_clusters, self.param_topics)
 
     def serialize(self):
         return {

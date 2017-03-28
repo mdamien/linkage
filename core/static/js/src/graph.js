@@ -119,7 +119,8 @@ function init(state_init = {}) {
       clearTimeout(timeout);
     }
     if (!running) {
-      RENDERER.run();
+      RENDERER.resume();
+      running = true;
     }
   }
 
