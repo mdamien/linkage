@@ -1,6 +1,7 @@
 import os, subprocess
 
-def process(X, tdm, n_clusters, n_topics, id=0, n_clusters_max=None, n_topics_max=None):
+def process(X, tdm, n_clusters, n_topics, id=0,
+        n_clusters_max=None, n_topics_max=None, update=lambda log, kq_done, msg: print('kq_done', kq_done) and print(msg)):
     linkage_dir = '../repos/linkage-cpp/'
     run_dir = '%sruns/%d/' % (linkage_dir, id)
     run_dir_for_linkage = 'runs/%d/' % id
@@ -17,7 +18,7 @@ def process(X, tdm, n_clusters, n_topics, id=0, n_clusters_max=None, n_topics_ma
     n_topics_max = n_topics if n_topics_max is None else n_topics_max
     n_clusters_max = n_clusters if n_clusters_max is None else n_clusters_max
 
-    log = []
+    log = ''
 
     cmd_cd = 'cd {link_dir};'.format(link_dir=linkage_dir) + 'export LD_LIBRARY_PATH="build/arma/";'
     cmd_base = ('./build/linkage ' \
@@ -28,12 +29,18 @@ def process(X, tdm, n_clusters, n_topics, id=0, n_clusters_max=None, n_topics_ma
                 Qmax=n_clusters_max,
                 dir=run_dir_for_linkage)
 
-    log.append(cmd_base+'\n')
+    log += cmd_base + '\n'
     print(cmd_base)
+    n_done = 0
     for line in os.popen(cmd_cd + cmd_base):
         print(line.strip())
-        log += [line]
-    log = ''.join(log)
+        log += line
+
+        # signal: "[linkage-web-signal] - (K|Q) finished: " << K << ";" << Q << "" << endl
+        if '[linkage-web-signal] - (K|Q) finished' in line:
+            n_done += 1
+            print('DETECTION OK')
+            update(log, n_done, line.strip())
     print('processing done')
 
     groups = {}
@@ -1377,7 +1384,7 @@ if __name__ == '__main__':
 163 121 1
 3 121 1
 """
-    groups, log = process(X, tdm, 2, 2)
+    groups, log = process(X, tdm, 2, 2, n_clusters_max=3, n_topics_max=2)
 
     for group in groups:
         print(group)

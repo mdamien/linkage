@@ -63,7 +63,7 @@ class Job extends React.Component {
             <div className="col-md-12">
                 <br/>
                 {finished ? null : <div className="progress progress-striped active">
-                    <div className="progress-bar" style={{width: '10%'}}></div>
+                    <div className="progress-bar" style={{width: (job.progress * 100).toFixed(2) + '%'}}></div>
                 </div>}
                 <div>Log:</div>
                 <pre style={{maxHeight: 100}}>{job.log}</pre>

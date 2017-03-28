@@ -84,6 +84,9 @@ def pubmed_to_csv(q, limit=500):
     for pubarticle in xml['PubmedArticleSet']['PubmedArticle']:
         article = pubarticle['MedlineCitation']['Article']
         authors = []
+        if 'AuthorList' not in article:
+            print('ERROR: NO author list for ', article.get('ArticleTitle'))
+            continue
         raw_authors = article['AuthorList']['Author']
         if type(raw_authors) is not list:
             raw_authors = [raw_authors]
@@ -91,7 +94,10 @@ def pubmed_to_csv(q, limit=500):
             if 'CollectiveName' in author:
                 authors.append(author['CollectiveName'])
             else:
-                authors.append(author['LastName'] + ' ' + author['ForeName'])
+                if 'LastName' or 'ForeName' in authors:
+                    authors.append(author.get('LastName', '') + ' ' + author.get('ForeName', ''))
+                else:
+                    raise Exception('Author with no infos:', author)
         abstract = []
         if 'Abstract' in article:
             abstract = article['Abstract']['AbstractText']

@@ -30,11 +30,27 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
         'text': '%d - STARTED' % graph.pk
     })
 
+    def update(log, kq_done, msg):
+        graph.job_log = log
+        kq_todo = (
+            (param_max_clusters - param_clusters)
+                * (param_max_topics - param_topics)
+        )
+        if kq_todo == 0:
+            print('ERROR: kq_todo == 0 but job update()')
+            return
+        graph.job_progress = kq_done / kq_todo
+        graph.save()
+        Group("jobs-%d" % graph.user.pk).send({
+            'text': '%d - UPDATE' % graph.pk
+        })
+
     results, log = graph_processing.process(
         graph.edges, graph.tdm,
         param_clusters, param_topics,
         result_pk if result_pk else random.randint(0, 10000),
-        param_max_clusters, param_max_topics)
+        param_max_clusters, param_max_topics,
+        update=update)
 
     graph.job_log = log
     graph.job_time = time.process_time() - t
