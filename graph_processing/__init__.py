@@ -19,10 +19,10 @@ def process(X, tdm, n_clusters, n_topics, id=0,
     n_clusters_max = n_clusters if n_clusters_max is None else n_clusters_max
 
     log = ''
-
+    
     cmd_cd = 'cd {link_dir};'.format(link_dir=linkage_dir) + 'export LD_LIBRARY_PATH="build/arma/";'
     cmd_base = ('./build/linkage ' \
-            + '{Kmin} {Kmax} {Qmin} {Qmax} 10 0 1 100 0.0001 100 100 {dir}').format(
+            + '{Kmin} {Kmax} {Qmin} {Qmax} 10 0 1 100 0.0001 10 10 {dir}').format(
                 Kmin=n_topics,
                 Kmax=n_topics_max,
                 Qmin=n_clusters,

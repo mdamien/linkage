@@ -137,13 +137,15 @@ def graph_data_from_links(links):
                     for token in tokens:
                         doc_terms[stemmer.stem(token)] += 1
 
-    curr_edge = 0
-    for edge, doc_terms in edges.items():
-        start, end = edge.split(',')
+    def key_to_order_for_tdm(edge_name):
+        start, end = [int(x) for x in edge_name.split(',')]
+        return start + end*len(nodes)
+
+    for curr_edge, edge_name in enumerate(sorted(edges.keys(), key=key_to_order_for_tdm)):
+        start, end = edge_name.split(',')
         X_writer.writerow([start, end, 1])
-        for token, count in doc_terms.items():
+        for token, count in edges[edge_name].items():
             DTM_writer.writerow([term_to_i(token), curr_edge, count])
-        curr_edge += 1
 
     # add empty link to make the matrix square if it's not already a square
     start = end = len(nodes) - 1

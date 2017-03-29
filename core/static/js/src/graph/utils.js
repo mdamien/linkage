@@ -18,11 +18,6 @@ var hashIt = function(s) {
   return Math.abs(s.toString().split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0)*1.2;return a&a},0)) * 3423;
 };
 
-var get_color = (i, set='bonus') => {
-  var colors = colorbrewer[set][12];
-  return colors[i % colors.length];
-};
-
 var hashedColor = s => get_color(hashIt(s));
 
 var edgesArr = X => {
@@ -51,6 +46,14 @@ const n_best_elems = (arr, n, key=v => v) => {
       return 0;
     });
     return n ? result.slice(0, n) : result;
+};
+
+var get_color = (i, set='bonus') => {
+  // if (set == 'bonus') set = 'Set1';
+  var setset = colorbrewer[set];
+  var maxKey = n_best_elems(Object.keys(setset), 1)[0][1];
+  var colors = setset[maxKey];
+  return colors[i % colors.length];
 };
 
 export {
