@@ -263,7 +263,10 @@ def signup(request):
                 auth_login(request, user)
                 messages.success(request, 'Account successfully created')
 
-                client.captureException('User created: {}'.format(email))
+                try:
+                    raise Exception('User created: {}'.format(email))
+                except:
+                    client.captureException()
 
                 # TODO send mail
                 # messages.success(request, 'An email has been sent to %s to confirm the account creation' % email)
