@@ -1,4 +1,4 @@
-import os, subprocess
+import os, subprocess, time
 
 def process(X, tdm, n_clusters, n_topics, id=0,
         n_clusters_max=None, n_topics_max=None, update=lambda log, kq_done, msg: print('kq_done', kq_done) and print(msg)):
@@ -30,8 +30,10 @@ def process(X, tdm, n_clusters, n_topics, id=0,
                 dir=run_dir_for_linkage)
 
     log += cmd_base + '\n'
-    print(cmd_base)
     n_done = 0
+    update(log, n_done, log)
+    last_update = time.time()
+    print(cmd_base)
     for line in os.popen(cmd_cd + cmd_base):
         print(line.strip())
         log += line
@@ -39,8 +41,11 @@ def process(X, tdm, n_clusters, n_topics, id=0,
         # signal: "[linkage-web-signal] - (K|Q) finished: " << K << ";" << Q << "" << endl
         if '[linkage-web-signal] - (K|Q) finished' in line:
             n_done += 1
-            print('DETECTION OK')
+        
+        diff = time.time() - last_update
+        if diff > 5:
             update(log, n_done, line.strip())
+            last_update = time.time()
     print('processing done')
 
     groups = {}
