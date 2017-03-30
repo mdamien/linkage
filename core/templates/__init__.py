@@ -18,12 +18,12 @@ SHORT_SPACER = raw('&nbsp;&nbsp;')
 
 def header(request, page_name=''):
     return L.div('.row') / (
-        L.div('.col-md-2') / (
+        L.div('.col-xs-2') / (
             L.a(href='/') / (
                 L.h2 / ('Linkage', ('*' if DEBUG else None)),
             ),
         ),
-        L.div('.col-md-5') / (
+        L.div('.col-xs-5') / (
             L.ul('.nav.nav-pills') / (
                 L.li('.active' if page_name == 'addjob' else '',
                         style='margin-top: 20px;margin-right: 20px;display:inline-block') / (
@@ -35,7 +35,7 @@ def header(request, page_name=''):
                 ),
             ),
         ) if request.user.is_authenticated else None,
-        L.div('.col-md-5.text-right') / (
+        L.div('.col-xs-5.text-right') / (
             (
                 L.a('.btn.btn-link', href='/admin/', style='margin-top: 20px;display:inline-block') / 'admin'
             ) if request.user.is_staff else None,
@@ -338,12 +338,44 @@ def landing(request):
     return base((
         L.div('.container') / (
             header(request),
-            L.div('.row') / (
-                L.div('.col-md-3.center-block.text-center', style='float:none') / (
-                    L.p / (
-                        'Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet.'
+            L.div('.row', style="background-image: url('/static/img/landing.png');background-size: contain;background-color: white;background-repeat: no-repeat;") / (
+                L.div('.col-md-12', style="float:none;color: black;font-size: 18px;") / (
+                    L.h2(style="""
+                            background: rgba(255, 255, 255, 0.68);
+                            padding: 7px 25px;
+                            padding-left: 0;
+                        """) / "Innovative and efficient cluster analysis of networks with textual edges",
+                    L.p(style="""
+                            background: rgba(255, 255, 255, 0.68);
+                            padding: 7px 25px;
+                            padding-left: 0;
+                        """) / ("""
+Linkage allows you to cluster the nodes of networks with textual edges while identifying topics which are used in communications. You can analyze with Linkage networks such as email networks or co-authorship networks. Linkage allows you to upload your own network data or to make requests on scientific databases (Arxiv, Pubmed, HAL).
+"""
                     ),
-                    L.a('.btn.btn-primary.btn-large', href='/jobs/add/') / 'Try Linkage'
+                    L.a('.btn.btn-primary.btn-large', href='/jobs/add/') / 'Try Linkage',
+                    L.br, L.br, L.br
+                ),
+            ),
+            L.hr,
+            L.div('.row') / (
+                L.div('.col-md-6') / (
+                    L.h4 / 'How Linkage works ?',
+                    L.p / """Linkage is build upon a sound statistical model for networks with textual edges and implement an innovative  and efficient inference algorithm to fit the model on your data. Model selection allows to find in a fully automatic way the best number of groups and topics."""
+                ),
+                L.div('.col-md-6') / (
+                    L.h4 / 'Upload and manage your data securely',
+                    L.p / """Upload all or part of your data on the platform to analyze them with Linkage. You will keep full control on the data you upload and only you will be able to access them."""
+                ),
+            ),
+            L.div('.row') / (
+                L.div('.col-md-6') / (
+                    L.h4 / 'Focus on data and interpretation',
+                    L.p / """Minimum configuration is required to use Linkage since it selects the most sensible parameters for the data you provide. No scientific background is required to start working and get results. Advanced configuration options are available also if you need specific setups."""
+                ),
+                L.div('.col-md-6') / (
+                    L.h4 / 'Visualize and export the results',
+                    L.p / """Linkage also provides advanced visualization tools, based on the specific features of the statistical modeling. Linkage finally allows to export as CSV files the clustering results obtained on your data for further processing."""
                 ),
             ),
             FOOTER,
