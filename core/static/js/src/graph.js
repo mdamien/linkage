@@ -206,6 +206,8 @@ function collapse_clusters(graph, X, clusters) {
 }
 
 function get_graph_graphics(graph, X, clusters) {
+    var last_mouse_down_event = null;
+
     var graphics = Viva.Graph.View.svgGraphics(),
         nodeSize = 20;
 
@@ -278,8 +280,16 @@ function get_graph_graphics(graph, X, clusters) {
         // svgText.attr('visibility', 'hidden');
       });
 
-      $(ui).click(function() {
+      $(ui).mousedown(event => {
+        last_mouse_down_event = event;
+      });
+
+      $(ui).click(function(event) {
         console.log('clicked on', node);
+        if (event.offsetX != last_mouse_down_event.offsetX ||
+          event.offsetY != last_mouse_down_event.offsetY) {
+          return;
+        }
         if (is_cluster) {
           expand_cluster(node.id, graph, X, clusters);
 
