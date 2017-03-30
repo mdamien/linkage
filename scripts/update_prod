@@ -1,5 +1,5 @@
-git pull --rebase
-cd core/static/js;webpack --env=prod;cd ~/linkage
+git pull --rebase;
+cd core/static/js;rm dist/*;webpack --env=prod;cd ~/linkage
 vf activate linkage
 pip install -r requirements_prod.txt
 rm -rf collected_static/
