@@ -235,10 +235,6 @@ function get_graph_graphics(graph, X, clusters) {
           square = Viva.Graph.svg('rect')
             .attr('stroke', 'black')
             .attr('stroke-width', '0')
-            .attr('x', -10)
-            .attr('y', -10)
-            .attr('width', 20)
-            .attr('height', 20)
             .attr('style', 'fill: ' + color);
       // ui.append(svgText);
       if (is_cluster) {
@@ -254,8 +250,10 @@ function get_graph_graphics(graph, X, clusters) {
         square.attr('y', -size/2);
         square.attr('width', size);
         square.attr('height', size);
+        node._node_size = size;
         ui.append(square);
       } else {
+        node._node_size = 7;
         ui.append(circle);
       }
 
@@ -412,6 +410,10 @@ function get_graph_graphics(graph, X, clusters) {
           ui.attr('stroke-width', strokeWidth);
         });
 
+        ui._prev = prev;
+        ui._to = to;
+        ui.cluster_to_cluster = cluster_to_cluster;
+
         return ui;
     }).placeLink(function(linkUI, fromPos, toPos) {
         if (fromPos.x == toPos.x && fromPos.y == toPos.y) {
@@ -424,8 +426,8 @@ function get_graph_graphics(graph, X, clusters) {
         //  "Links should start/stop at node's bounding box, not at the node center."
         // For rectangular nodes Viva.Graph.geom() provides efficient way to find
         // an intersection point between segment and rectangle
-        var toNodeSize = nodeSize,
-            fromNodeSize = nodeSize;
+        var toNodeSize = linkUI._to._node_size,
+            fromNodeSize = linkUI._prev._node_size;
         var from = geom.intersectRect(
                 // rectangle:
                         fromPos.x - fromNodeSize / 2, // left
@@ -446,6 +448,34 @@ function get_graph_graphics(graph, X, clusters) {
                     || toPos; // if no intersection found - return center of the node
         var data = 'M' + from.x + ',' + from.y +
                    'L' + to.x + ',' + to.y;
+        if (linkUI.cluster_to_cluster) {
+          var ax = (to.x - from.x);
+          var ay = (to.y - from.y)
+
+          var mx = ax / 2 + from.x; // middle
+          var my = ay / 2 + from.y;
+
+          /*
+          // find perpendicular line via dot product 
+          0 = ax × bx + ay × by
+          AX x bx = -AY x by
+          bx = 1
+          by = -AX/AY
+          */
+
+          var bx = ax > 0 ? 1 : -1;
+          var by = - ax / ay;
+
+          var b_length = Math.sqrt(bx*bx + by*by);
+          var a_length = Math.sqrt(ax*ax * ay*ay);
+
+          var px = mx + bx / b_length * 20;
+          var py = my + by / b_length * 20;
+
+          data = 'M ' + from.x + ' ' + from.y
+              + ' Q ' + px + ' ' + py
+              + ' ' + to.x + ' ' + to.y;
+        }
         linkUI.attr("d", data);
     });
   return graphics;
