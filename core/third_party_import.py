@@ -72,6 +72,8 @@ def pubmed_to_csv(q, limit=500):
     resp = requests.get(BASE + 'esearch.fcgi', params=params)
     ids = resp.json()['esearchresult']['idlist']
     print('PUBMED search for', q, ':', len(ids), 'papers found')
+    if len(ids) == 0:
+        return ''
 
     params = {
         'db': 'pubmed',
