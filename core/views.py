@@ -1,10 +1,11 @@
-
 from io import TextIOWrapper
 
+from django import forms
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 from core import templates, models, third_party_import
 
@@ -239,8 +240,28 @@ def login(request):
             message = "Please enter a correct username and password"
     return HttpResponse(templates.login(request, message))
 
+class SignupForm(forms.Form):
+    email = forms.EmailField(required=True)
+    password = forms.CharField(required=True)
+
+
 def signup(request):
-    return HttpResponse(templates.signup(request))
+    message = None
+    form = SignupForm()
+    if request.method == 'POST':
+        form = SignupForm(data=request.POST)
+        if form.is_valid():
+            email, password = form.cleaned_data['email'], form.cleaned_data['password']
+            email_domain = email.split('@')[1]
+            if email_domain not in ('parisdescartes.fr', 'univ-paris1.fr', 'dam.io'):
+                message = 'Email domain is restricted during the beta period, please contact us if you want an account'
+            else:
+                messages.success(request, 'An email has been sent to %s to confirm the account creation' % email)
+                return redirect('/')
+        else:
+            message = 'Invalid email/password'
+
+    return HttpResponse(templates.signup(request, form, message))
 
 from django.contrib.auth import logout as auth_logout
 

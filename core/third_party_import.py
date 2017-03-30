@@ -48,7 +48,7 @@ def hal_to_csv(q, limit=500):
 
     print('HAL search for', q, '; results:', N)
     for result in results:
-        authors = result['authFullName_s'][:7]
+        authors = result['authFullName_s'][:7] # constrain the authors to avoid exponential edge growth
         for i, author in enumerate(authors):
             for author2 in authors[i+1:]:
                 writer.writerow([author, author2, result['title_s'][0]])
@@ -92,6 +92,7 @@ def pubmed_to_csv(q, limit=500):
         raw_authors = article['AuthorList']['Author']
         if type(raw_authors) is not list:
             raw_authors = [raw_authors]
+        raw_authors = raw_authors[:7] # constrain the authors to avoid exponential edge growth
         for author in raw_authors:
             if 'CollectiveName' in author:
                 authors.append(author['CollectiveName'])

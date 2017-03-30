@@ -4,6 +4,7 @@ from django.middleware.csrf import get_token
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.template.defaultfilters import filesizeformat
 from django.conf import settings
+from django.contrib.messages import get_messages
 
 from lys import L, raw
 
@@ -319,25 +320,58 @@ def login(request, message):
     ))
 
 
-def signup(request):
+def signup(request, form, message):
     return base((
         L.div('.container') / (
             header(request),
             L.div('.row') / (
                 L.div('.col-md-3.center-block', style='float:none') / (
-                    L.div('.alert.alert-warning') / 'Sign up is not yet available',
+                    L.h3 / 'Sign up',
+                    (L.div('.alert.alert-danger') / message) if message else None,
+                    L.form(method='post') / (
+                        L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
+                        L.div('.form-group') / (
+                            L.label('control-label') / 'Email',
+                            L.input('form-control', name='email', value=form.data.get('email', '')),
+                        ),
+                        L.div('.form-group') / (
+                            L.label('control-label') / 'Password',
+                            L.input('form-control', type='password', name='password', value=form.data.get('password', '')),
+                        ),
+                        L.div('.form-group') / (
+                            L.div('.checkbox') / (
+                                L.label / (
+                                    L.input(name='accept_terms', checked='', type='checkbox'),
+                                    ' Accept', 
+                                ),
+                                raw('&nbsp'),
+                                L.a(href='/about/terms/') / 'terms and conditions',
+                            ),
+                        ),
+                        L.div('.form-group.text-center') / (
+                            L.button('.btn.btn-primary', type='submit') / 'Sign up'
+                        )
+                    ),
                 ),
             ),
             FOOTER,
             SENTRY,
         ),
-    ))
+    )
+)
 
 
 def landing(request):
     return base((
         L.div('.container') / (
             header(request),
+            L.div('.row') / (
+                L.div('.col-md-12') / (
+                    (
+                        L.div('.alert.alert-success') / str(message),
+                    ) for message in get_messages(request)
+                ),
+            ),
             L.div('.row', style="background-image: url('/static/img/landing.png');background-size: contain;background-color: white;background-repeat: no-repeat;") / (
                 L.div('.col-md-12', style="float:none;color: black;font-size: 18px;") / (
                     L.h2(style="""
