@@ -380,9 +380,10 @@ function get_graph_graphics(graph, X, clusters) {
 
         var ui = Viva.Graph.svg('path')
                    .attr('stroke-width', strokeWidth)
+                   .attr('fill', 'transparent')
                    .attr('stroke', color);
         
-        if (GRAPH.directed) {
+        if (GRAPH.directed && prev.id != to.id) {
           ui = ui.attr('marker-end', 'url(#Triangle)');
         }
 
@@ -413,6 +414,12 @@ function get_graph_graphics(graph, X, clusters) {
 
         return ui;
     }).placeLink(function(linkUI, fromPos, toPos) {
+        if (fromPos.x == toPos.x && fromPos.y == toPos.y) {
+          var x = fromPos.x, y = fromPos.y;
+          linkUI.attr("d", 'M ' + x + ' ' + y
+              + ' c -50 -50 -50 50 0 0');
+          return;
+        }
         // Here we should take care about
         //  "Links should start/stop at node's bounding box, not at the node center."
         // For rectangular nodes Viva.Graph.geom() provides efficient way to find
