@@ -17,6 +17,9 @@ COMMIT_HASH = settings.COMMIT_HASH
 SPACER = raw('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;') # dat spacer
 SHORT_SPACER = raw('&nbsp;&nbsp;')
 
+def icon(name):
+    return L.span('.glyphicon.glyphicon-' + name)
+
 def header(request, page_name=''):
     return L.div('.row') / (
         L.div('.col-xs-2') / (
@@ -395,21 +398,37 @@ Linkage allows you to cluster the nodes of networks with textual edges while ide
             L.hr,
             L.div('.row') / (
                 L.div('.col-md-6') / (
-                    L.h4 / 'How Linkage works ?',
+                    L.h4(style='color:#e95420') / (
+                        icon('ok'),
+                        SHORT_SPACER,
+                        'How Linkage works ?'
+                    ),
                     L.p / """Linkage is build upon a sound statistical model for networks with textual edges and implement an innovative  and efficient inference algorithm to fit the model on your data. Model selection allows to find in a fully automatic way the best number of groups and topics."""
                 ),
                 L.div('.col-md-6') / (
-                    L.h4 / 'Upload and manage your data securely',
+                    L.h4(style='color:#e95420') / (
+                        icon('upload'),
+                        SHORT_SPACER,
+                        'Upload and manage your data securely',
+                    ),
                     L.p / """Upload all or part of your data on the platform to analyze them with Linkage. You will keep full control on the data you upload and only you will be able to access them."""
                 ),
             ),
             L.div('.row') / (
                 L.div('.col-md-6') / (
-                    L.h4 / 'Focus on data and interpretation',
+                    L.h4(style='color:#e95420') / (
+                        icon('thumbs-up'),
+                        SHORT_SPACER,
+                        'Focus on data and interpretation',
+                    ),
                     L.p / """Minimum configuration is required to use Linkage since it selects the most sensible parameters for the data you provide. No scientific background is required to start working and get results. Advanced configuration options are available also if you need specific setups."""
                 ),
                 L.div('.col-md-6') / (
-                    L.h4 / 'Visualize and export the results',
+                    L.h4(style='color:#e95420') / (
+                        icon('export'),
+                        SHORT_SPACER,
+                        'Visualize and export the results',
+                    ),
                     L.p / """Linkage also provides advanced visualization tools, based on the specific features of the statistical modeling. Linkage finally allows to export as CSV files the clustering results obtained on your data for further processing."""
                 ),
             ),
