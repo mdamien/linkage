@@ -2,6 +2,7 @@ git pull --rebase
 cd core/static/js;webpack --env=prod;cd ~/linkage
 vf activate linkage
 pip install -r requirements_prod.txt
+rm -rf collected_static/
 python manage.py collectstatic --noinput
 python manage.py migrate
 cowsay 'restart celery and app server plz :)' | lolcat
