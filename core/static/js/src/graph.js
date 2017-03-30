@@ -416,18 +416,21 @@ function get_graph_graphics(graph, X, clusters) {
 
         return ui;
     }).placeLink(function(linkUI, fromPos, toPos) {
-        if (fromPos.x == toPos.x && fromPos.y == toPos.y) {
-          var x = fromPos.x, y = fromPos.y;
-          linkUI.attr("d", 'M ' + x + ' ' + y
-              + ' c -50 -50 -50 50 0 0');
-          return;
-        }
         // Here we should take care about
         //  "Links should start/stop at node's bounding box, not at the node center."
         // For rectangular nodes Viva.Graph.geom() provides efficient way to find
         // an intersection point between segment and rectangle
-        var toNodeSize = linkUI._to._node_size,
-            fromNodeSize = linkUI._prev._node_size;
+        var toNodeSize = linkUI._to._node_size + 1,
+            fromNodeSize = linkUI._prev._node_size + 1;
+
+        // self-loop
+        if (fromPos.x == toPos.x && fromPos.y == toPos.y) {
+          var x = fromPos.x - fromNodeSize / 2, y = fromPos.y;
+          linkUI.attr("d", 'M ' + x + ' ' + y
+              + ' c -30 -30 -30 30 0 0');
+          return;
+        }
+
         var from = geom.intersectRect(
                 // rectangle:
                         fromPos.x - fromNodeSize / 2, // left

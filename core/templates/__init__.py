@@ -399,7 +399,7 @@ Linkage allows you to cluster the nodes of networks with textual edges while ide
             L.div('.row') / (
                 L.div('.col-md-6') / (
                     L.h4(style='color:#e95420') / (
-                        icon('ok'),
+                        icon('education'),
                         SHORT_SPACER,
                         'How Linkage works ?'
                     ),

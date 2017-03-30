@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Slider from 'rc-slider';
 
-import { styles } from 'react-autocomplete/lib/utils'
-import Autocomplete from 'react-autocomplete'
+// import { styles } from 'react-autocomplete/lib/utils'
+// import Autocomplete from 'react-autocomplete'
 
 import { get_color, hashedColor, n_best_elems } from './utils';
 import { init } from '../graph';
@@ -17,7 +17,7 @@ export function sortStates (a, b, value) {
     b.toLowerCase().indexOf(value.toLowerCase()) ? 1 : -1
   )
 }
-
+/*
 let App = React.createClass({
   getInitialState() {
     return { value: '' }
@@ -58,6 +58,7 @@ let App = React.createClass({
     )
   }
 })
+*/
 
 class TopicWords extends React.Component {
     constructor(props) {
