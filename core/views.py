@@ -5,11 +5,14 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login as auth_login
+from django.contrib.auth.models import User
 from django.contrib import messages
+from django.core.exceptions import PermissionDenied
+
+from raven.contrib.django.raven_compat.models import client
 
 from core import templates, models, third_party_import
-
-from django.core.exceptions import PermissionDenied
 
 @login_required
 def index(request):
@@ -256,7 +259,15 @@ def signup(request):
             if email_domain not in ('parisdescartes.fr', 'univ-paris1.fr', 'dam.io'):
                 message = 'Email domain is restricted during the beta period, please contact us if you want an account'
             else:
-                messages.success(request, 'An email has been sent to %s to confirm the account creation' % email)
+                user = User.objects.create_user(email, email, password)
+                auth_login(request, user)
+                messages.success(request, 'Account successfully created')
+
+                client.captureException('User created: {}'.format(email))
+
+                # TODO send mail
+                # messages.success(request, 'An email has been sent to %s to confirm the account creation' % email)
+
                 return redirect('/')
         else:
             message = 'Invalid email/password'

@@ -37,6 +37,7 @@ def header(request, page_name=''):
             ),
         ) if request.user.is_authenticated else None,
         L.div('.col-xs-5.text-right') / (
+            L.span('.btn.btn-link.disabled', style='margin-top: 20px;display:inline-block') / request.user.username,
             (
                 L.a('.btn.btn-link', href='/admin/', style='margin-top: 20px;display:inline-block') / 'admin'
             ) if request.user.is_staff else None,
