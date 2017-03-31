@@ -175,23 +175,29 @@ function expand_clusters(graph, X, clusters) {
 
 function _add_clusters(graph, X, nodeToCluster) {
   var added_links = new Set();
-  X.forEach(function(line) {
-    var cluster0 = nodeToCluster[line[0]];
-    var cluster1 = nodeToCluster[line[1]];
-    var key = cluster0 + ',' + cluster1;
-    if (added_links.has(key)) return;
-    added_links.add(key);
-    if (cluster0 === undefined) {
-      console.log('invalid cluster0', cluster0, 'for', line);
-      return;
-    }
-    if (cluster1 === undefined) {
-      console.log('invalid cluster1', cluster1, 'for', line);
-      return;
-    }
-    graph.addNode(cluster0, {isCluster: true});
-    graph.addNode(cluster1, {isCluster: true});
-    graph.addLink(cluster0, cluster1);
+
+  var clusters = new Set();
+  nodeToCluster.forEach(x => clusters.add(x));
+
+  clusters.forEach(function(cluster0) {
+    clusters.forEach(function(cluster1) {
+      var key = cluster0 + ',' + cluster1;
+      if (added_links.has(key)) return;
+      added_links.add(key);
+      if (cluster0 === undefined) {
+        console.log('invalid cluster0', cluster0, 'for', line);
+        return;
+      }
+      if (cluster1 === undefined) {
+        console.log('invalid cluster1', cluster1, 'for', line);
+        return;
+      }
+      if (STATE.pi[cluster0][cluster1] > 0.0025) {
+        graph.addNode(cluster0, {isCluster: true});
+        graph.addNode(cluster1, {isCluster: true});
+        graph.addLink(cluster0, cluster1);
+      }
+    })
   });
 }
 
@@ -386,6 +392,7 @@ function get_graph_graphics(graph, X, clusters) {
         }
 
         $(ui).hover(function() {
+          if (strokeWidth == 0) return;
           var words = [];
 
           if (link_id !== -1) {

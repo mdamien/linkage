@@ -60,6 +60,8 @@ let App = React.createClass({
 })
 */
 
+const EPS_TOPICS = 0.0000001;
+
 class TopicWords extends React.Component {
     constructor(props) {
       super(props);
@@ -72,16 +74,21 @@ class TopicWords extends React.Component {
         this.setState({showAll: !this.state.showAll});
     }
     render() {
+        var remove_unicode = word => word.replace('<U+00E9>', 'é')
+          .replace('<U+0001F175>', '🅵')
+          .replace('<U+0001F17D>', '🅽')
+          .replace('<U+00C2>', 'Â')
+          .replace('<U+00E8>', 'È')
+          .replace('<U+00C7>', 'Ç');
         let {i, words, dictionnary} = this.props;
         return <div className='list-group-item'>
             {ColorSquare(get_color(i))}
             ex: {n_best_elems(words, 5, v => v.tfidf).map((t, i) => {
-                if (t[1].freq < 0.001) return null;
                 return <span key={i}>
                     <span
                         className="label label-default"
                         key={i}
-                    >{dictionnary[t[0]]}</span>{' '}
+                    >{remove_unicode(dictionnary[t[0]])}</span>{' '}
                 </span>
             })}
             <p style={{marginTop: 10}}>
@@ -91,11 +98,10 @@ class TopicWords extends React.Component {
             </p>
             {this.state.showAll ? <table className='table table-striped table-bordered'>
                 <tbody>
-                    {n_best_elems(words, false, v => v.tfidf).map((t, i) => {
-                        if (t[1].freq < 0.001) return null;
+                    {n_best_elems(words, 1000, v => v.tfidf).map((t, i) => {
                         return <tr key={i}>
-                            <td>{dictionnary[t[0]]}</td>
-                            <td className='text-right'>{(t[1].freq * 100).toFixed(2)} %</td>
+                            <td>{remove_unicode(dictionnary[t[0]])}</td>
+                            <td className='text-right'>{(t[1].freq * 100).toFixed(3)} %</td>
                             {/*<td className='text-right'>{(t[1].tfidf * 100).toFixed(2)}</td>*/}
                         </tr>;
                     })}
