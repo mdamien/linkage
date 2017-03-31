@@ -1,4 +1,4 @@
-import xmltodict, csv, tqdm
+import xmltodict, csv, tqdm, re
 
 nodes = []
 node = None
@@ -14,6 +14,9 @@ def write_stuff():
     if node:
         nodes_csv.writerow([node['@id'], node[11]['value'].strip()])
     if edge:
+        def clean_text(text):
+            return text.strip()
+
         if type(edge[0]) is list:
             # remove mention from retweets
             retweet_dates = set()
@@ -24,14 +27,18 @@ def write_stuff():
             for i, cat in enumerate(edge[0]):
                 if cat['value'] == 'mention' and cat['start'] in retweet_dates:
                     continue
-                if cat['value'] == 'co-mention':
+                elif cat['value'] == 'co-mention':
                     continue
-
-                edges_csv.writerow([edge['@source'], edge['@target'], edge['@weight'],
-                    edge[0][i]['value'], edge[1][i]['value'], edge[2][i]['value'].strip()])
+                else:
+                    text = clean_text(edge[2][i]['value'])
+                    edges_csv.writerow([edge['@source'], edge['@target'], edge['@weight'],
+                        cat['value'], edge[1][i]['value'], text])
         else:
+            cat = edge[0]['value']
+            if cat == 'co-mention':
+                return
             edges_csv.writerow([edge['@source'], edge['@target'], edge['@weight'],
-                edge[0]['value'], edge[1]['value'], edge[2]['value']])
+                cat, edge[1]['value'], clean_text(edge[2]['value'])])
 
 for line in tqdm.tqdm(open('presidentielles_big.gexf')):
     if '<node id=' in line:

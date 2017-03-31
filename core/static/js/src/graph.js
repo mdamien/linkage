@@ -378,7 +378,7 @@ function get_graph_graphics(graph, X, clusters) {
 
         var ui = Viva.Graph.svg('path')
                    .attr('stroke-width', strokeWidth)
-                   .attr('fill', 'transparent')
+                   .attr('fill', 'none')
                    .attr('stroke', color);
         
         if (GRAPH.directed && prev.id != to.id) {
