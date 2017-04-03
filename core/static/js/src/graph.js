@@ -382,7 +382,7 @@ function get_graph_graphics(graph, X, clusters) {
           // WIDTH IN PI()
           var width = STATE.pi[prev.id][to.id];
 
-          strokeWidth = 1 + 30*width;
+          strokeWidth = 0.25 + 40*width;
         }
 
         var ui = Viva.Graph.svg('path')
