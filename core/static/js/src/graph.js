@@ -59,6 +59,10 @@ function init(state_init = {}) {
 
     STATE.topicToTermsTFIDF = tfidf(topics);
 
+    STATE.topicsName = STATE.topicToTermsTFIDF.map(words =>
+      dictionnary[n_best_elems(words, 1, v => v.tfidf)[0][0]]
+    );
+
     var topics_per_edges = Papa.parse(GRAPH.result.topics_per_edges_mat,
       {delimiter: '  ', dynamicTyping: true, skipEmptyLines: true}).data;
 
@@ -369,7 +373,6 @@ function get_graph_graphics(graph, X, clusters) {
         var strokeWidth = 1;
         var cluster_topic_perc = false;
         if (cluster_to_cluster) {
-
           // BEST TOPIC
           cluster_topic_perc = STATE.theta_qr[
             prev.id * Object.keys(STATE.clusterToNodes).length + to.id];
@@ -406,9 +409,10 @@ function get_graph_graphics(graph, X, clusters) {
 
           ui.attr('stroke-width', strokeWidth + 2);
           renderGraphSidebar({
-            title: ' ',
+            title: ' ', // cluster_to_cluster ? prev.id + '→' + to.id : ' ',
             words,
             topics: topics_perc || cluster_topic_perc,
+            topicsName: STATE.topicsName,
             renderer: RENDERER,
             expand_clusters: expand_clusters.bind(this, graph, X, clusters),
             collapse_clusters: collapse_clusters.bind(this, graph, X, clusters),

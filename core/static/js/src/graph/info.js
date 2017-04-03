@@ -33,8 +33,11 @@ function render(params) {
         )}
       </div> : null}
       {params.topics && params.topics.length > 0 ? <div>
-        <br/>
-        {params.topics.map((v, i) => <div key={i}>{ColorSquare(get_color(i), ' ', (v * 100).toFixed(2) + '%')} {(v * 100).toFixed(0) + ' %'}</div>)}
+        <h4>Topics</h4>
+        {params.topics.map((v, i) => <div key={i}>
+          {ColorSquare(get_color(i), v > 0.20 ? params.topicsName[i] : <span>&nbsp;</span>,
+              (v * 100).toFixed(2) + '%')}&nbsp;{(v * 100).toFixed(1)}&nbsp;%
+        </div>)}
       </div> : null}
     </div>;
   }
