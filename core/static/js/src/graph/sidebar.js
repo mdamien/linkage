@@ -8,7 +8,7 @@ import Slider from 'rc-slider';
 import { get_color, hashedColor, n_best_elems } from './utils';
 import { init } from '../graph';
 
-var ColorSquare = color => <span className='label' style={{ backgroundColor: color, marginRight: 10 }}> </span>;
+var ColorSquare = (color, content=' ')  => <span className='label' style={{ backgroundColor: color, marginRight: 10 }}>{content}</span>;
 
 
 export function sortStates (a, b, value) {
@@ -218,30 +218,6 @@ class Sidebar extends React.Component {
             </div>
             <div className='panel panel-default'>
                 <div className='panel-heading'>
-                    <h3 className='panel-title'>Clusters 
-                        {state.clusterToNodes ?
-                            <span> - {Object.keys(state.clusterToNodes).length}</span>
-                            : null}
-                    </h3>
-                </div>
-                {GRAPH.job_param_clusters != GRAPH.job_param_clusters_max ? <div className='panel-body'>
-                    <Slider steps={1} dots defaultValue={this.state.clusters}
-                      min={GRAPH.job_param_clusters}
-                      max={GRAPH.job_param_clusters_max}
-                      marks={marks_clusters}
-                      onAfterChange={this.updateClusters}/>
-                    <br/>
-                </div> : null}
-                {state.clusterToNodes ? <div className='list-group'>
-                    {Object.keys(state.clusterToNodes).map(key => 
-                        <div className='list-group-item' key={key}>
-                            {ColorSquare(get_color(key, 'Paired'))} {state.clusterToNodes[key].length}
-                        </div>
-                    )}
-                </div> : null}
-            </div>
-            <div className='panel panel-default'>
-                <div className='panel-heading'>
                     <h3 className='panel-title'>Topics 
                         {state.topicToTerms ?
                             <span> - {state.topicToTerms.length}</span>
@@ -260,6 +236,32 @@ class Sidebar extends React.Component {
                     {state.topicToTermsTFIDF.map((v, i) => 
                         <TopicWords words={v} i={i} key={i} dictionnary={state.dictionnary}/>
                     )}
+                </div> : null}
+            </div>
+            <div className='panel panel-default'>
+                <div className='panel-heading'>
+                    <h3 className='panel-title'>Clusters 
+                        {state.clusterToNodes ?
+                            <span> - {Object.keys(state.clusterToNodes).length}</span>
+                            : null}
+                    </h3>
+                </div>
+                {GRAPH.job_param_clusters != GRAPH.job_param_clusters_max ? <div className='panel-body'>
+                    <Slider steps={1} dots defaultValue={this.state.clusters}
+                      min={GRAPH.job_param_clusters}
+                      max={GRAPH.job_param_clusters_max}
+                      marks={marks_clusters}
+                      onAfterChange={this.updateClusters}/>
+                    <br/>
+                </div> : null}
+                {state.clusterToNodes ? <div className='list-group'>
+                    <div className='list-group-item'>
+                      {Object.keys(state.clusterToNodes).map(key => 
+                          <span>
+                          {ColorSquare(get_color(key, 'Paired'), state.clusterToNodes[key].length)}{' '}
+                          </span>
+                      )}
+                    </div>
                 </div> : null}
             </div>
         </div>;

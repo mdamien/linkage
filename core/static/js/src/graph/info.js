@@ -3,7 +3,12 @@ import ReactDOM from 'react-dom';
 
 import { get_color, hashedColor } from './utils';
 
-var ColorSquare = (color, content=' ')  => <span className='label' style={{ backgroundColor: color, marginRight: 10 }}>{content}</span>;
+var ColorSquare = (color, content=' ', width='auto') => <span className='label' style={{
+    backgroundColor: color,
+    marginRight: 10,
+    width: width,
+    display: 'inline-block'
+  }}>{content}</span>;
 
 /*
   params = {title, is_node, topics, renderer}
@@ -29,7 +34,7 @@ function render(params) {
       </div> : null}
       {params.topics && params.topics.length > 0 ? <div>
         <br/>
-        {params.topics.map((v, i) => <span key={i}>{ColorSquare(get_color(i), (v * 100).toFixed(2) + ' %')} </span>)}
+        {params.topics.map((v, i) => <div key={i}>{ColorSquare(get_color(i), ' ', (v * 100).toFixed(2) + '%')} {(v * 100).toFixed(0) + ' %'}</div>)}
       </div> : null}
     </div>;
   }
