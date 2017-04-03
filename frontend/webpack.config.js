@@ -37,7 +37,7 @@ module.exports = function(env) {
     },
     output: {
       filename: '[name].js',
-      path: path.resolve(__dirname, 'dist')
+      path: path.resolve(__dirname, '../core/static/js/dist')
     },
     module: {
       rules: [
