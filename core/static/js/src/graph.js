@@ -192,7 +192,7 @@ function _add_clusters(graph, X, nodeToCluster) {
         console.log('invalid cluster1', cluster1, 'for', line);
         return;
       }
-      if (STATE.pi[cluster0][cluster1] > 0.0025) {
+      if (STATE.pi[cluster0][cluster1] > GRAPH.cluster_to_cluster_cutoff) {
         graph.addNode(cluster0, {isCluster: true});
         graph.addNode(cluster1, {isCluster: true});
         graph.addLink(cluster0, cluster1);

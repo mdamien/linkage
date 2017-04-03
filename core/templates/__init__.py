@@ -105,6 +105,7 @@ def serialize_graph(graph, result, simple=False):
         'log': graph.job_log,
         'time': graph.job_time,
         'progress': graph.job_progress,
+        'cluster_to_cluster_cutoff': graph.cluster_to_cluster_cutoff,
         'job_param_clusters': graph.job_param_clusters,
         'job_param_topics': graph.job_param_topics,
         'job_param_clusters_max': graph.job_param_clusters_max,

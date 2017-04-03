@@ -74,12 +74,6 @@ class TopicWords extends React.Component {
         this.setState({showAll: !this.state.showAll});
     }
     render() {
-        var remove_unicode = word => word.replace('<U+00E9>', 'é')
-          .replace('<U+0001F175>', '🅵')
-          .replace('<U+0001F17D>', '🅽')
-          .replace('<U+00C2>', 'Â')
-          .replace('<U+00E8>', 'È')
-          .replace('<U+00C7>', 'Ç');
         let {i, words, dictionnary} = this.props;
         return <div className='list-group-item'>
             {ColorSquare(get_color(i))}
@@ -88,7 +82,7 @@ class TopicWords extends React.Component {
                     <span
                         className="label label-default"
                         key={i}
-                    >{remove_unicode(dictionnary[t[0]])}</span>{' '}
+                    >{dictionnary[t[0]]}</span>{' '}
                 </span>
             })}
             <p style={{marginTop: 10}}>
@@ -100,7 +94,7 @@ class TopicWords extends React.Component {
                 <tbody>
                     {n_best_elems(words, 1000, v => v.tfidf).map((t, i) => {
                         return <tr key={i}>
-                            <td>{remove_unicode(dictionnary[t[0]])}</td>
+                            <td>{dictionnary[t[0]]}</td>
                             <td className='text-right'>{(t[1].freq * 100).toFixed(3)} %</td>
                             {/*<td className='text-right'>{(t[1].tfidf * 100).toFixed(2)}</td>*/}
                         </tr>;

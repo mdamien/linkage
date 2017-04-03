@@ -24,6 +24,8 @@ class Graph(models.Model): # = Job
     # term count per edge as raw_ascii ( = tdm )
     tdm = models.TextField(blank=True, default='')
 
+    cluster_to_cluster_cutoff = models.FloatField(default=0.005)
+
     directed = models.BooleanField(default=True)
     user = models.ForeignKey(User)
     created_at = models.DateTimeField(auto_now_add=True)

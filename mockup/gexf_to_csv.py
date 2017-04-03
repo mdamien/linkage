@@ -1,14 +1,16 @@
-import xmltodict, csv, tqdm, re
+import xmltodict, csv, tqdm, re, sys
 
-nodes = []
 node = None
 edge = None
 
-nodes_csv = csv.writer(open('nodes.csv','w'))
-edges_csv = csv.writer(open('edges.csv','w'))
+nodes_csv = csv.writer(open(sys.argv[2] + '_nodes.csv','w'))
+edges_csv = csv.writer(open(sys.argv[2] + '_edges.csv','w'))
 
 nodes_csv.writerow(['id','label'])
 edges_csv.writerow(['source','target', 'weight', 'type', 'emotion', 'text'])
+
+# todo: garder que les comment et les mentions [ok]
+# todo: regarder un comm genere une mention de la personne dans le tweet commenté
 
 def write_stuff():
     if node:
@@ -18,29 +20,29 @@ def write_stuff():
             return text.strip()
 
         if type(edge[0]) is list:
-            # remove mention from retweets
-            retweet_dates = set()
-            for cat in edge[0]:
-                if cat['value'] == 'retweet':
-                    retweet_dates.add(cat['start'])
-
             for i, cat in enumerate(edge[0]):
-                if cat['value'] == 'mention' and cat['start'] in retweet_dates:
+                text = clean_text(edge[2][i]['value'])
+                if text.startswith('RT '):
                     continue
                 elif cat['value'] == 'co-mention':
                     continue
+                elif cat['value'] == 'retweet':
+                    continue
                 else:
-                    text = clean_text(edge[2][i]['value'])
                     edges_csv.writerow([edge['@source'], edge['@target'], edge['@weight'],
                         cat['value'], edge[1][i]['value'], text])
         else:
+            text = clean_text(edge[2]['value'])
+            if text.startswith('RT '):
+                return
             cat = edge[0]['value']
             if cat == 'co-mention':
                 return
             edges_csv.writerow([edge['@source'], edge['@target'], edge['@weight'],
-                cat, edge[1]['value'], clean_text(edge[2]['value'])])
+                cat, edge[1]['value'], text])
 
-for line in tqdm.tqdm(open('presidentielles_big.gexf')):
+
+for line in tqdm.tqdm(open(sys.argv[1])):
     if '<node id=' in line:
         write_stuff()
         node = xmltodict.parse(line + '</node>')['node']
