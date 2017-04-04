@@ -11,6 +11,11 @@ module.exports = function(env) {
   ];
 
   if (prod) {
+    plugins.push(new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify('production')
+      }
+    }));
     plugins.push(new webpack.LoaderOptionsPlugin({
       minimize: true,
       debug: false
