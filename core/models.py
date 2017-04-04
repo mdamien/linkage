@@ -100,6 +100,7 @@ def graph_data_from_links(links):
 
     nodes = [] # labels
     terms = [] # dictionnary
+    stemm_to_lemm = {}
 
     def node_to_i(node):
         try:
@@ -137,7 +138,13 @@ def graph_data_from_links(links):
                         edges[edge_name] = collections.Counter()
                     doc_terms = edges[edge_name]
                     for token in tokens:
-                        doc_terms[stemmer.stem(token)] += 1
+                        stemm = stemmer.stem(token)
+                        if stemm in stemm_to_lemm:
+                            lemm = stemm_to_lemm[stemm]
+                        else:
+                            stemm_to_lemm[stemm] = token.lower()
+                            lemm = token
+                        doc_terms[lemm] += 1
 
     def key_to_order_for_tdm(edge_name):
         start, end = [int(x) for x in edge_name.split(',')]
