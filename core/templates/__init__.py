@@ -292,7 +292,7 @@ def index(request, messages, import_type_selected='coauth'):
             FOOTER
         ),
         JS_LIBS,
-        L.script(src='/static/js/src/import.js?v=' + COMMIT_HASH),
+        L.script(src='/static/js/import.js?v=' + COMMIT_HASH),
     ))
 
 def login(request, message):
