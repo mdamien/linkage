@@ -324,9 +324,9 @@ function get_graph_graphics(graph, X, clusters) {
                        .attr('viewBox', "0 0 10 10")
                        .attr('refX', "10")
                        .attr('refY', "5")
-                       .attr('markerUnits', "strokeWidth")
-                       .attr('markerWidth', "10")
-                       .attr('markerHeight', "5")
+                       .attr('markerUnits', "userSpaceOnUse")
+                       .attr('markerWidth', "5")
+                       .attr('markerHeight', "2.5")
                        .attr('orient', "auto");
         },
         marker = createMarker('Triangle');
@@ -382,7 +382,7 @@ function get_graph_graphics(graph, X, clusters) {
           // WIDTH IN PI()
           var width = STATE.pi[prev.id][to.id];
 
-          strokeWidth = 0.25 + 40*width;
+          strokeWidth = 0.25 + 10*width;
         }
 
         var ui = Viva.Graph.svg('path')
@@ -390,7 +390,7 @@ function get_graph_graphics(graph, X, clusters) {
                    .attr('fill', 'none')
                    .attr('stroke', color);
         
-        if (GRAPH.directed && prev.id != to.id) {
+        if ((cluster_to_cluster || GRAPH.directed) && prev.id != to.id) {
           ui = ui.attr('marker-end', 'url(#Triangle)');
         }
 

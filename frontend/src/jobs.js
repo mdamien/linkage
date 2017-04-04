@@ -3,6 +3,8 @@ import './graph/csrf.js';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+const Icon = props => <span className={'glyphicon glyphicon-' + props.name}></span>;
+
 class Job extends React.Component {
     constructor(props) {
       super(props);
@@ -24,6 +26,7 @@ class Job extends React.Component {
       });
     }
     render() {
+
       if (this.state.deleted) {
         return <div></div>;
       }
@@ -51,12 +54,22 @@ class Job extends React.Component {
             </div>
             <div className='col-md-7 text-right'>
               {finished ? <span>
-                <a className='btn btn-success' href={job.url}>View</a>
+                <a className='btn btn-success' href={job.url}>
+                  <Icon name='fullscreen'/>&nbsp;&nbsp;View
+                </a>
                 &nbsp;&nbsp;&nbsp;&nbsp;
+                {/*
                 <a className='btn btn-warning' href={job.url+'details/'}>Details</a>
                 &nbsp;&nbsp;&nbsp;&nbsp;
+                */}
+                <a className='btn btn-warning' href={job.url + 'data/?all'} download={'job_' + job.id + '_export.json'}>
+                  <Icon name='download'/>&nbsp;&nbsp;Download
+                </a>
+                &nbsp;&nbsp;&nbsp;&nbsp;
               </span> : null}
-              <button className='btn btn-danger' onClick={() => this.doDelete()}>Delete</button>
+              <button className='btn btn-danger' onClick={() => this.doDelete()}>
+                <Icon name='trash'/>&nbsp;&nbsp;Delete
+              </button>
             </div>
           </div>
           <div className='row'>

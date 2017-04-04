@@ -117,7 +117,12 @@ def serialize_graph(graph, result, simple=False):
         del data['labels']
         del data['edges']
     if result:
-        data['result'] = result.serialize()
+        try:
+            # for export
+            if len(result) > 1:
+                data['results'] = [r.serialize() for r in result]
+        except TypeError:
+            data['result'] = result.serialize()
     return data
 
 def result(request, graph, result):
@@ -426,7 +431,7 @@ Linkage allows you to cluster the nodes of networks with textual edges while ide
                 ),
                 L.div('.col-md-6') / (
                     L.h4(style='color:#e95420') / (
-                        icon('export'),
+                        icon('download'),
                         SHORT_SPACER,
                         'Visualize and export the results',
                     ),

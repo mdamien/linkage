@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 import { get_color, hashedColor } from './utils';
 
-var ColorSquare = (color, content=' ', width='auto') => <span className='label' style={{
+var ColorSquare = (color, content=<span>&nbsp;</span>, width='auto') => <span className='label' style={{
     backgroundColor: color,
     marginRight: 10,
     width: width,

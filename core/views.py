@@ -188,8 +188,9 @@ def api_result(request, pk):
         try:
             result = models.ProcessingResult.objects \
                 .filter(graph=graph) \
-                .order_by('-crit') \
-                .first()
+                .order_by('-crit')
+            if 'all' not in request.GET:
+                result = result.first()
         except:
             print('no match for graph')
     
