@@ -7,10 +7,10 @@ export default function tfidf(topic2terms) {
   return topic2terms.map((freqs) => {
     var max_freq_topic = n_best_elems(freqs, 1)[0][1];
     return freqs.map((freq, i) => {
-      if (freq < 0.001) {
+      if (freq < 0.000001) {
         return {
-          freq: 0,
-          tfidf: 0,
+          freq: freq,
+          tfidf: freq, // tf*idf,
         };
       }
       var tf = 0.5 + 0.5*freq/max_freq_topic;
