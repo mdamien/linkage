@@ -1,7 +1,7 @@
 from config.settings import *
 
 DEBUG = False
-ALLOWED_HOSTS = ['193.51.82.105']
+ALLOWED_HOSTS = ['linkage.fr']
 USE_X_FORWARDED_HOST = True
 
 SECRET_KEY = 'to_be_changed_in_to_a_random_var_on_disk'
