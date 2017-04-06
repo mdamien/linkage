@@ -405,7 +405,7 @@ Linkage allows you to cluster the nodes of networks with textual edges while ide
             L.div('.row') / (
                 L.div('.col-md-6') / (
                     L.h4(style='color:#e95420') / (
-                        icon('education'),
+                        icon('certificate'),
                         SHORT_SPACER,
                         'How Linkage works ?'
                     ),
@@ -436,6 +436,36 @@ Linkage allows you to cluster the nodes of networks with textual edges while ide
                         'Visualize and export the results',
                     ),
                     L.p / """Linkage also provides advanced visualization tools, based on the specific features of the statistical modeling. Linkage finally allows to export as CSV files the clustering results obtained on your data for further processing."""
+                ),
+            ),
+            L.div('.row') / (
+                L.div('.col-md-6') / (
+                    L.h4(style='color:#e95420') / (
+                        icon('education'),
+                        SHORT_SPACER,
+                        'The statistical method behind the platform',
+                    ),
+                    L.p / """Linkage is based on advanced statistical  clustering methods for networks with textual edges. The methodology implemented is partly related to an article published in the journal « Statistics and Computing ». The reference to cite in case of academic use of the platform is « C. Bouveyron, P. Latouche and R. Zreik, The Stochastic Topic Block Model for the Clustering of Networks with Textual Edges, Statistics and Computing, in press, 2017. DOI: 10.1007/s11222-016-9713-7 »."""
+                ),
+                L.div('.col-md-6') / (
+                    L.h4(style='color:#e95420') / (
+                        icon('user'),
+                        SHORT_SPACER,
+                        'The people behind',
+                    ),
+                    L.p / """Linkage is developed by an academic team: """,
+                    L.ul / (
+                        L.li / (
+                            'Methodology and code: ',
+                            L.a(href='http://w3.mi.parisdescartes.fr/~cbouveyr/') / 'C. Bouveyron',
+                            ' and ',
+                            L.a(href='http://samm.univ-paris1.fr/Pierre-Latouche') / 'P. Latouche',
+                        ),
+                        L.li / (
+                            'Web interface and visualisations: ',
+                            L.a(href='http://dam.io') / 'D. Marié',
+                        )
+                    )
                 ),
             ),
             FOOTER,
