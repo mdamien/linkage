@@ -67,7 +67,10 @@ def index(request):
             elif 'choice_twitter' in request.POST:
                 q = request.POST['q']
                 if len(q) > 0:
-                    links = third_party_import.twitter_to_csv(q, limit)
+                    if request.GET.get('use_loklak'):
+                        links = third_party_import.loklak_to_csv(q, limit)
+                    else:
+                        links = third_party_import.twitter_to_csv(q, limit)                        
                     data = models.graph_data_from_links(links)
                     graph = models.Graph(name='Twitter import of search term: %s' % (q, ),
                         user=request.user, directed=True, **data)

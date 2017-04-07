@@ -216,6 +216,17 @@ def index(request, messages, import_type_selected='coauth'):
                                 )
                             ),
                             L.br,
+                            L.div('.form-group._mbox-options') / (
+                                L.div('.col-md-3.control-label') / (' '),
+                                L.div('.col-md-9') / (
+                                    L.div('.checkbox') / (
+                                        L.label / (
+                                            L.input(name='use_loklak', type='checkbox'),
+                                            ' Use Lolklat API (older tweets, less rate-limited)',
+                                        )                                    
+                                    ),                                 
+                                ),
+                            ),
                             L.div('.form-group') / (
                                 L.div('.col-md-3.control-label') / (L.strong / 'Limit'),
                                 L.div('.col-md-2') / (
