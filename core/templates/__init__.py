@@ -175,6 +175,8 @@ def index(request, messages, import_type_selected='coauth'):
                             href='?import_type=coauth') / 'Co-authorship network',
                         L.a('.list-group-item' + ('.active' if import_type_selected == 'mbox' else ''),
                             href='?import_type=mbox') / 'MBox',
+                        L.a('.list-group-item' + ('.active' if import_type_selected == 'twitter' else ''),
+                            href='?import_type=twitter') / 'Twitter',
                         L.a('.list-group-item' + ('.active' if import_type_selected == 'csv' else ''),
                             href='?import_type=csv') / 'CSV',
                         L.a('.list-group-item' + ('.active' if import_type_selected == 'sample' else ''),
@@ -188,7 +190,7 @@ def index(request, messages, import_type_selected='coauth'):
                         L.input(type='hidden', name='action', value='import'),
                         (
                             L.div('.row') / (
-                                L.div('.col-md-5') / L.input('.form-control', type='text', name='q', placeholder="'security', 'defense', 'weapons', 'deep learning',.."),
+                                L.div('.col-md-5') / L.input('.form-control', type='text', name='q', placeholder="'security', 'defense', 'weapons', 'deep learning',..."),
                                 L.div('.col-md-7') / (
                                     L.input('.btn.btn-primary.btn-large', name='choice_arxiv', type='submit', value='search arXiv'),
                                     SPACER,
@@ -205,6 +207,21 @@ def index(request, messages, import_type_selected='coauth'):
                                 ),
                             ),
                         ) if import_type_selected == 'coauth' else None,
+                        (
+                            L.div('.row') / (
+                                L.div('.col-md-5') / L.input('.form-control', type='text', name='q', placeholder="@spotify, #fakenews,..."),
+                                L.div('.col-md-7') / (
+                                    L.input('.btn.btn-primary.btn-large', name='choice_twitter', type='submit', value='search'),
+                                )
+                            ),
+                            L.br,
+                            L.div('.form-group') / (
+                                L.div('.col-md-3.control-label') / (L.strong / 'Limit'),
+                                L.div('.col-md-2') / (
+                                    L.input('.form-control', name='limit', value='500', type='number'),
+                                ),
+                            ),
+                        ) if import_type_selected == 'twitter' else None,
                         (
                             L.div('.row') / (
                                 L.div('.col-md-7') / L.input('form-control', type='file', name='csv_file'),

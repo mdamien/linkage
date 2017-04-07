@@ -1,4 +1,4 @@
-import io, csv, email, json
+import io, csv, email, json, re
 
 from email import header
 from email.utils import getaddresses
@@ -115,6 +115,32 @@ def pubmed_to_csv(q, limit=500):
             for author2 in authors[i+1:]:
                 writer.writerow([author, author2, text])
 
+    return output.getvalue()
+
+
+def twitter_to_csv(q, limit=500):
+    params = {
+        'q': q,
+        'maximumRecords': limit,
+    }
+    resp = requests.get('https://api.loklak.org/api/search.json', params=params)
+    results = resp.json()['statuses']
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    N = len(results)
+
+    print('Twitter search for', q, '; results:', N)
+
+    for result in results:
+        author = result['screen_name']
+        mentions = result['mentions']
+        text = re.sub(r'^https?:\/\/.*[\r\n]*', '', result['text'], flags=re.MULTILINE)
+        for mention in mentions:
+            writer.writerow([author, mention, text])
+        if len(mentions) == 0:
+            writer.writerow([author, author, text])
     return output.getvalue()
 
 

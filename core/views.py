@@ -64,6 +64,15 @@ def index(request):
                         user=request.user, directed=False, **data)
                 else:
                     messages.append(['danger', 'You must include a search term to do a query'])
+            elif 'choice_twitter' in request.POST:
+                q = request.POST['q']
+                if len(q) > 0:
+                    links = third_party_import.twitter_to_csv(q, limit)
+                    data = models.graph_data_from_links(links)
+                    graph = models.Graph(name='Twitter import of search term: %s' % (q, ),
+                        user=request.user, directed=True, **data)
+                else:
+                    messages.append(['danger', 'You must include a search term to do a query'])
             elif 'choice_hal' in request.POST:
                 q = request.POST['q']
                 if len(q) > 0:
