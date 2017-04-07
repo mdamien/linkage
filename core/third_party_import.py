@@ -107,7 +107,7 @@ def pubmed_to_csv(q, limit=500):
             abstract = article['Abstract']['AbstractText']
             if type(abstract) is not list:
                 abstract = [abstract]
-            abstract = [x['#text'] if '#text' in x else x for x in abstract]
+            abstract = [x['#text'] if '#text' in x else x for x in abstract if not (not '#text' in x and '@Label' in x)]
         title = []
         if 'ArticleTitle' in article:
             title = [article['ArticleTitle']]
