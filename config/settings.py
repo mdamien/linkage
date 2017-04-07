@@ -106,3 +106,5 @@ CHANNEL_LAYERS = {
 
 import raven
 COMMIT_HASH = raven.fetch_git_sha(os.path.dirname(os.pardir))
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

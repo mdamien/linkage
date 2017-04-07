@@ -462,7 +462,7 @@ Linkage allows you to cluster the nodes of networks with textual edges while ide
                             L.a(href='http://samm.univ-paris1.fr/Pierre-Latouche') / 'P. Latouche',
                         ),
                         L.li / (
-                            'Web interface and visualisations: ',
+                            'Web interface and visualizations: ',
                             L.a(href='http://dam.io') / 'D. Marié',
                         )
                     )

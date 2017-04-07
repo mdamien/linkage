@@ -1,4 +1,5 @@
 from io import TextIOWrapper
+import hashlib
 
 from django import forms
 from django.shortcuts import render
@@ -9,6 +10,8 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
+from django.core.mail import send_mail
+from django.conf import settings
 
 from raven.contrib.django.raven_compat.models import client
 
@@ -140,6 +143,15 @@ def details(request, pk):
 
 
 def landing(request):
+    if 'confirm_email_token' in request.GET:
+        user_pk, token = request.GET['confirm_email_token'].split('p', 1)
+        user = User.objects.get(pk=int(user_pk))
+        if get_user_token(user) == token and not user.is_active:
+            user.is_active = True
+            user.save()
+            auth_login(request, user)
+            messages.success(request, 'Account %s confirmed' % user.email)
+        return redirect('/')
     return HttpResponse(templates.landing(request))
 
 
@@ -248,6 +260,9 @@ class SignupForm(forms.Form):
     email = forms.EmailField(required=True)
     password = forms.CharField(required=True)
 
+# TODO: get rid of homemade protocol and get a real random token
+def get_user_token(user):
+    return hashlib.sha512(('%s %s %s' % (user.pk, user.email, settings.SECRET_KEY)).encode()).hexdigest()
 
 def signup(request):
     message = None
@@ -261,16 +276,23 @@ def signup(request):
                 message = 'Email domain is restricted during the beta period, please contact us if you want an account'
             else:
                 user = User.objects.create_user(email, email, password)
-                auth_login(request, user)
-                messages.success(request, 'Account successfully created')
+                user.is_active = False
+                user.save()
 
                 try:
                     raise Exception('User created: {}'.format(email))
                 except:
                     client.captureException()
 
-                # TODO send mail
-                # messages.success(request, 'An email has been sent to %s to confirm the account creation' % email)
+                token = str(user.pk) + 'p' + get_user_token(user)
+
+                send_mail('[linkage.fr] Account confirmation', """
+                    Welcome to linkage.fr.
+
+                    You are just one click away from getting an account, click on the following link: https://linkage.fr/?confirm_email_token=%s
+                """ % token, 'no-reply@linkage.fr', [email], fail_silently=False)
+
+                messages.success(request, 'An email has been sent to %s to confirm the account creation' % email)
 
                 return redirect('/')
         else:
