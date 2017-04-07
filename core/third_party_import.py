@@ -11,6 +11,7 @@ import chardet
 from chardet.universaldetector import UniversalDetector
 import requests
 import xmltodict
+from TwitterAPI import TwitterAPI, TwitterRestPager
 
 from raven.contrib.django.raven_compat.models import client
 
@@ -118,7 +119,7 @@ def pubmed_to_csv(q, limit=500):
     return output.getvalue()
 
 
-def twitter_to_csv(q, limit=500):
+def loklak_to_csv(q, limit=500):
     params = {
         'q': q,
         'maximumRecords': limit,
@@ -159,6 +160,40 @@ def twitter_to_csv(q, limit=500):
             break
     
     print('Twitter search for', q, '; results total:', len_all)
+
+    return output.getvalue()
+
+
+
+def twitter_to_csv(q, limit=500):
+    consumer_key='AufuRL0LOPWf39gEJSXl0Eg6M'
+    consumer_secret='n0YDsmnnAjHcgNDFSTTsWny8yAJGeMVq14RNVVkHWMNmsFoYTO'
+    access_token_key='131772959-OnVIRfs1l2B2vNZ809DAwSKXZIF6jBFycLr6RNHN'
+    access_token_secret='OdBVFgyRW6zcjQKLqgFZrjwCrYymsNEXUNEW8RE2A34f2'
+    api = TwitterAPI(consumer_key, consumer_secret, access_token_key, access_token_secret)
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    api = TwitterAPI(consumer_key, consumer_secret, access_token_key, access_token_secret)
+
+    count = 0
+    r = TwitterRestPager(api, 'search/tweets', {'q': q, 'count': limit})
+    for item in r.get_iterator():
+        if 'text' in item:
+            count += 1
+            author = item['user']['screen_name']
+            mentions = item['entities']['user_mentions']
+            text = re.sub(r'https?:\/\/.*[\r\n]*', '', item['text'], flags=re.MULTILINE)
+            for mention in mentions:
+                writer.writerow([author, mention['screen_name'], text])
+            if len(mentions) == 0:
+                writer.writerow([author, author, text])
+        elif 'message' in item and item['code'] == 88:
+            print('SUSPEND, RATE LIMIT EXCEEDED: %s\n' % item['message'])
+            break
+
+    print('Twitter search for', q, '; results:', count)
 
     return output.getvalue()
 
