@@ -273,12 +273,19 @@ function get_graph_graphics(graph, X, clusters) {
         circle.attr('stroke-width', '1');
         square.attr('stroke-width', '1');
 
+        var top_nodes = [];
+        if (is_cluster) {
+          top_nodes = STATE.clusterToNodes[node.id].slice(0, 5).map(x => STATE.labels[x])
+          .filter(x => x);
+        }
+
         renderGraphSidebar({
           title: node.data && node.data.isCluster ? node.id : STATE.labels[node.id],
           is_node: true,
           is_cluster: is_cluster,
           cluster: is_cluster || !clusters ? undefined : clusters[node.id],
           renderer: RENDERER,
+          top_nodes,
           expand_clusters: expand_clusters.bind(this, graph, X, clusters),
           collapse_clusters: collapse_clusters.bind(this, graph, X, clusters),
         });

@@ -16,7 +16,7 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
     import csv, io, random, time
     from core.models import Graph, ProcessingResult
 
-    t = time.process_time()
+    t = time.time()
 
     graph = Graph.objects.get(pk=graph_pk)
 
@@ -50,7 +50,7 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
         update=update)
 
     graph.job_log = log
-    graph.job_time = time.process_time() - t
+    graph.job_time = (time.time() - t) / 100
     graph.job_progress = 1;
     graph.save()
     

@@ -39,6 +39,15 @@ function render(params) {
               (v * 100).toFixed(2) + '%')}&nbsp;{(v * 100).toFixed(1)}&nbsp;%
         </div>)}
       </div> : null}
+      {params.top_nodes && params.top_nodes.length > 0 ? <div>
+        <br/>
+        <h4>Sample of nodes</h4>
+        <ul>
+        {params.top_nodes.map((v, i) => <li key={i}>
+          {v}
+        </li>)}
+        </ul>
+      </div> : null}
     </div>;
   }
 

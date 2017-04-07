@@ -5,6 +5,7 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.template.defaultfilters import filesizeformat
 from django.conf import settings
 from django.contrib.messages import get_messages
+from django.urls import reverse
 
 from lys import L, raw
 
@@ -335,6 +336,10 @@ def login(request, message):
                             L.button('.btn.btn-primary', type='submit') / 'Login'
                         )
                     ),
+                    L.p / (
+                        'Or',
+                        L.a(href=reverse('social:begin', args=['google-oauth2'])) / ' with Google',
+                    ) if False else None,
                     L.p / (
                         'No account yet ? you can ',
                         L.a(href='/accounts/signup/') / 'sign up here',

@@ -123,24 +123,43 @@ def twitter_to_csv(q, limit=500):
         'q': q,
         'maximumRecords': limit,
     }
-    resp = requests.get('https://api.loklak.org/api/search.json', params=params)
-    results = resp.json()['statuses']
 
     output = io.StringIO()
     writer = csv.writer(output)
 
-    N = len(results)
+    len_all = 0
+    offset = ''
+    while True:
+        params['q'] = q + offset
+        resp = requests.get('https://api.loklak.org/api/search.json', params=params)
+        results = resp.json()['statuses']
 
-    print('Twitter search for', q, '; results:', N)
+        N = len(results)
+        len_all += N
 
-    for result in results:
-        author = result['screen_name']
-        mentions = result['mentions']
-        text = re.sub(r'^https?:\/\/.*[\r\n]*', '', result['text'], flags=re.MULTILINE)
-        for mention in mentions:
-            writer.writerow([author, mention, text])
-        if len(mentions) == 0:
-            writer.writerow([author, author, text])
+        if len(results) == 0:
+            break
+
+        print('Twitter search for', q, '; results:', N , ' - offset=', offset)
+
+        for result in results:
+            author = result['screen_name']
+            mentions = result['mentions']
+            text = re.sub(r'https?:\/\/.*[\r\n]*', '', result['text'], flags=re.MULTILINE)
+            for mention in mentions:
+                writer.writerow([author, mention, text])
+            if len(mentions) == 0:
+                writer.writerow([author, author, text])
+
+        new_offset = ' until:' + results[-1]['timestamp']
+        if new_offset == offset:
+            break
+        offset = new_offset
+        if len_all > limit:
+            break
+    
+    print('Twitter search for', q, '; results total:', len_all)
+
     return output.getvalue()
 
 

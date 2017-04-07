@@ -13,3 +13,5 @@ requests
 django-admin-gitlog
 xmltodict
 langdetect
+social-auth-app-django
+social-auth-core

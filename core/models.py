@@ -139,6 +139,7 @@ def graph_data_from_links(links):
                     doc_terms = edges[edge_name]
                     for token in tokens:
                         stemm = stemmer.stem(token)
+                        token = token.lower()
                         if stemm in stemm_to_lemm:
                             lemm = stemm_to_lemm[stemm]
                         else:
