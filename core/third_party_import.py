@@ -138,7 +138,7 @@ def loklak_to_csv(q, limit=500):
         N = len(results)
         len_all += N
 
-        if len(results) == 0:
+        if N == 0:
             break
 
         print('Twitter search for', q, '; results:', N , ' - offset=', offset)
@@ -156,7 +156,7 @@ def loklak_to_csv(q, limit=500):
         if new_offset == offset:
             break
         offset = new_offset
-        if len_all > limit:
+        if len_all >= limit:
             break
     
     print('Twitter search for', q, '; results total:', len_all)

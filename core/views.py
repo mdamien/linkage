@@ -67,11 +67,16 @@ def index(request):
             elif 'choice_twitter' in request.POST:
                 q = request.POST['q']
                 if len(q) > 0:
-                    if request.GET.get('use_loklak'):
+                    if request.POST.get('use_loklak'):
                         links = third_party_import.loklak_to_csv(q, limit)
                     else:
-                        links = third_party_import.twitter_to_csv(q, limit)                        
-                    data = models.graph_data_from_links(links)
+                        import TwitterAPI
+                        try:
+                            links = third_party_import.twitter_to_csv(q, limit)
+                        except TwitterAPI.TwitterRequestError as e:
+                            messages.append(['danger', str(e)])
+                            links = ''
+                    data = models.graph_data_from_links(links, ignore_self_loop=False)
                     graph = models.Graph(name='Twitter import of search term: %s' % (q, ),
                         user=request.user, directed=True, **data)
                 else:

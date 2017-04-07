@@ -75,7 +75,7 @@ class ProcessingResult(models.Model):
         }
 
 
-def graph_data_from_links(links):
+def graph_data_from_links(links, ignore_self_loop=True):
     import csv, random, io, sys, os
     import collections
     import time
@@ -132,7 +132,7 @@ def graph_data_from_links(links):
             if len(tokens) > 0: # filter empty links
                 start = node_to_i(link[0])
                 end = node_to_i(link[1])
-                if start != end:
+                if not ignore_self_loop or start != end:
                     edge_name = '%d,%d' % (start, end)
                     if edge_name not in edges:
                         edges[edge_name] = collections.Counter()
