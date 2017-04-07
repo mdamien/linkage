@@ -21,7 +21,7 @@ export default function tfidf(topic2terms) {
       var idf = Math.log(topic2terms.length/(nb_of_time_in_topics));
       return {
         freq,
-        tfidf: freq, // tf*idf,
+        tfidf: tf*idf,
       };
     })
   });
