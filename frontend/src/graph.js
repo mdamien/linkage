@@ -263,7 +263,7 @@ function get_graph_graphics(graph, X, clusters) {
         node._node_size = size;
         ui.append(square);
       } else {
-        node._node_size = 7;
+        node._node_size = 7*2;
         ui.append(circle);
       }
 
@@ -391,7 +391,7 @@ function get_graph_graphics(graph, X, clusters) {
                    .attr('stroke', color);
         
         if ((cluster_to_cluster || GRAPH.directed) && prev.id != to.id) {
-          ui = ui.attr('marker-end', 'url(#Triangle)');
+          ui.attr('marker-end', 'url(#Triangle)');
         }
 
         $(ui).hover(function() {
