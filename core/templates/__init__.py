@@ -222,7 +222,7 @@ def index(request, messages, import_type_selected='coauth'):
                                     L.div('.checkbox') / (
                                         L.label / (
                                             L.input(name='use_loklak', type='checkbox'),
-                                            ' Use Lolklat API (older tweets, less rate-limited)',
+                                            ' Use Lolklak API (older tweets, less rate-limited)',
                                         )                                    
                                     ),                                 
                                 ),
