@@ -141,14 +141,15 @@ def loklak_to_csv(q, limit=500):
         if N == 0:
             break
 
-        print('Twitter search for', q, '; results:', N , ' - offset=', offset)
+        print('Twitter/loklak search for', q, '; results:', N , ' - offset=', offset)
 
         for result in results:
-            author = result['screen_name']
+            author = result['screen_name'].lower()
             mentions = result['mentions']
             text = re.sub(r'https?:\/\/.*[\r\n]*', '', result['text'], flags=re.MULTILINE)
+            text = re.sub(r'@.*[\r\n]*', '', result['text'], flags=re.MULTILINE)
             for mention in mentions:
-                writer.writerow([author, mention, text])
+                writer.writerow([author, mention.lower(), text])
             if len(mentions) == 0:
                 writer.writerow([author, author, text])
 
@@ -159,7 +160,7 @@ def loklak_to_csv(q, limit=500):
         if len_all >= limit:
             break
     
-    print('Twitter search for', q, '; results total:', len_all)
+    print('Twitter/loklak search for', q, '; results total:', len_all)
 
     return output.getvalue()
 
@@ -178,19 +179,21 @@ def twitter_to_csv(q, limit=500):
     api = TwitterAPI(consumer_key, consumer_secret, access_token_key, access_token_secret)
 
     count = 0
-    r = TwitterRestPager(api, 'search/tweets', {'q': q, 'count': limit})
+    r = TwitterRestPager(api, 'search/tweets', {'q': q, 'count': 100})
     for item in r.get_iterator():
         if 'text' in item:
             count += 1
-            author = item['user']['screen_name']
+            author = item['user']['screen_name'].lower()
             mentions = item['entities']['user_mentions']
             text = re.sub(r'https?:\/\/.*[\r\n]*', '', item['text'], flags=re.MULTILINE)
             for mention in mentions:
-                writer.writerow([author, mention['screen_name'], text])
+                writer.writerow([author, mention['screen_name'].lower(), text])
             if len(mentions) == 0:
                 writer.writerow([author, author, text])
         elif 'message' in item and item['code'] == 88:
             print('SUSPEND, RATE LIMIT EXCEEDED: %s\n' % item['message'])
+            break
+        if count > limit:
             break
 
     print('Twitter search for', q, '; results:', count)
