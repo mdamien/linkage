@@ -19,6 +19,8 @@ from core import templates, models, third_party_import
 
 @login_required
 def index(request):
+    from config.celery import import_graph_data, retrieve_graph_data
+
     messages = []
     graph = None
     if request.POST and request.POST['action'] == 'import':
@@ -58,10 +60,19 @@ def index(request):
             elif 'choice_arxiv' in request.POST:
                 q = request.POST['q']
                 if len(q) > 0:
-                    links = third_party_import.arxiv_to_csv(q, limit)
-                    data = models.graph_data_from_links(links)
+
                     graph = models.Graph(name='arXiv import of search term: %s' % (q, ),
-                        user=request.user, directed=False, **data)
+                        user=request.user, directed=False)
+                    if clusters:
+                        graph.job_param_clusters = clusters
+                        graph.job_param_clusters_max = clusters
+                        graph.job_param_topics = topics
+                        graph.job_param_topics_max = topics
+                    graph.save()
+
+                    retrieve_graph_data.delay(graph.pk, q=q, limit=limit)
+
+                    return redirect('/jobs/')
                 else:
                     messages.append(['danger', 'You must include a search term to do a query'])
             elif 'choice_twitter' in request.POST:
@@ -109,8 +120,15 @@ def index(request):
                     graph = models.Graph(name='MBOX import of %s' % (filename), user=request.user, **data)
                 elif '.csv' in filename:
                     content = open('csv_samples/' + filename).read()
-                    data = models.graph_data_from_links(content)
-                    graph = models.Graph(name='CSV import of %s' % (filename), user=request.user, **data)                    
+                    graph = models.Graph(name='CSV import of %s' % (filename), user=request.user)
+                    if clusters:
+                        graph.job_param_clusters = clusters
+                        graph.job_param_clusters_max = clusters
+                        graph.job_param_topics = topics
+                        graph.job_param_topics_max = topics
+                    graph.save()
+                    import_graph_data.delay(graph.pk, content)
+                    return redirect('/jobs/')
             if graph:
                 if len(graph.labels.strip()) < 2:
                     messages.append(['danger', 'There is no data for this graph'])

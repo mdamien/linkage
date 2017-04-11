@@ -76,3 +76,26 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
     })
 
     return None
+
+
+@task()
+def retrieve_graph_data(graph_pk, **params):
+    from core import third_party_import
+    links = third_party_import.arxiv_to_csv(params['q'], params['limit'])
+    import_graph_data(graph_pk, links)
+
+
+@task()
+def import_graph_data(graph_pk, csv_content):
+    from core import models
+    graph = models.Graph.objects.get(pk=graph_pk)
+    data = models.graph_data_from_links(csv_content)
+    for key in data:
+        setattr(graph, key, data[key])
+    graph.save()
+    if len(graph.labels.strip()) < 2:
+        pass
+        # messages.append(['danger', 'There is no data for this graph'])
+        # TODO: error out when no data
+    process_graph(graph.pk, ws_delay=2)
+
