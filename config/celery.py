@@ -79,17 +79,17 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
 
 
 @task()
-def retrieve_graph_data(graph_pk, **params):
+def retrieve_graph_data(graph_pk, method, **params):
     from core import third_party_import
-    links = third_party_import.arxiv_to_csv(params['q'], params['limit'])
-    import_graph_data(graph_pk, links)
+    links = getattr(third_party_import, method)(params['q'], params['limit'])
+    import_graph_data(graph_pk, links, ignore_self_loop=params.get('ignore_self_loop', True))
 
 
 @task()
-def import_graph_data(graph_pk, csv_content):
+def import_graph_data(graph_pk, csv_content, ignore_self_loop=True):
     from core import models
     graph = models.Graph.objects.get(pk=graph_pk)
-    data = models.graph_data_from_links(csv_content)
+    data = models.graph_data_from_links(csv_content, ignore_self_loop=ignore_self_loop)
     for key in data:
         setattr(graph, key, data[key])
     graph.save()

@@ -110,7 +110,7 @@ def process(X, tdm, n_clusters, n_topics, id=0,
             crit = 0
         result['crit'] = crit
 
-    # os.system('rm -rf %s' % (run_dir,))
+    os.system('rm -rf %s' % (run_dir,))
 
     return groups, log
 

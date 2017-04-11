@@ -147,7 +147,7 @@ def loklak_to_csv(q, limit=500):
             author = result['screen_name'].lower()
             mentions = result['mentions']
             text = re.sub(r'https?:\/\/.*[\r\n]*', '', result['text'], flags=re.MULTILINE)
-            text = re.sub(r' @.*[\r\n]*', '', result['text'], flags=re.MULTILINE)
+            text = re.sub(r' @.*[\r\n]*', '', text, flags=re.MULTILINE)
             for mention in mentions:
                 writer.writerow([author, mention.lower(), text])
             if len(mentions) == 0:
@@ -186,7 +186,7 @@ def twitter_to_csv(q, limit=500):
             author = item['user']['screen_name'].lower()
             mentions = item['entities']['user_mentions']
             text = re.sub(r'https?:\/\/.*[\r\n]*', '', item['text'], flags=re.MULTILINE)
-            text = re.sub(r' @.*[\r\n]*', '', result['text'], flags=re.MULTILINE)
+            text = re.sub(r' @.*[\r\n]*', '', text, flags=re.MULTILINE)
             for mention in mentions:
                 writer.writerow([author, mention['screen_name'].lower(), text])
             if len(mentions) == 0:

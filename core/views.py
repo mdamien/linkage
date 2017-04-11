@@ -14,8 +14,10 @@ from django.core.mail import send_mail
 from django.conf import settings
 
 from raven.contrib.django.raven_compat.models import client
+import TwitterAPI
 
 from core import templates, models, third_party_import
+
 
 @login_required
 def index(request):
@@ -42,72 +44,98 @@ def index(request):
             messages.append(['danger', 'Invalid limit']) # todo: proper form validation
             valid_parameters = False
         if valid_parameters:
+
+            def make_graph(name, directed=True):
+                graph = models.Graph(name=name,
+                    user=request.user, directed=directed)
+                if clusters:
+                    graph.job_param_clusters = clusters
+                    graph.job_param_clusters_max = clusters
+                    graph.job_param_topics = topics
+                    graph.job_param_topics_max = topics
+                graph.save()
+                return graph
+
+            def papers_import(name, method, **kwargs):
+                graph = make_graph(name, directed=kwargs.get('directed', False))
+                retrieve_graph_data.delay(graph.pk, method, **kwargs)
+                return redirect('/jobs/')
+
             if ('choice_csv' in request.POST or 'choice_mbox' in request.POST) and not request.FILES:
                 messages.append(['danger', 'You must include a file to import'])
+
             elif 'choice_csv' in request.POST:
                 if 'csv_file' not in request.FILES:
                     messages.append(['danger', 'You must include a file to import'])
                 links = TextIOWrapper(request.FILES['csv_file'].file, encoding='utf-8').read()
-                data = models.graph_data_from_links(links)
-                graph = models.Graph(name='CSV import of %s' % (request.FILES['csv_file'].name), user=request.user, **data)
+                graph = make_graph('CSV import of %s' % (request.FILES['csv_file'].name))
+                import_graph_data.delay(graph.pk, links)
+                return redirect('/jobs/')
+
             elif 'choice_mbox' in request.POST:
                 if 'mbox_file' not in request.FILES:
                     messages.append(['danger', 'You must include a file to import'])
+                graph = make_graph('MBOX import of %s' % (request.FILES['mbox_file'].name))
+                
                 mbox = TextIOWrapper(request.FILES['mbox_file'].file, encoding='utf-8')
+                # TODO async conversion to csv
                 links = third_party_import.mbox_to_csv(mbox, request.POST.get('mbox_subject_only'))
-                data = models.graph_data_from_links(links)
-                graph = models.Graph(name='MBOX import of %s' % (request.FILES['mbox_file'].name), user=request.user, **data)
+                import_graph_data.delay(graph.pk, links)
+                return redirect('/jobs/')
+
             elif 'choice_arxiv' in request.POST:
                 q = request.POST['q']
                 if len(q) > 0:
-
-                    graph = models.Graph(name='arXiv import of search term: %s' % (q, ),
-                        user=request.user, directed=False)
-                    if clusters:
-                        graph.job_param_clusters = clusters
-                        graph.job_param_clusters_max = clusters
-                        graph.job_param_topics = topics
-                        graph.job_param_topics_max = topics
-                    graph.save()
-
-                    retrieve_graph_data.delay(graph.pk, q=q, limit=limit)
-
-                    return redirect('/jobs/')
+                    return papers_import(
+                        'arXiv import of search term: %s' % (q, ),
+                        'arxiv_to_csv',
+                        q=q, limit=limit
+                    )
                 else:
                     messages.append(['danger', 'You must include a search term to do a query'])
             elif 'choice_twitter' in request.POST:
                 q = request.POST['q']
                 if len(q) > 0:
+                    name = 'Twitter import of search term: %s' % (q, )
                     if request.POST.get('use_loklak'):
-                        links = third_party_import.loklak_to_csv(q, limit)
+                        return papers_import(
+                            name,
+                            'loklak_to_csv',
+                            q=q, limit=limit
+                        )
                     else:
-                        import TwitterAPI
+                        # TODO capture exception inside celery job
                         try:
-                            links = third_party_import.twitter_to_csv(q, limit)
+                            return papers_import(
+                                name,
+                                'twitter_to_csv',
+                                q=q, limit=limit,
+                                ignore_self_loop=False,
+                                directed=True
+                            )
                         except TwitterAPI.TwitterRequestError as e:
                             messages.append(['danger', str(e)])
                             links = ''
-                    data = models.graph_data_from_links(links, ignore_self_loop=False)
-                    graph = models.Graph(name='Twitter import of search term: %s' % (q, ),
-                        user=request.user, directed=True, **data)
                 else:
                     messages.append(['danger', 'You must include a search term to do a query'])
             elif 'choice_hal' in request.POST:
                 q = request.POST['q']
                 if len(q) > 0:
-                    links = third_party_import.hal_to_csv(q, limit)
-                    data = models.graph_data_from_links(links)
-                    graph = models.Graph(name='HAL import of search term: %s' % (q, ),
-                        user=request.user, directed=False, **data)
+                    return papers_import(
+                        'HAL import of search term: %s' % (q, ),
+                        'hal_to_csv',
+                        q=q, limit=limit
+                    )
                 else:
                     messages.append(['danger', 'You must include a search term to do a query'])
             elif 'choice_pubmed' in request.POST:
                 q = request.POST['q']
                 if len(q) > 0:
-                    links = third_party_import.pubmed_to_csv(q, limit)
-                    data = models.graph_data_from_links(links)
-                    graph = models.Graph(name='PubMed import of search term: %s' % (q, ),
-                        user=request.user, directed=False, **data)
+                    return papers_import(
+                        'PubMed import of search term: %s' % (q, ),
+                        'pubmed_to_csv',
+                        q=q, limit=limit
+                    )
                 else:
                     messages.append(['danger', 'You must include a search term to do a query'])
             elif 'choice_dropdown' in request.POST:
@@ -120,13 +148,7 @@ def index(request):
                     graph = models.Graph(name='MBOX import of %s' % (filename), user=request.user, **data)
                 elif '.csv' in filename:
                     content = open('csv_samples/' + filename).read()
-                    graph = models.Graph(name='CSV import of %s' % (filename), user=request.user)
-                    if clusters:
-                        graph.job_param_clusters = clusters
-                        graph.job_param_clusters_max = clusters
-                        graph.job_param_topics = topics
-                        graph.job_param_topics_max = topics
-                    graph.save()
+                    graph = make_graph('CSV import of %s' % (filename))
                     import_graph_data.delay(graph.pk, content)
                     return redirect('/jobs/')
             if graph:
