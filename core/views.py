@@ -311,7 +311,7 @@ def login(request):
             return redirect('/jobs/add/')
         else:
             message = "Please enter a correct username and password"
-    return HttpResponse(templates.login(request, message))
+    return HttpResponse(templates.login(request, message, SignupForm()))
 
 class SignupForm(forms.Form):
     email = forms.EmailField(required=True)

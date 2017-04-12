@@ -87,6 +87,7 @@ def retrieve_graph_data(graph_pk, method, **params):
 
 @task()
 def import_graph_data(graph_pk, csv_content, ignore_self_loop=True):
+    # print('received csv_content:', csv_content[:100])
     from core import models
     graph = models.Graph.objects.get(pk=graph_pk)
     data = models.graph_data_from_links(csv_content, ignore_self_loop=ignore_self_loop)

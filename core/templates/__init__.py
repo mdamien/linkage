@@ -324,37 +324,79 @@ def index(request, messages, import_type_selected='coauth'):
         L.script(src='/static/js/import.js?v=' + COMMIT_HASH),
     ))
 
-def login(request, message):
+def login(request, message, signup_form):
     return base((
         L.div('.container') / (
             header(request),
             L.div('.row') / (
-                L.div('.col-md-3.center-block', style='float:none') / (
+                L.div('.col-md-6.center-block', style='float:none') / (
                     (L.div('.alert.alert-danger') / message) if message else (
-                        L.div('.alert.alert-info') / 'You need to login to access this application'
+                        L.div('.alert.alert-info') / 'You need to login or sign up to access this application'
                     ),
-                    L.form(method='post') / (
-                        L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
-                        L.div('.form-group') / (
-                            L.label('control-label') / 'Username',
-                            L.input('form-control', name='username'),
+                    L.div('.row') / (
+                        L.div('.col-md-5') / (
+                            L.h3 / 'Login',
+                            L.form(method='post') / (
+                                L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
+                                L.div('.form-group') / (
+                                    L.label('control-label') / 'Username',
+                                    L.input('form-control', name='username'),
+                                ),
+                                L.div('.form-group') / (
+                                    L.label('control-label') / 'Password',
+                                    L.input('form-control', type='password', name='password'),
+                                ),
+                                L.div('.form-group.text-center') / (
+                                    L.button('.btn.btn-primary', type='submit') / 'Login'
+                                )
+                            ),
+                            L.p / (
+                                'Or',
+                                L.a(href=reverse('social:begin', args=['google-oauth2'])) / ' with Google',
+                            ) if False else None,
                         ),
-                        L.div('.form-group') / (
-                            L.label('control-label') / 'Password',
-                            L.input('form-control', type='password', name='password'),
+
+                        L.div('.col-md-2') / (
+                            L.h3 / 'or',
                         ),
-                        L.div('.form-group.text-center') / (
-                            L.button('.btn.btn-primary', type='submit') / 'Login'
-                        )
+
+                        L.div('.col-md-5') / (
+                            L.h3 / 'Sign up',
+                            (L.div('.alert.alert-danger') / message) if message else None,
+                            L.form(method='post', action='/accounts/signup/') / (
+                                L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
+                                L.div('.form-group') / (
+                                    L.label('.control-label') / 'Email',
+                                    L.input('.form-control', name='email', value=signup_form.data.get('email', '')),
+                                ),
+                                L.div('.form-group') / (
+                                    L.label('.control-label') / 'Password',
+                                    L.input('.form-control', type='password', name='password', value=signup_form.data.get('password', '')),
+                                ),
+                                L.div('.form-group') / (
+                                    L.label('.control-label') / 'Organization',
+                                    L.select('.form-control', name='org') / (
+                                        L.option(value='individual', selected='') / 'Individual',
+                                        L.option(value='univ') / 'University',
+                                        L.option(value='pro') / 'Company',
+                                    )
+                                ),
+                                L.div('.form-group') / (
+                                    L.div('.checkbox') / (
+                                        L.label / (
+                                            L.input(name='accept_terms', checked='', type='checkbox'),
+                                            ' Accept', 
+                                        ),
+                                        raw('&nbsp'),
+                                        L.a(href='/about/terms/') / 'terms and conditions',
+                                    ),
+                                ),
+                                L.div('.form-group.text-center') / (
+                                    L.button('.btn.btn-primary', type='submit') / 'Sign up'
+                                )
+                            ),
+                        ),
                     ),
-                    L.p / (
-                        'Or',
-                        L.a(href=reverse('social:begin', args=['google-oauth2'])) / ' with Google',
-                    ) if False else None,
-                    L.p / (
-                        'No account yet ? you can ',
-                        L.a(href='/accounts/signup/') / 'sign up here',
-                    )
                 ),
             ),
             FOOTER,

@@ -35,7 +35,7 @@ def process(X, tdm, n_clusters, n_topics, id=0,
     last_update = time.time()
     print(cmd_base)
     for line in os.popen(cmd_cd + cmd_base):
-        print(line.strip())
+        # print(line.strip())
         log += line
 
         # signal: "[linkage-web-signal] - (K|Q) finished: " << K << ";" << Q << "" << endl
