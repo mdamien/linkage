@@ -75,6 +75,14 @@ class ProcessingResult(models.Model):
         }
 
 
+class UserProfile(models.Model):
+    user = models.OneToOneField(User)
+    org_type = models.CharField(max_length=50)
+
+    def __str__(self):
+        return '{}: {}'.format(self.user, self.org_type)
+
+
 def graph_data_from_links(links, ignore_self_loop=True):
     import csv, random, io, sys, os
     import collections

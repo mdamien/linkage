@@ -374,12 +374,20 @@ def signup(request, form, message):
                     L.form(method='post') / (
                         L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
                         L.div('.form-group') / (
-                            L.label('control-label') / 'Email',
-                            L.input('form-control', name='email', value=form.data.get('email', '')),
+                            L.label('.control-label') / 'Email',
+                            L.input('.form-control', name='email', value=form.data.get('email', '')),
                         ),
                         L.div('.form-group') / (
-                            L.label('control-label') / 'Password',
-                            L.input('form-control', type='password', name='password', value=form.data.get('password', '')),
+                            L.label('.control-label') / 'Password',
+                            L.input('.form-control', type='password', name='password', value=form.data.get('password', '')),
+                        ),
+                        L.div('.form-group') / (
+                            L.label('.control-label') / 'Organization',
+                            L.select('.form-control', name='org') / (
+                                L.option(value='individual', selected='') / 'Individual',
+                                L.option(value='univ') / 'University',
+                                L.option(value='pro') / 'Company',
+                            )
                         ),
                         L.div('.form-group') / (
                             L.div('.checkbox') / (

@@ -316,6 +316,7 @@ def login(request):
 class SignupForm(forms.Form):
     email = forms.EmailField(required=True)
     password = forms.CharField(required=True)
+    org = forms.CharField(required=True)
 
 # TODO: get rid of homemade protocol and get a real random token
 def get_user_token(user):
@@ -333,6 +334,7 @@ def signup(request):
                 message = 'Email domain is restricted during the beta period, please contact us if you want an account'
             else:
                 user = User.objects.create_user(email, email, password)
+                models.UserProfile(user=user, org_type=form.cleaned_data['org']).save()
                 user.is_active = False
                 user.save()
 
