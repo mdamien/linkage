@@ -185,3 +185,53 @@ def graph_data_from_links(links, ignore_self_loop=True):
         'labels': labels.getvalue(),
         'dictionnary': dictionnary.getvalue()
     }
+
+
+def export_to_csv(graph, results):
+    import csv, random, io, sys, os, zipfile
+
+    zip_out = io.BytesIO()
+    z = zipfile.ZipFile(zip_out, 'w')
+
+    # edges.csv
+    output = io.StringIO()
+    writer = csv.writer(output)
+    labels = list(csv.reader([graph.labels], delimiter=' '))[0]
+    for line in csv.reader(graph.edges.split('\n'), delimiter=' '):
+        if len(line) == 3:
+            source, target, val = line
+            if val == '0':
+                continue
+            writer.writerow([labels[int(source)], labels[int(target)]])
+    edges_csv = output.getvalue()
+    z.writestr('edges.csv', output.getvalue())
+
+    # clusters
+    for i, result in enumerate(results):
+        prefix = 'k%d_q%d/' % (result.param_topics, result.param_clusters)
+        
+        # clusters.csv
+        output = io.StringIO()
+        writer = csv.writer(output)
+        clusters = list(csv.reader([result.clusters_mat], delimiter=' '))[0]
+        clusters_labeleds = [None] * result.param_clusters
+        c = 0
+        for cluster in clusters:
+            if cluster != '':
+                if clusters_labeleds[int(cluster)] is None:
+                    clusters_labeleds[int(cluster)] = []
+                clusters_labeleds[int(cluster)].append(labels[c])
+                c += 1
+        for row in clusters_labeleds:
+            if row is None:
+                row = []
+            writer.writerow(row)
+        z.writestr(prefix + 'clusters.csv', output.getvalue())
+
+        # topics.csv
+        
+
+        z.writestr(prefix + 'raw/clusters', result.clusters_mat)
+
+    z.close()
+    return zip_out.getvalue()
