@@ -2,7 +2,8 @@ from lys import L, render, raw
 
 CSS = L.style / raw("""
 /* hack for bootstrap + vivagraph */
-#_graph > svg { width: 100%; height: 700px }
+#_graph > svg, #_loading { width: 100%; height: 700px }
+#_loading { padding: 200px; color: #888 }
 /* hack for bootstrap + firefox + input[file] */
 .form-control {
     height: auto;

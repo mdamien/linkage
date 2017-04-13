@@ -97,10 +97,7 @@ function init(state_init = {}) {
       graphics: get_graph_graphics(graph, X, nodeToCluster),
   });
 
-  var loading = document.getElementById('_loading');
-  if (loading) {
-    document.getElementById('_loading').outerHTML = '';
-  }
+  $('#_loading').hide();
 
   var timeout = false;
   var running = false;
@@ -504,6 +501,13 @@ function get_graph_graphics(graph, X, clusters) {
 
 init();
 
+var display_loading = () => {
+  RENDERER.dispose();
+  $('#_loading').show();
+  renderGraphSidebar(null);
+}
+
 export {
   init,
+  display_loading,
 };

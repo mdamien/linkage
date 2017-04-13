@@ -137,8 +137,9 @@ def result(request, graph, result):
                 L.div('.col-md-9') / (
                     L.div('.panel.panel-default', style='position:relative') / (
                         L.div('#_graph-sidebar'),
-                        L.div('#_graph.panel-body', style='padding:0') / (
-                            L.h3('#_loading.text-center') / 'Loading…'
+                        L.div('.panel-body', style='padding:0') / (
+                            L.h3('#_loading.text-center') / 'Loading…',
+                            L.div('#_graph'),
                         ),
                     )
                 ),
@@ -465,7 +466,8 @@ def landing(request):
                     ) for message in get_messages(request)
                 ),
             ),
-            L.div('.row', style="background-image: url('/static/img/landing.png');background-size: contain;background-color: white;background-repeat: no-repeat;") / (
+            L.div('.row', style="""background-image: url('/static/img/landing.png');background-size: contain;background-color: white;background-repeat: no-repeat;
+                        border-top: 1px solid #eee;border-bottom: 1px solid #eee;""") / (
                 L.div('.col-md-12', style="float:none;color: black;font-size: 18px;") / (
                     L.h2(style="""
                             background: rgba(255, 255, 255, 0.68);
@@ -629,7 +631,9 @@ def jobs(request, graphs):
             header(request, 'jobs'),
             L.div('.row') / (
                 (
-                    L.div('#_jobs.col-md-12') / 'loading…',
+                    L.div('#_jobs.col-md-12') / (
+                        L.h3('#_loading.text-center') / 'Loading…',
+                    ),
                 ) if len(graphs) > 0 else (
                     L.div('.alert.alert-warning') / 'No jobs yet'
                 ),

@@ -14,6 +14,10 @@ var ColorSquare = (color, content=<span>&nbsp;</span>, width='auto') => <span cl
   params = {title, is_node, topics, renderer}
 */
 function render(params) {
+  if (params === null) {
+    ReactDOM.render(<div></div>, document.getElementById('_graph-sidebar'));
+    return;
+  }
   var popup = <div></div>;
   if (params.title !== undefined || (params.topics && params.topics.length > 0)) {
     popup = <div

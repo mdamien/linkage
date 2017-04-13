@@ -6,7 +6,7 @@ import Slider from 'rc-slider';
 // import Autocomplete from 'react-autocomplete'
 
 import { get_color, hashedColor, n_best_elems } from './utils';
-import { init } from '../graph';
+import { init, display_loading } from '../graph';
 
 var ColorSquare = (color, content=' ')  => <span className='label' style={{ backgroundColor: color, marginRight: 10 }}>{content}</span>;
 
@@ -139,6 +139,7 @@ class Sidebar extends React.Component {
         });
         this.props.state.current_selected_topics = this.state.topics;
         this.props.state.current_selected_clusters = clusters;
+        display_loading();
     }
     updateTopics(topics) {
         this.setState({topics: topics});
@@ -154,6 +155,7 @@ class Sidebar extends React.Component {
         });
         this.props.state.current_selected_topics = topics;
         this.props.state.current_selected_clusters = this.state.clusters;
+        display_loading();
     }
     componentWillReceiveProps(props) {
       if (props.state.force_use_result_param) {
