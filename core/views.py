@@ -263,8 +263,8 @@ def api_result(request, pk):
         except:
             print('no match for graph')
     
-    if 'csv' in request.GET:
-        return HttpResponse(models.export_to_csv(graph, result),
+    if 'zip' in request.GET:
+        return HttpResponse(models.export_to_zip(graph, result),
                 content_type='application/zip')
 
     return JsonResponse(templates.api_result(request, graph, result))

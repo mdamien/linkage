@@ -62,7 +62,7 @@ class Job extends React.Component {
                 <a className='btn btn-warning' href={job.url+'details/'}>Details</a>
                 &nbsp;&nbsp;&nbsp;&nbsp;
                 */}
-                <a className='btn btn-warning' href={job.url + 'data/?all'} download={'job_' + job.id + '_export.json'}>
+                <a className='btn btn-warning' href={job.url + 'data/?all&zip'} download={'job_' + job.id + '_export.zip'}>
                   <Icon name='download'/>&nbsp;&nbsp;Download
                 </a>
                 &nbsp;&nbsp;&nbsp;&nbsp;

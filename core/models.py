@@ -187,7 +187,7 @@ def graph_data_from_links(links, ignore_self_loop=True):
     }
 
 
-def export_to_csv(graph, results):
+def export_to_zip(graph, results):
     import csv, random, io, sys, os, zipfile
 
     zip_out = io.BytesIO()
@@ -205,6 +205,9 @@ def export_to_csv(graph, results):
             writer.writerow([labels[int(source)], labels[int(target)]])
     edges_csv = output.getvalue()
     z.writestr('edges.csv', output.getvalue())
+    z.writestr('raw/X.sp_mat', graph.edges)
+    z.writestr('raw/labels', graph.labels)
+    z.writestr('raw/tdm.sp_mat', graph.tdm)
 
     # clusters
     for i, result in enumerate(results):
@@ -229,9 +232,14 @@ def export_to_csv(graph, results):
         z.writestr(prefix + 'clusters.csv', output.getvalue())
 
         # topics.csv
-        
+        # TODO
 
         z.writestr(prefix + 'raw/clusters', result.clusters_mat)
+        z.writestr(prefix + 'raw/topics', result.topics_mat)
+        z.writestr(prefix + 'raw/topics_per_edges', result.topics_per_edges_mat)
+        z.writestr(prefix + 'raw/rho', result.rho_mat)
+        z.writestr(prefix + 'raw/PI', result.pi_mat)
+        z.writestr(prefix + 'raw/crit', str(result.crit))
 
     z.close()
     return zip_out.getvalue()
