@@ -198,6 +198,7 @@ def export_to_zip(graph, results):
     output = io.StringIO()
     writer = csv.writer(output)
     labels = list(csv.reader([graph.labels], delimiter=' '))[0]
+    dictionnary = list(csv.reader([graph.dictionnary], delimiter=' '))[0]
     for line in csv.reader(graph.edges.split('\n'), delimiter=' '):
         if len(line) == 3:
             source, target, val = line
@@ -209,6 +210,7 @@ def export_to_zip(graph, results):
     z.writestr('raw/X.sp_mat', graph.edges)
     z.writestr('raw/labels', graph.labels)
     z.writestr('raw/tdm.sp_mat', graph.tdm)
+    z.writestr('raw/dictionnary', graph.dictionnary)
 
     # clusters
     for i, result in enumerate(results):
@@ -233,13 +235,29 @@ def export_to_zip(graph, results):
         z.writestr(prefix + 'clusters.csv', output.getvalue())
 
         # topics.csv
-        # TODO
+        output = io.StringIO()
+        writer = csv.writer(output)
+        for topic in csv.reader(result.topics_mat.split('\n'), delimiter=' '):
+            c = 0
+            words = []
+            for word_perc in topic:
+                if word_perc:
+                    words.append((dictionnary[c], float(word_perc)))
+                    c += 1
+            words = sorted(words, key=lambda x: -x[1])
+            row = []
+            for w, p in words:
+                row.append(w)
+                row.append(p)
+            writer.writerow(row)
+        z.writestr(prefix + 'topics.csv', output.getvalue())
 
         z.writestr(prefix + 'raw/clusters', result.clusters_mat)
         z.writestr(prefix + 'raw/topics', result.topics_mat)
         z.writestr(prefix + 'raw/topics_per_edges', result.topics_per_edges_mat)
         z.writestr(prefix + 'raw/rho', result.rho_mat)
         z.writestr(prefix + 'raw/PI', result.pi_mat)
+        z.writestr(prefix + 'raw/thetaQR', result.theta_qr_mat)
         z.writestr(prefix + 'raw/crit', str(result.crit))
 
     z.close()
