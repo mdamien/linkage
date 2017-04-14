@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Slider from 'rc-slider';
+import Tooltip from 'rc-tooltip';
 
 // import { styles } from 'react-autocomplete/lib/utils'
 // import Autocomplete from 'react-autocomplete'
@@ -105,6 +106,21 @@ class TopicWords extends React.Component {
     }
 };
 
+const handle = (props) => {
+  const { value, dragging, index } = props;
+  return (
+    <Tooltip
+      prefixCls="rc-slider-tooltip"
+      overlay={value}
+      visible={dragging}
+      placement="top"
+      key={index}
+    >
+      <Slider.Handle {...props} />
+    </Tooltip>
+  );
+};
+
 class Sidebar extends React.Component {
     constructor(props) {
       super(props);
@@ -112,10 +128,12 @@ class Sidebar extends React.Component {
         showLog: false,
         clusters: GRAPH.result ? GRAPH.result.param_clusters : 3,
         topics: GRAPH.result ? GRAPH.result.param_topics : 3,
+        cutoff: GRAPH.cluster_to_cluster_cutoff,
       };
       this.toggleLog = this.toggleLog.bind(this);
       this.updateClusters = this.updateClusters.bind(this);
       this.updateTopics = this.updateTopics.bind(this);
+      this.updateCutoff = this.updateCutoff.bind(this);
 
       if (GRAPH.result) {
         this.props.state.current_selected_topics = this.state.topics;
@@ -156,6 +174,11 @@ class Sidebar extends React.Component {
         this.props.state.current_selected_topics = topics;
         this.props.state.current_selected_clusters = this.state.clusters;
         display_loading();
+    }
+    updateCutoff(cutoff) {
+        this.setState({cutoff: cutoff});
+        GRAPH.cluster_to_cluster_cutoff = cutoff;
+        init();
     }
     componentWillReceiveProps(props) {
       if (props.state.force_use_result_param) {
@@ -265,6 +288,19 @@ class Sidebar extends React.Component {
                       )}
                     </div>
                 </div> : null}
+            </div>
+            <div className='panel panel-default'>
+                <div className='panel-heading'>
+                    <h3 className='panel-title'>cluster-to-cluster cutoff - {this.state.cutoff}</h3>
+                </div>
+                <div className='panel-body'>
+                    <Slider step={0.00001} defaultValue={this.state.cutoff}
+                      min={0}
+                      max={0.005}
+                      handle={handle}
+                      onAfterChange={this.updateCutoff}/>
+                    <br/>
+                </div>
             </div>
         </div>;
     }

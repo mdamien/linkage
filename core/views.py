@@ -276,6 +276,11 @@ def api_cluster(request, pk):
     if request.user.pk != graph.user.pk:
         raise PermissionDenied
 
+    if 'cluster_to_cluster_cutoff' in request.POST:
+        graph.cluster_to_cluster_cutoff = float(cluster_to_cluster_cutoff)
+        graph.save()
+        return JsonResponse({'message': 'ok [cutoff-updated]'})
+
     clusters = int(request.POST['clusters'])
     topics = int(request.POST['topics'])
     if clusters <= 0 or topics <= 0:
