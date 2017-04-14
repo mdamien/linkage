@@ -24,6 +24,11 @@ function init(state_init = {}) {
     X = X.slice(0, X.length - 1);
   }
 
+  if (!labels || !X) {
+    $('#_loading').text('No data for this graph');
+    return;
+  }
+
   STATE.labels = labels;
   STATE.n_edges = X.length;
   STATE.n_nodes = labels.length;
@@ -503,6 +508,7 @@ init();
 
 var display_loading = () => {
   RENDERER.dispose();
+  $('#_loading').text('Loading…');
   $('#_loading').show();
   renderGraphSidebar(null);
 }

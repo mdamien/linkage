@@ -95,8 +95,12 @@ def import_graph_data(graph_pk, csv_content, ignore_self_loop=True):
         setattr(graph, key, data[key])
     graph.save()
     if len(graph.labels.strip()) < 2:
-        pass
-        # messages.append(['danger', 'There is no data for this graph'])
-        # TODO: error out when no data
+        graph.job_error_log = 'No data to process for this graph'
+        graph.job_progress = 1.0
+        graph.save()
+        Group("jobs-%d" % graph.user.pk).send({
+            'text': '%d - ERROR' % graph.pk
+        })
+        return
     process_graph(graph.pk, ws_delay=2)
 

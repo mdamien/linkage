@@ -111,12 +111,14 @@ def serialize_graph(graph, result, simple=False):
         'job_param_topics': graph.job_param_topics,
         'job_param_clusters_max': graph.job_param_clusters_max,
         'job_param_topics_max': graph.job_param_topics_max,
+        'job_error_log': graph.job_error_log,
     }
     if simple:
         del data['tdm']
         del data['dictionnary']
         del data['labels']
         del data['edges']
+        del data['log']
     if result:
         try:
             # for export

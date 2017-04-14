@@ -31,7 +31,7 @@ class Job extends React.Component {
         return <div></div>;
       }
       var job = this.props.job;
-      var finished = job.progress == 1;
+      var finished = job.progress == 1 || job.job_error_log !== '';
       return <div className='panel panel-default' ref='job'>
         <div className='panel-heading'>{job.name}</div>
         <div className='panel-body'>
@@ -53,7 +53,7 @@ class Job extends React.Component {
               }
             </div>
             <div className='col-md-7 text-right'>
-              {finished ? <span>
+              {finished && job.job_error_log === '' ? <span>
                 <a className='btn btn-success' href={job.url}>
                   <Icon name='fullscreen'/>&nbsp;&nbsp;View
                 </a>
@@ -68,18 +68,26 @@ class Job extends React.Component {
                 &nbsp;&nbsp;&nbsp;&nbsp;
               </span> : null}
               <button className='btn btn-danger' onClick={() => this.doDelete()}>
-                <Icon name='trash'/>&nbsp;&nbsp;Delete
+                <Icon name='trash'/>
               </button>
             </div>
           </div>
           <div className='row'>
             <div className="col-md-12">
-                <br/>
-                {finished ? null : <div className="progress progress-striped active">
-                    <div className="progress-bar" style={{width: (job.progress * 100).toFixed(2) + '%'}}></div>
+                {finished ? null : <div>
+                  <br/>
+                  <div className="progress progress-striped active">
+                      <div className="progress-bar" style={{width: (job.progress * 100).toFixed(2) + '%'}}></div>
+                  </div>
                 </div>}
-                <div>Log:</div>
-                <pre style={{maxHeight: 100}}>{job.log}</pre>
+                {job.job_error_log !== '' ? <div>
+                  <br/>
+                  <div className="alert alert-danger">
+                    {job.job_error_log}
+                  </div>
+                </div> : null}
+                {/*<div>Log:</div>
+                <pre style={{maxHeight: 100}}>{job.log}</pre>*/}
                 {/*<pre style={{maxHeight: 100}}>{JSON.stringify(job, null, 2)}</pre>*/}
             </div>
           </div>
