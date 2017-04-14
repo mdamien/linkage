@@ -8,6 +8,9 @@ CSS = L.style / raw("""
 .form-control {
     height: auto;
 }
+body { background: #eee }
+.container { background: white; margin-top: 10px; border-radius: 4px }
+.container-fluid { background: white; margin: 10px; border-radius: 4px }
 """)
 
 def basic_frame(*content, title=''):
