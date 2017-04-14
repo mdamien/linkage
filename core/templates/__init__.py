@@ -123,7 +123,8 @@ def top_nodes_per_clusters(graph, result):
         nodes = clusters_nodes.get(cluster, {})
         return [labels[node] for node, _ in
                     sorted(nodes.items(), key=lambda it: -it[1])[:5]]
-    top_nodes = [top_5(cluster) for cluster in range(max(clusters))]
+    top_nodes = [top_5(cluster) for cluster in range(max(clusters) + 1)]
+
     return top_nodes # [ [label1_for_cluster_1, label2], [label4_for_cluster_2, label3],.. ]
 
 
@@ -149,6 +150,9 @@ def serialize_graph(graph, result, simple=False):
         'job_error_log': graph.job_error_log,
         'magic_too_big_to_display_X': graph.magic_too_big_to_display_X,
     }
+    if graph.magic_too_big_to_display_X:
+        data['edges'] = '0 0 1'
+        data['labels'] = '0 0'
     if simple:
         del data['tdm']
         del data['dictionnary']
@@ -162,10 +166,7 @@ def serialize_graph(graph, result, simple=False):
                 data['results'] = [r.serialize() for r in result]
         except TypeError:
             data['result'] = result.serialize()
-            if graph.magic_too_big_to_display_X and not simple:
-                data['edges'] = '0 0 1'
-                data['labels'] = '0 0'
-                data['top_nodes'] = top_nodes_per_clusters(graph, result)
+            data['top_nodes'] = top_nodes_per_clusters(graph, result)
     return data
 
 def result(request, graph, result):
