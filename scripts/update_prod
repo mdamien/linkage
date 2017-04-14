@@ -1,6 +1,7 @@
 git pull --rebase;
 cd frontend
 rm ../core/static/js/dist/*
+npm i
 webpack --env=prod
 cd ..
 vf activate linkage
