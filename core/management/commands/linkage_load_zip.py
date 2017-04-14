@@ -25,8 +25,11 @@ class Command(BaseCommand):
                     theta_qr = open(os.path.join(folder, file)).read()
                 if 'PI' in file:
                     pi = open(os.path.join(folder, file)).read()
+                if 'X' in file:
+                    X = open(os.path.join(folder, file)).read()
 
             dictionnary = ' '.join([x[0] for x in csv.reader(open(os.path.join(folder, 'dic.csv'))) ])
+            labels = ' '.join([x[1] if len(x) > 1 else x[0] for x in csv.reader(open(os.path.join(folder, 'labels.csv'))) ])
 
             graph = models.Graph.objects.create(
                 name=folder,
@@ -35,8 +38,9 @@ class Command(BaseCommand):
                 job_param_clusters_max=0,
                 job_param_topics_max=0,
                 job_progress=1,
-                labels='a b',
-                edges='0 0 1',
+                labels=labels,
+                edges=X,
+                magic_too_big_to_display_X=True,
                 dictionnary=dictionnary,
                 tdm='0 0 1',
                 user=models.User.objects.get(pk=options['user_id'][0]),

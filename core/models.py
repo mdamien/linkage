@@ -27,6 +27,7 @@ class Graph(models.Model): # = Job
 
     cluster_to_cluster_cutoff = models.FloatField(default=0.002)
 
+    magic_too_big_to_display_X = models.BooleanField(default=False)
     directed = models.BooleanField(default=True)
     user = models.ForeignKey(User)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -277,8 +277,12 @@ function get_graph_graphics(graph, X, clusters) {
 
         var top_nodes = [];
         if (is_cluster) {
-          top_nodes = STATE.clusterToNodes[node.id].slice(0, 5).map(x => STATE.labels[x])
-          .filter(x => x);
+          if (GRAPH.top_nodes) {
+            top_nodes = GRAPH.top_nodes[node.id];
+          } else {
+            top_nodes = STATE.clusterToNodes[node.id].slice(0, 5).map(x => STATE.labels[x])
+            .filter(x => x);
+          }
         }
 
         renderGraphSidebar({

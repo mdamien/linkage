@@ -92,6 +92,41 @@ JS_LIBS = (
         L.script(src='/static/js/vendor/bootstrap.js'),
 )
 
+def top_nodes_per_clusters(graph, result):
+    import csv, random, io, sys, os, zipfile
+
+    labels = list(csv.reader([graph.labels], delimiter=' '))[0]
+    clusters = [int(x) for x in 
+        list(csv.reader([result.clusters_mat], delimiter=' '))[0]
+        if x is not '']
+
+    clusters_nodes = {}
+
+    def add_one(node):
+        cluster = clusters[node]
+        if cluster not in clusters_nodes:
+            clusters_nodes[cluster] = {}
+        clust_nodes = clusters_nodes[cluster]
+        if node not in clust_nodes:
+            clust_nodes[node] = 0
+        clust_nodes[node] += 1
+
+    for line in csv.reader(graph.edges.split('\n'), delimiter=' '):
+        if len(line) == 3:
+            source, target, val = line
+            if val == '0':
+                continue
+            add_one(int(source))
+            add_one(int(target))
+
+    def top_5(cluster):
+        nodes = clusters_nodes.get(cluster, {})
+        return [labels[node] for node, _ in
+                    sorted(nodes.items(), key=lambda it: -it[1])[:5]]
+    top_nodes = [top_5(cluster) for cluster in range(max(clusters))]
+    return top_nodes # [ [label1_for_cluster_1, label2], [label4_for_cluster_2, label3],.. ]
+
+
 def serialize_graph(graph, result, simple=False):
     data = {
         'id': graph.pk,
@@ -112,6 +147,7 @@ def serialize_graph(graph, result, simple=False):
         'job_param_clusters_max': graph.job_param_clusters_max,
         'job_param_topics_max': graph.job_param_topics_max,
         'job_error_log': graph.job_error_log,
+        'magic_too_big_to_display_X': graph.magic_too_big_to_display_X,
     }
     if simple:
         del data['tdm']
@@ -126,6 +162,10 @@ def serialize_graph(graph, result, simple=False):
                 data['results'] = [r.serialize() for r in result]
         except TypeError:
             data['result'] = result.serialize()
+            if graph.magic_too_big_to_display_X and not simple:
+                data['edges'] = '0 0 1'
+                data['labels'] = '0 0'
+                data['top_nodes'] = top_nodes_per_clusters(graph, result)
     return data
 
 def result(request, graph, result):
