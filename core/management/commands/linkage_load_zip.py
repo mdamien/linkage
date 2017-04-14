@@ -29,7 +29,7 @@ class Command(BaseCommand):
                     X = open(os.path.join(folder, file)).read()
 
             dictionnary = ' '.join([x[0] for x in csv.reader(open(os.path.join(folder, 'dic.csv'))) ])
-            labels = ' '.join([x[1] if len(x) > 1 else x[0] for x in csv.reader(open(os.path.join(folder, 'labels.csv'))) ])
+            labels = ' '.join([x[0] for x in csv.reader(open(os.path.join(folder, 'labels.csv'))) ])
 
             graph = models.Graph.objects.create(
                 name=folder,
