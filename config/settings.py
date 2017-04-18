@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'channels',
 
     'core',
+    'pm',
 ]
 
 MIDDLEWARE_CLASSES = [

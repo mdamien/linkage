@@ -7,4 +7,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url('', include('social_django.urls', namespace='social')),
     url(r'', include('core.urls')),
+    url(r'pm-data/', include('pm.urls')),
 ]

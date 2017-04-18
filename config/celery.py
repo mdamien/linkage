@@ -3,6 +3,7 @@ from celery import Celery, task
 from channels import Group
 
 import graph_processing
+from graph_processing.layout import spacialize
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings_dev')
 
@@ -103,4 +104,15 @@ def import_graph_data(graph_pk, csv_content, ignore_self_loop=True):
         })
         return
     process_graph(graph.pk, ws_delay=2)
+    spacialize_graph.delay(graph.pk)
+
+
+@task()
+def spacialize_graph(graph_pk):
+    from core import models
+    graph = models.Graph.objects.get(pk=graph_pk)
+
+    print('spacialize', graph.pk)
+    spacialize(graph.edges, graph.labels, graph.pk)
+    print('spacialize DONE', graph.pk)
 
