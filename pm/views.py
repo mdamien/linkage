@@ -33,5 +33,5 @@ def nodes_data(requests, pk):
     pk = int(pk)
     result = models.ProcessingResult.objects.filter(graph_id=pk).first()
     return JsonResponse({
-        'clustering': result.serialize(),
+        'clustering': result.serialize() if result else { "clusters_mat": ''},
     })
