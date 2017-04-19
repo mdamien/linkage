@@ -31,7 +31,7 @@ def positions(requests, pk):
 
 def nodes_data(requests, pk):
     pk = int(pk)
-    result = models.ProcessingResult.objects.filter(graph_id=pk).first()
+    result = models.ProcessingResult.objects.filter(graph_id=pk).order_by('-crit').first()
     return JsonResponse({
         'clustering': { "clusters_mat": result.clusters_mat if result else ''},
     })
