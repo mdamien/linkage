@@ -28,14 +28,14 @@ def arxiv_to_csv(q, limit=500):
         authors = result['authors'][:7]
         for i, author in enumerate(authors):
             for author2 in authors[i+1:]:
-                writer.writerow([author, author2, result['title']])
+                writer.writerow([author, author2, result['title'] + '\n' + result.get('summary', '')])
 
     return output.getvalue()
 
 
 def hal_to_csv(q, limit=500):
     params = {
-        'fl': 'authFullName_s,title_s',
+        'fl': 'authFullName_s,title_s,abstract_s',
         'q': q,
         'rows': limit,
     }
@@ -52,7 +52,7 @@ def hal_to_csv(q, limit=500):
         authors = result['authFullName_s'][:7] # constrain the authors to avoid exponential edge growth
         for i, author in enumerate(authors):
             for author2 in authors[i+1:]:
-                writer.writerow([author, author2, result['title_s'][0]])
+                writer.writerow([author, author2, result['title_s'][0] + '\n' + result.get('abstract_s', [''])[0]])
 
     return output.getvalue()
 
