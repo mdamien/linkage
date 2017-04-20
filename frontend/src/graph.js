@@ -344,9 +344,24 @@ function get_graph_graphics(graph, X, clusters) {
         },
         marker = createMarker('Triangle');
     marker.append('path').attr('d', 'M 0 0 L 10 5 L 0 10 z');
+
+    var createMarkerBig = function(id) {
+            return Viva.Graph.svg('marker')
+                       .attr('id', id)
+                       .attr('viewBox', "0 0 10 10")
+                       .attr('refX', "10")
+                       .attr('refY', "5")
+                       .attr('markerUnits', "userSpaceOnUse")
+                       .attr('markerWidth', "10")
+                       .attr('markerHeight', "5")
+                       .attr('orient', "auto");
+        },
+        markerBig = createMarkerBig('TriangleBig');
+    markerBig.append('path').attr('d', 'M 0 0 L 10 5 L 0 10 z');
     // Marker should be defined only once in <defs> child element of root <svg> element:
     var defs = graphics.getSvgRoot().append('defs');
     defs.append(marker);
+    defs.append(markerBig);
     var geom = Viva.Graph.geom();
     graphics.link(function(link) {
         var prev = graph.getNode(link.fromId);
@@ -395,7 +410,7 @@ function get_graph_graphics(graph, X, clusters) {
           // WIDTH IN PI()
           var width = STATE.pi[prev.id][to.id];
 
-          strokeWidth = 0.25 + 10*width;
+          strokeWidth = 1 + 10*width;
         }
 
         var ui = Viva.Graph.svg('path')
@@ -404,7 +419,11 @@ function get_graph_graphics(graph, X, clusters) {
                    .attr('stroke', color);
         
         if ((cluster_to_cluster || GRAPH.directed) && prev.id != to.id) {
-          ui.attr('marker-end', 'url(#Triangle)');
+          if (cluster_to_cluster) {
+            ui.attr('marker-end', 'url(#TriangleBig)');
+          } else {
+            ui.attr('marker-end', 'url(#Triangle)');
+          }
         }
 
         $(ui).hover(function() {
@@ -427,6 +446,7 @@ function get_graph_graphics(graph, X, clusters) {
             topics: topics_perc || cluster_topic_perc,
             topicsName: STATE.topicsName,
             renderer: RENDERER,
+            pi_value: cluster_to_cluster ? STATE.pi[prev.id][to.id] : undefined,
             expand_clusters: expand_clusters.bind(this, graph, X, clusters),
             collapse_clusters: collapse_clusters.bind(this, graph, X, clusters),
           });

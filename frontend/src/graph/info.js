@@ -36,6 +36,7 @@ function render(params) {
             </span>
         )}
       </div> : null}
+      {params.pi_value ? <p><abbr title="cluster-to-cluster relationship">PI</abbr>: {(params.pi_value*100).toFixed(4)} %</p> : null}
       {params.topics && params.topics.length > 0 ? <div>
         <h4>Topics</h4>
         {params.topics.map((v, i) => <div key={i}>

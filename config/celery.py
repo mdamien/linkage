@@ -103,7 +103,7 @@ def import_graph_data(graph_pk, csv_content, ignore_self_loop=True):
             'text': '%d - ERROR' % graph.pk
         })
         return
-    spacialize_graph.delay(graph.pk)
+    # spacialize_graph.delay(graph.pk)
     process_graph(graph.pk, ws_delay=2)
 
 
