@@ -294,7 +294,7 @@ def api_cluster(request, pk):
         if result:
             return JsonResponse({
                 'message': 'ok [already-clustered]',
-                'result': result.serialize(),
+                'result': templates.api_result(request, graph, result)['result'],
             })
     except Exception as e: 
         print(e)

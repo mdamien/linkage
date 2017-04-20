@@ -166,7 +166,7 @@ def serialize_graph(graph, result, simple=False):
                 data['results'] = [r.serialize() for r in result]
         except TypeError:
             data['result'] = result.serialize()
-            data['top_nodes'] = top_nodes_per_clusters(graph, result)
+            data['result']['top_nodes'] = top_nodes_per_clusters(graph, result)
     return data
 
 def result(request, graph, result):

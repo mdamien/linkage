@@ -165,6 +165,8 @@ function init(state_init = {}) {
     collapse_clusters: collapse_clusters.bind(this, graph, X, nodeToCluster),   
     graph_layout_running: STATE.graph_layout_running, 
   });
+
+  update_graph_height();
 }
 
 function expand_cluster(cluster_name, graph, X, clusters) {
@@ -302,8 +304,8 @@ function get_graph_graphics(graph, X, clusters) {
 
         var top_nodes = [];
         if (is_cluster) {
-          if (GRAPH.top_nodes) {
-            top_nodes = GRAPH.top_nodes[node.id];
+          if (GRAPH.results && GRAPH.result.top_nodes) {
+            top_nodes = GRAPH.result.top_nodes[node.id];
           } else {
             top_nodes = STATE.clusterToNodes[node.id].slice(0, 5).map(x => STATE.labels[x])
             .filter(x => x);
@@ -567,12 +569,11 @@ function get_graph_graphics(graph, X, clusters) {
 
 init();
 
-var update_graph_height = () => {
-  var g = $('#_graph');
+function update_graph_height() {
+  var g = $('#_graph svg');
   g.height(window.innerHeight - g.offset().top - 20);
 };
 $(window).resize(update_graph_height);
-update_graph_height();
 
 var display_loading = () => {
   RENDERER.dispose();
