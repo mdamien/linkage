@@ -108,6 +108,9 @@ class TopicWords extends React.Component {
 
 const handle = (props) => {
   const { value, dragging, index } = props;
+  delete props.dragging;
+  delete props.value;
+  delete props.index;
   return (
     <Tooltip
       prefixCls="rc-slider-tooltip"

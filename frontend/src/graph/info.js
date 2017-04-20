@@ -56,17 +56,7 @@ function render(params) {
     </div>;
   }
 
-  var buttons = <div style={{ position: 'absolute', bottom: 10, right: 10}}>
-    <button className="btn btn-primary btn-xs" onClick={() => params.renderer.clear_pause_in()}>resume auto-layout</button>
-    &nbsp;
-    <button href="#" className="btn btn-primary btn-xs" onClick={() => params.renderer.pause_in(0)}>pause auto-layout</button>
-    &nbsp;
-    <button href="#" className="btn btn-primary btn-xs" onClick={() => params.expand_clusters()}>expand clusters</button>
-    &nbsp;
-    <button href="#" className="btn btn-primary btn-xs" onClick={() => params.collapse_clusters()}>collapse clusters</button>
-  </div>;
-
-  ReactDOM.render(<div>{buttons}{popup}</div>, document.getElementById('_graph-sidebar'));
+  ReactDOM.render(popup, document.getElementById('_graph-sidebar'));
 };
 
 export default render;

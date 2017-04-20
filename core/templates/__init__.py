@@ -180,6 +180,7 @@ def result(request, graph, result):
                 L.div('.col-md-9') / (
                     L.div('.panel.panel-default', style='position:relative') / (
                         L.div('#_graph-sidebar'),
+                        L.div('#_graph-buttons'),
                         L.div('.panel-body', style='padding:0') / (
                             L.h3('#_loading.text-center') / 'Loading…',
                             L.div('#_graph'),

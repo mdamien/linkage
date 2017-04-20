@@ -2,6 +2,7 @@ import './graph/csrf.js';
 
 import renderSidebar from './graph/sidebar';
 import renderGraphSidebar from './graph/info';
+import renderGraphButtons from './graph/graph_buttons';
 
 import { get_color, hashedColor, COLORS, edgesArr, n_best_elems } from './graph/utils';
 import tfidf from './graph/tf_idf';
@@ -105,18 +106,30 @@ function init(state_init = {}) {
   $('#_loading').hide();
 
   var timeout = false;
-  var running = false;
+  STATE.graph_layout_running = false;
   RENDERER.pause_in = (time) => {
     if (timeout) {
       clearTimeout(timeout);
     }
-    if (time != 0 && !running) {
+    if (time != 0 && !STATE.graph_layout_running) {
       RENDERER.resume();
-      running = true;
+      STATE.graph_layout_running = true;
     }
+    renderGraphButtons({
+      renderer: RENDERER,
+      expand_clusters: expand_clusters.bind(this, graph, X, nodeToCluster),
+      collapse_clusters: collapse_clusters.bind(this, graph, X, nodeToCluster),   
+      graph_layout_running: STATE.graph_layout_running, 
+    });
     timeout = setTimeout(function() {
       RENDERER.pause();
-      running = false;
+      STATE.graph_layout_running = false;
+      renderGraphButtons({
+        renderer: RENDERER,
+        expand_clusters: expand_clusters.bind(this, graph, X, nodeToCluster),
+        collapse_clusters: collapse_clusters.bind(this, graph, X, nodeToCluster),   
+        graph_layout_running: STATE.graph_layout_running, 
+      });
     }, time);
   };
 
@@ -124,13 +137,19 @@ function init(state_init = {}) {
     if (timeout) {
       clearTimeout(timeout);
     }
-    if (!running) {
+    if (!STATE.graph_layout_running) {
       RENDERER.resume();
-      running = true;
+      STATE.graph_layout_running = true;
     }
+    renderGraphButtons({
+      renderer: RENDERER,
+      expand_clusters: expand_clusters.bind(this, graph, X, nodeToCluster),
+      collapse_clusters: collapse_clusters.bind(this, graph, X, nodeToCluster),   
+      graph_layout_running: STATE.graph_layout_running, 
+    });
   }
 
-  running = true;
+  STATE.graph_layout_running = true;
   RENDERER.run();
   RENDERER.pause_in(2000);
 
@@ -139,6 +158,12 @@ function init(state_init = {}) {
     renderer: RENDERER,
     expand_clusters: expand_clusters.bind(this, graph, X, nodeToCluster),
     collapse_clusters: collapse_clusters.bind(this, graph, X, nodeToCluster),
+  });
+  renderGraphButtons({
+    renderer: RENDERER,
+    expand_clusters: expand_clusters.bind(this, graph, X, nodeToCluster),
+    collapse_clusters: collapse_clusters.bind(this, graph, X, nodeToCluster),   
+    graph_layout_running: STATE.graph_layout_running, 
   });
 }
 
@@ -198,9 +223,9 @@ function _add_clusters(graph, X, nodeToCluster) {
         console.log('invalid cluster1', cluster1, 'for', line);
         return;
       }
+      graph.addNode(cluster0, {isCluster: true});
+      graph.addNode(cluster1, {isCluster: true});
       if (STATE.pi[cluster0][cluster1] > GRAPH.cluster_to_cluster_cutoff) {
-        graph.addNode(cluster0, {isCluster: true});
-        graph.addNode(cluster1, {isCluster: true});
         graph.addLink(cluster0, cluster1);
       }
     })
@@ -294,6 +319,12 @@ function get_graph_graphics(graph, X, clusters) {
           top_nodes,
           expand_clusters: expand_clusters.bind(this, graph, X, clusters),
           collapse_clusters: collapse_clusters.bind(this, graph, X, clusters),
+        });
+        renderGraphButtons({
+          renderer: RENDERER,
+          expand_clusters: expand_clusters.bind(this, graph, X, clusters),
+          collapse_clusters: collapse_clusters.bind(this, graph, X, clusters),
+          graph_layout_running: STATE.graph_layout_running, 
         });
       }, function() {
         circle.attr('stroke-width', '0');
@@ -450,6 +481,12 @@ function get_graph_graphics(graph, X, clusters) {
             expand_clusters: expand_clusters.bind(this, graph, X, clusters),
             collapse_clusters: collapse_clusters.bind(this, graph, X, clusters),
           });
+          renderGraphButtons({
+            renderer: RENDERER,
+            expand_clusters: expand_clusters.bind(this, graph, X, clusters),
+            collapse_clusters: collapse_clusters.bind(this, graph, X, clusters),
+            graph_layout_running: STATE.graph_layout_running, 
+          });
         }, function() {
           ui.attr('stroke-width', strokeWidth);
         });
@@ -530,11 +567,19 @@ function get_graph_graphics(graph, X, clusters) {
 
 init();
 
+var update_graph_height = () => {
+  var g = $('#_graph');
+  g.height(window.innerHeight - g.offset().top - 20);
+};
+$(window).resize(update_graph_height);
+update_graph_height();
+
 var display_loading = () => {
   RENDERER.dispose();
   $('#_loading').text('Loading…');
   $('#_loading').show();
   renderGraphSidebar(null);
+  renderGraphButtons(null);
 }
 
 export {
