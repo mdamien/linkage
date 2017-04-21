@@ -60,7 +60,7 @@ function init(state_init = {}) {
     );
 
     var topics_per_edges = parse_txt_mat(GRAPH.result.topics_per_edges_mat);
-    
+
     STATE.topics_per_edges = topics_per_edges;
 
     STATE.rho = Papa.parse(GRAPH.result.rho_mat,
@@ -475,8 +475,17 @@ function get_graph_graphics(graph, X, clusters) {
           }
         }
 
+        if (linked_to_cluster && !cluster_to_cluster) {
+          ui.attr('stroke-dasharray', '5, 5');
+        }
+
         $(ui).hover(function() {
           if (strokeWidth == 0) return;
+
+          if (linked_to_cluster && !cluster_to_cluster) {
+            return;
+          }
+
           var words = [];
 
           if (link_id !== -1) {
