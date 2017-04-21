@@ -60,11 +60,7 @@ function init(state_init = {}) {
     );
 
     var topics_per_edges = parse_txt_mat(GRAPH.result.topics_per_edges_mat);
-
-    topics_per_edges.forEach((v, i) => {
-      topics_per_edges[i] = v.slice(1);
-    });
-
+    
     STATE.topics_per_edges = topics_per_edges;
 
     STATE.rho = Papa.parse(GRAPH.result.rho_mat,
@@ -84,8 +80,8 @@ function init(state_init = {}) {
   document.getElementById('_graph').innerHTML = '';
 
   var layout = Viva.Graph.Layout.forceDirected(graph, {
-    springLength: 80,
-    springCoeff: 0.0002,
+    springLength: 100,
+    springCoeff: 0.0004,
   });
 
   RENDERER = Viva.Graph.View.renderer(graph, {
@@ -174,22 +170,13 @@ function parse_txt_mat(mat) {
 
 function fit_graph() {
   // https://github.com/anvaka/VivaGraphJS/blob/a5c5c92cdecd6964b0bb0c1cb0aaa63c30ffc9e4/demos/other/precompute-advanced.html#L62-L77
-  var graphRect = RENDERER.layout.getGraphRect();
+  var graphRect = R.ENDERER.layout.getGraphRect();
   var graphSize = Math.min(graphRect.x2 - graphRect.x1, graphRect.y2 - graphRect.y1);
   var g = $('#_graph svg')[0];
   var screenSize = Math.min(g.clientWidth, g.clientHeight);
   var desiredScale = screenSize / graphSize;
-  zoomOut(desiredScale, 1);
-  function zoomOut(desiredScale, currentScale) {
-    // zoom API in vivagraph 0.5.x is silly. There is no way to pass transform
-    // directly. Maybe it will be fixed in future, for now this is the best I could do:
-    if (desiredScale < currentScale) {
-      currentScale = RENDERER.zoomOut();
-      setTimeout(function () {
-          zoomOut(desiredScale, currentScale);
-      }, 16);
-    }
-  }
+  RENDERER.moveTo((graphRect.x2 + graphRect.x1)/2, (graphRect.y2 + graphRect.y1)/2);
+  RENDERER.scale(desiredScale);
 }
 
 function expand_cluster(cluster_name, graph, X, clusters) {
