@@ -1,4 +1,4 @@
-import os
+import os, time
 from celery import Celery, task
 from channels import Group
 
@@ -14,7 +14,7 @@ app.config_from_object('django.conf:settings')
 def process_graph(graph_pk, result_pk=None, ws_delay=0):
     print('Processing graph {}'.format(graph_pk))
 
-    import csv, io, random, time
+    import csv, io, random
     from core.models import Graph, ProcessingResult
 
     t = time.time()
@@ -81,8 +81,27 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
 
 @task()
 def retrieve_graph_data(graph_pk, method, **params):
-    from core import third_party_import
+    from core import third_party_import, models
     links = getattr(third_party_import, method)(params['q'], params['limit'])
+    if len(links) < 2:
+        graph = models.Graph.objects.get(pk=graph_pk)
+        error = 'No results for this request'
+        if 'hal_' in method:
+            error = 'No HAL results for this request'
+        if 'arxiv_' in method:
+            error = 'No arXiv results for this request'
+        if 'pubmed_' in method:
+            error = 'No PubMed results for this request'
+        if 'twitter_' in method or 'loklak_' in method:
+            error = 'No Twitter results for this request'
+        graph.job_error_log = error
+        graph.job_progress = 1.0
+        graph.save()
+        time.sleep(1)
+        Group("jobs-%d" % graph.user.pk).send({
+            'text': '%d - ERROR' % graph.pk
+        })
+        return
     import_graph_data(graph_pk, links, ignore_self_loop=params.get('ignore_self_loop', True))
 
 
@@ -100,6 +119,7 @@ def import_graph_data(graph_pk, csv_content, ignore_self_loop=True):
         graph.job_error_log = 'No data to process for this graph'
         graph.job_progress = 1.0
         graph.save()
+        time.sleep(1)
         Group("jobs-%d" % graph.user.pk).send({
             'text': '%d - ERROR' % graph.pk
         })
