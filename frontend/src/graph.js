@@ -38,12 +38,7 @@ function init(state_init = {}) {
   STATE.tdm = tdm;
 
   if (GRAPH.result && GRAPH.result.clusters_mat) {
-    var nodeToCluster = Papa.parse(GRAPH.result.clusters_mat,
-      {delimiter: ' ', dynamicTyping: true, skipEmptyLines: true}).data[0];
-
-    if (nodeToCluster[0] === "") {
-      nodeToCluster = nodeToCluster.slice(1);
-    }
+    var nodeToCluster = parse_txt_mat(GRAPH.result.clusters_mat)[0];
 
     var clusterToNodes = {};
     nodeToCluster.forEach(function(cluster, node) {
@@ -54,12 +49,7 @@ function init(state_init = {}) {
     });
     STATE.clusterToNodes = clusterToNodes;
 
-    var topics = Papa.parse(GRAPH.result.topics_mat,
-      {delimiter: '  ', dynamicTyping: true, skipEmptyLines: true}).data;
-
-    topics.forEach((v, i) => {
-      topics[i] = v.slice(1);
-    });
+    var topics = parse_txt_mat(GRAPH.result.topics_mat);
 
     STATE.topicToTerms = topics;
 
@@ -69,8 +59,7 @@ function init(state_init = {}) {
       dictionnary[n_best_elems(words, 1, v => v.tfidf)[0][0]]
     );
 
-    var topics_per_edges = Papa.parse(GRAPH.result.topics_per_edges_mat,
-      {delimiter: '  ', dynamicTyping: true, skipEmptyLines: true}).data;
+    var topics_per_edges = parse_txt_mat(GRAPH.result.topics_per_edges_mat);
 
     topics_per_edges.forEach((v, i) => {
       topics_per_edges[i] = v.slice(1);
@@ -81,13 +70,9 @@ function init(state_init = {}) {
     STATE.rho = Papa.parse(GRAPH.result.rho_mat,
       {delimiter: ',', dynamicTyping: true, skipEmptyLines: true}).data;
 
-    STATE.theta_qr = Papa.parse(GRAPH.result.theta_qr_mat,
-      {delimiter: '   ', dynamicTyping: true, skipEmptyLines: true}).data
-      .map(v => v.slice(1));
+    STATE.theta_qr = parse_txt_mat(GRAPH.result.theta_qr_mat);
 
-    STATE.pi = Papa.parse(GRAPH.result.pi_mat,
-      {delimiter: '   ', dynamicTyping: true, skipEmptyLines: true}).data
-      .map(v => v.slice(1));
+    STATE.pi = parse_txt_mat(GRAPH.result.pi_mat);
 
     _add_clusters(graph, X, nodeToCluster);
   } else {
@@ -179,6 +164,12 @@ function init(state_init = {}) {
   });
 
   update_graph_height();
+}
+
+function parse_txt_mat(mat) {
+  return mat.split('\n').map(line =>
+    line.split(' ').filter(x => x).map(x => parseFloat(x))
+  ).filter(line => line.length > 0);
 }
 
 function fit_graph() {
