@@ -221,13 +221,14 @@ def export_to_zip(graph, results):
         output = io.StringIO()
         writer = csv.writer(output)
         clusters = list(csv.reader([result.clusters_mat], delimiter=' '))[0]
-        clusters_labeleds = [None] * result.param_clusters
+        clusters = [int(c) for c in clusters if c != '']
+        clusters_labeleds = [None] * (max(clusters)+1)
         c = 0
         for cluster in clusters:
             if cluster != '':
-                if clusters_labeleds[int(cluster)] is None:
-                    clusters_labeleds[int(cluster)] = []
-                clusters_labeleds[int(cluster)].append(labels[c])
+                if clusters_labeleds[cluster] is None:
+                    clusters_labeleds[cluster] = []
+                clusters_labeleds[cluster].append(labels[c])
                 c += 1
         for row in clusters_labeleds:
             if row is None:

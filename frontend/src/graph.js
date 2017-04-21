@@ -337,7 +337,7 @@ function get_graph_graphics(graph, X, clusters) {
 
         var top_nodes = [];
         if (is_cluster) {
-          if (GRAPH.results && GRAPH.result.top_nodes) {
+          if (GRAPH.result && GRAPH.result.top_nodes) {
             top_nodes = GRAPH.result.top_nodes[cluster_name];
           } else {
             top_nodes = STATE.clusterToNodes[cluster_name].slice(0, 5).map(x => STATE.labels[x])
