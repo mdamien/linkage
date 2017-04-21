@@ -210,9 +210,7 @@ class Sidebar extends React.Component {
                     <h3 className='panel-title'>{GRAPH.name}</h3>
                 </div>
                 <div className='panel-body'>
-                    <strong>{state.n_edges}</strong> edges
-                    <br/>
-                    <strong>{state.n_nodes}</strong> nodes
+                    <strong>{state.n_edges}</strong> edges, <strong>{state.n_nodes}</strong> nodes
                     <br/>
                     imported <strong>{GRAPH.created_at}</strong><br/>
                     {GRAPH.result && false ? 
@@ -221,28 +219,6 @@ class Sidebar extends React.Component {
                       </span>
                       : null}
                 </div>
-            </div>
-            <div className='panel panel-default'>
-                <div className='panel-heading'>
-                    <h3 className='panel-title'>Result</h3>
-                </div>
-                {GRAPH.result ? <div className='panel-body'>
-                    time taken <strong>{(GRAPH.time*100).toFixed(2)}s</strong><br/>
-                    clustering score: <strong>{GRAPH.result.crit}</strong><br/>
-                    {GRAPH.log ? <div>
-                        <a className='btn btn-info btn-xs' onClick={this.toggleLog}>
-                            {this.state.showLog ? 'hide' : 'show'} log
-                        </a>
-                        {this.state.showLog ? <div>
-                            <br/>
-                            <pre>{GRAPH.log}</pre>
-                        </div> : null}
-                    </div> : null}
-                </div> : <div className='panel-body'>
-                    {GRAPH.result && GRAPH.progress == 1 ?
-                        'An error occured while processing.'
-                        : 'Processing graph...'}
-                </div>}
             </div>
             <div className='panel panel-default'>
                 <div className='panel-heading'>
@@ -291,6 +267,28 @@ class Sidebar extends React.Component {
                       )}
                     </div>
                 </div> : null}
+            </div>
+            <div className='panel panel-default'>
+                <div className='panel-heading'>
+                    <h3 className='panel-title'>Result</h3>
+                </div>
+                {GRAPH.result ? <div className='panel-body'>
+                    time taken <strong>{(GRAPH.time*100).toFixed(2)}s</strong><br/>
+                    clustering score: <strong>{GRAPH.result.crit}</strong><br/>
+                    {GRAPH.log ? <div>
+                        <a className='btn btn-info btn-xs' onClick={this.toggleLog}>
+                            {this.state.showLog ? 'hide' : 'show'} log
+                        </a>
+                        {this.state.showLog ? <div>
+                            <br/>
+                            <pre>{GRAPH.log}</pre>
+                        </div> : null}
+                    </div> : null}
+                </div> : <div className='panel-body'>
+                    {GRAPH.result && GRAPH.progress == 1 ?
+                        'An error occured while processing.'
+                        : 'Processing graph...'}
+                </div>}
             </div>
             <div className='panel panel-default'>
                 <div className='panel-heading'>
