@@ -98,9 +98,15 @@ function init(state_init = {}) {
 
   document.getElementById('_graph').innerHTML = '';
 
+  var layout = Viva.Graph.Layout.forceDirected(graph, {
+    springLength: 80,
+    springCoeff: 0.0002,
+  });
+
   RENDERER = Viva.Graph.View.renderer(graph, {
-      container: document.getElementById('_graph'),
-      graphics: get_graph_graphics(graph, X, nodeToCluster),
+    layout: layout,
+    container: document.getElementById('_graph'),
+    graphics: get_graph_graphics(graph, X, nodeToCluster),
   });
 
   $('#_loading').hide();
@@ -119,7 +125,8 @@ function init(state_init = {}) {
       renderer: RENDERER,
       expand_clusters: expand_clusters.bind(this, graph, X, nodeToCluster),
       collapse_clusters: collapse_clusters.bind(this, graph, X, nodeToCluster),   
-      graph_layout_running: STATE.graph_layout_running, 
+      graph_layout_running: STATE.graph_layout_running,
+      fit_graph: fit_graph,
     });
     timeout = setTimeout(function() {
       RENDERER.pause();
@@ -128,7 +135,8 @@ function init(state_init = {}) {
         renderer: RENDERER,
         expand_clusters: expand_clusters.bind(this, graph, X, nodeToCluster),
         collapse_clusters: collapse_clusters.bind(this, graph, X, nodeToCluster),   
-        graph_layout_running: STATE.graph_layout_running, 
+        graph_layout_running: STATE.graph_layout_running,
+        fit_graph: fit_graph,
       });
     }, time);
   };
@@ -145,13 +153,16 @@ function init(state_init = {}) {
       renderer: RENDERER,
       expand_clusters: expand_clusters.bind(this, graph, X, nodeToCluster),
       collapse_clusters: collapse_clusters.bind(this, graph, X, nodeToCluster),   
-      graph_layout_running: STATE.graph_layout_running, 
+      graph_layout_running: STATE.graph_layout_running,
+      fit_graph: fit_graph,
     });
   }
 
   STATE.graph_layout_running = true;
   RENDERER.run();
   RENDERER.pause_in(2000);
+
+  RENDERER.layout = layout;
 
   renderSidebar(STATE);
   renderGraphSidebar({
@@ -163,10 +174,31 @@ function init(state_init = {}) {
     renderer: RENDERER,
     expand_clusters: expand_clusters.bind(this, graph, X, nodeToCluster),
     collapse_clusters: collapse_clusters.bind(this, graph, X, nodeToCluster),   
-    graph_layout_running: STATE.graph_layout_running, 
+    graph_layout_running: STATE.graph_layout_running,
+    fit_graph: fit_graph,
   });
 
   update_graph_height();
+}
+
+function fit_graph() {
+  // https://github.com/anvaka/VivaGraphJS/blob/a5c5c92cdecd6964b0bb0c1cb0aaa63c30ffc9e4/demos/other/precompute-advanced.html#L62-L77
+  var graphRect = RENDERER.layout.getGraphRect();
+  var graphSize = Math.min(graphRect.x2 - graphRect.x1, graphRect.y2 - graphRect.y1);
+  var g = $('#_graph svg')[0];
+  var screenSize = Math.min(g.clientWidth, g.clientHeight);
+  var desiredScale = screenSize / graphSize;
+  zoomOut(desiredScale, 1);
+  function zoomOut(desiredScale, currentScale) {
+    // zoom API in vivagraph 0.5.x is silly. There is no way to pass transform
+    // directly. Maybe it will be fixed in future, for now this is the best I could do:
+    if (desiredScale < currentScale) {
+      currentScale = RENDERER.zoomOut();
+      setTimeout(function () {
+          zoomOut(desiredScale, currentScale);
+      }, 16);
+    }
+  }
 }
 
 function expand_cluster(cluster_name, graph, X, clusters) {
@@ -328,6 +360,7 @@ function get_graph_graphics(graph, X, clusters) {
           expand_clusters: expand_clusters.bind(this, graph, X, clusters),
           collapse_clusters: collapse_clusters.bind(this, graph, X, clusters),
           graph_layout_running: STATE.graph_layout_running, 
+          fit_graph: fit_graph,
         });
       }, function() {
         circle.attr('stroke-width', '0');
@@ -441,7 +474,7 @@ function get_graph_graphics(graph, X, clusters) {
         if (cluster_to_cluster) {
           // BEST TOPIC
           cluster_topic_perc = STATE.theta_qr[
-            prev_cluster_name * Object.keys(STATE.clusterToNodes).length + to_cluster_name];
+            to_cluster_name * Object.keys(STATE.clusterToNodes).length + prev_cluster_name];
           var topic_max = n_best_elems(cluster_topic_perc, 1)[0][0];
           color = get_color(topic_max);
 
@@ -492,7 +525,8 @@ function get_graph_graphics(graph, X, clusters) {
             renderer: RENDERER,
             expand_clusters: expand_clusters.bind(this, graph, X, clusters),
             collapse_clusters: collapse_clusters.bind(this, graph, X, clusters),
-            graph_layout_running: STATE.graph_layout_running, 
+            graph_layout_running: STATE.graph_layout_running,
+            fit_graph: fit_graph,
           });
         }, function() {
           ui.attr('stroke-width', strokeWidth);
