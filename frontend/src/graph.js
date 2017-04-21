@@ -171,7 +171,7 @@ function init(state_init = {}) {
 
 function expand_cluster(cluster_name, graph, X, clusters) {
   // remove current node
-  graph.removeNode(cluster_name);
+  graph.removeNode('c-' + cluster_name);
 
   // add all nodes of the cluster
   X.forEach(function(line, i) {
@@ -181,7 +181,7 @@ function expand_cluster(cluster_name, graph, X, clusters) {
         graph.addLink(line[0], line[1], {link_id: i});
       } else {
         // if target node not yet expanded, link to the cluster
-        graph.addLink(line[0], clusters[line[1]]);
+        graph.addLink(line[0], 'c-' + clusters[line[1]]);
       }
     }
     // if target node in cluster, add it
@@ -190,7 +190,7 @@ function expand_cluster(cluster_name, graph, X, clusters) {
         graph.addLink(line[0], line[1], {link_id: i});
       } else {
         // if origin node not yet expanded, link to the cluster
-        graph.addLink(clusters[line[0]], line[1]);
+        graph.addLink('c-' + clusters[line[0]], line[1]);
       }
     }
   });
@@ -225,10 +225,10 @@ function _add_clusters(graph, X, nodeToCluster) {
         console.log('invalid cluster1', cluster1, 'for', line);
         return;
       }
-      graph.addNode(cluster0, {isCluster: true});
-      graph.addNode(cluster1, {isCluster: true});
+      graph.addNode('c-' + cluster0, {isCluster: true});
+      graph.addNode('c-' + cluster1, {isCluster: true});
       if (STATE.pi[cluster0][cluster1] > GRAPH.cluster_to_cluster_cutoff) {
-        graph.addLink(cluster0, cluster1);
+        graph.addLink('c-' + cluster0, 'c-' + cluster1);
       }
     })
   });
@@ -252,18 +252,19 @@ function get_graph_graphics(graph, X, clusters) {
 
     graphics.node(function(node) {
       var is_cluster = node.data && node.data.isCluster;
+      var cluster_name = is_cluster ? parseInt(node.id.split('-')[1]) : null;
 
       var color = '#aaa';
 
       if (is_cluster) {
-        color = get_color(node.id, 'Paired');
+        color = get_color(cluster_name, 'Paired');
       }
 
       if (!is_cluster && clusters && clusters[node.id] !== undefined) {
         color = get_color(clusters[node.id], 'Paired');
       }
       var ui = Viva.Graph.svg('g'),
-          svgText = Viva.Graph.svg('text').attr('y', '-6px').text(node.id),
+          // svgText = Viva.Graph.svg('text').attr('y', '-6px').text(node.id),
           circle = Viva.Graph.svg('circle')
             .attr('cx', 0)
             .attr('cy', 0)
@@ -280,7 +281,7 @@ function get_graph_graphics(graph, X, clusters) {
         var sorted = n_best_elems(STATE.rho, false, v => v[0]);
         var max = sorted[0][1][0];
         var min = sorted.slice(-1)[0][1][0];
-        var normalized = (STATE.rho[node.id][0] - min) / (max - min);
+        var normalized = (STATE.rho[cluster_name][0] - min) / (max - min);
         if (!normalized) {
           normalized = 0;
         }
@@ -296,7 +297,7 @@ function get_graph_graphics(graph, X, clusters) {
         ui.append(circle);
       }
 
-      svgText.attr('visibility', 'hidden');
+      // svgText.attr('visibility', 'hidden');
       $(ui).hover(function() {
         // svgText.attr('visibility', 'visible');
         circle.attr('stroke-width', '1');
@@ -305,15 +306,15 @@ function get_graph_graphics(graph, X, clusters) {
         var top_nodes = [];
         if (is_cluster) {
           if (GRAPH.results && GRAPH.result.top_nodes) {
-            top_nodes = GRAPH.result.top_nodes[node.id];
+            top_nodes = GRAPH.result.top_nodes[cluster_name];
           } else {
-            top_nodes = STATE.clusterToNodes[node.id].slice(0, 5).map(x => STATE.labels[x])
+            top_nodes = STATE.clusterToNodes[cluster_name].slice(0, 5).map(x => STATE.labels[x])
             .filter(x => x);
           }
         }
 
         renderGraphSidebar({
-          title: node.data && node.data.isCluster ? node.id : STATE.labels[node.id],
+          title: node.data && node.data.isCluster ? cluster_name : STATE.labels[node.id],
           is_node: true,
           is_cluster: is_cluster,
           cluster: is_cluster || !clusters ? undefined : clusters[node.id],
@@ -345,7 +346,7 @@ function get_graph_graphics(graph, X, clusters) {
           return;
         }
         if (is_cluster) {
-          expand_cluster(node.id, graph, X, clusters);
+          expand_cluster(cluster_name, graph, X, clusters);
 
           RENDERER.pause_in(2000);
         }
@@ -399,8 +400,12 @@ function get_graph_graphics(graph, X, clusters) {
     graphics.link(function(link) {
         var prev = graph.getNode(link.fromId);
         var prev_is_cluster = prev.data && prev.data.isCluster;
+        var prev_cluster_name = prev_is_cluster ? parseInt(prev.id.split('-')[1]) : null;
+
         var to = graph.getNode(link.toId);
         var to_is_cluster = to.data && to.data.isCluster;
+        var to_cluster_name = to_is_cluster ? parseInt(to.id.split('-')[1]) : null;
+
         var linked_to_cluster = prev_is_cluster || to_is_cluster;
         var cluster_to_cluster = prev_is_cluster && to_is_cluster;
 
@@ -436,12 +441,12 @@ function get_graph_graphics(graph, X, clusters) {
         if (cluster_to_cluster) {
           // BEST TOPIC
           cluster_topic_perc = STATE.theta_qr[
-            prev.id * Object.keys(STATE.clusterToNodes).length + to.id];
+            prev_cluster_name * Object.keys(STATE.clusterToNodes).length + to_cluster_name];
           var topic_max = n_best_elems(cluster_topic_perc, 1)[0][0];
           color = get_color(topic_max);
 
           // WIDTH IN PI()
-          var width = STATE.pi[prev.id][to.id];
+          var width = STATE.pi[prev_cluster_name][to_cluster_name];
 
           strokeWidth = 1 + 10*width;
         }
@@ -479,7 +484,7 @@ function get_graph_graphics(graph, X, clusters) {
             topics: topics_perc || cluster_topic_perc,
             topicsName: STATE.topicsName,
             renderer: RENDERER,
-            pi_value: cluster_to_cluster ? STATE.pi[prev.id][to.id] : undefined,
+            pi_value: cluster_to_cluster ? STATE.pi[prev_cluster_name][to_cluster_name] : undefined,
             expand_clusters: expand_clusters.bind(this, graph, X, clusters),
             collapse_clusters: collapse_clusters.bind(this, graph, X, clusters),
           });
