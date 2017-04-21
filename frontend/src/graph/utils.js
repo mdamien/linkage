@@ -12,7 +12,51 @@ var COLORS = [
   '#bcbd22', '#dbdb8d'
 ];
 
-colorbrewer['bonus'] = {12:COLORS}
+var COLORS_2 = [
+  '#1f77b4',
+  '#ff7f0e',
+  '#2ca02c',
+  '#d62728',
+  '#9467bd',
+  '#8c564b',
+  '#e377c2',
+  '#7f7f7f',
+  '#bcbd22',
+  '#aec7e8',
+  '#ffbb78',
+  '#98df8a',
+  '#ff9896',
+  '#c5b0d5',
+  '#c49c94',
+  '#f7b6d2',
+  '#c7c7c7',
+  '#dbdb8d',
+];
+
+
+var COLORS_3 = [
+  '#ffbb78',
+  '#98df8a',
+  '#ff9896',
+  '#c5b0d5',
+  '#c49c94',
+  '#f7b6d2',
+  '#c7c7c7',
+  '#dbdb8d',
+  '#1f77b4',
+  '#ff7f0e',
+  '#2ca02c',
+  '#d62728',
+  '#9467bd',
+  '#8c564b',
+  '#e377c2',
+  '#7f7f7f',
+  '#bcbd22',
+  '#aec7e8',
+];
+
+colorbrewer['bonus'] = {12:COLORS_2}
+colorbrewer['bonus2'] = {12:COLORS_3}
 
 var hashIt = function(s) {
   return Math.abs(s.toString().split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0)*1.2;return a&a},0)) * 3423;
@@ -49,7 +93,7 @@ const n_best_elems = (arr, n, key=v => v) => {
 };
 
 var get_color = (i, set='bonus') => {
-  // if (set == 'bonus') set = 'Set1';
+  if (set == 'Paired') set = 'bonus2';
   var setset = colorbrewer[set];
   var maxKey = n_best_elems(Object.keys(setset), 1)[0][1];
   var colors = setset[maxKey];
