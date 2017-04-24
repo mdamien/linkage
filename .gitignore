@@ -4,3 +4,4 @@ venv/
 collected_static/
 *.lock
 pm_runs/
+last_graph.csv

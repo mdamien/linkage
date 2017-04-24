@@ -4203,6 +4203,8 @@ function renderer(graph, settings) {
   // TODO: I have a technical debt here: fix scaling/recentering! Currently it's a total mess.
   var FRAME_INTERVAL = 30;
 
+  var ZOOM_SPEED = 0.15;
+
   settings = settings || {};
 
   var layout = settings.layout,
@@ -4563,7 +4565,7 @@ function renderer(graph, settings) {
         y: containerSize.height / 2
       };
     }
-    var scaleFactor = Math.pow(1 + 0.4, out ? -0.2 : 0.2);
+    var scaleFactor = Math.pow(1 + 0.2, out ? -ZOOM_SPEED : ZOOM_SPEED);
     transform.scale = graphics.scale(scaleFactor, scrollPoint);
 
     renderGraph();

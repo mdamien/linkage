@@ -80,8 +80,8 @@ function init(state_init = {}) {
   document.getElementById('_graph').innerHTML = '';
 
   var layout = Viva.Graph.Layout.forceDirected(graph, {
-    springLength: 100,
-    springCoeff: 0.0004,
+    springLength: 80,
+    springCoeff: 0.0002,
   });
 
   RENDERER = Viva.Graph.View.renderer(graph, {
