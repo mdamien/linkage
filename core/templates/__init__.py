@@ -203,7 +203,7 @@ def api_result(request, graph, result):
     return serialize_graph(graph, result)
 
 
-def index(request, messages, import_type_selected='coauth'):
+def index(request, messages, import_type_selected='coauth', quota_exceeded=False):
     if not import_type_selected:
         import_type_selected = 'coauth'
     return base((
@@ -360,7 +360,7 @@ def index(request, messages, import_type_selected='coauth'):
                                 L.input('.form-control', name='topics', value='10', type='number'),
                             ),
                         ),
-                    )
+                    ) if not quota_exceeded else None,
                 ),
             ),
             FOOTER
