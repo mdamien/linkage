@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'social_django',
     # 'djcelery',
     'channels',
+    'loginas',
 
     'core',
     'pm',
@@ -113,3 +114,5 @@ CHANNEL_LAYERS = {
 
 import raven
 COMMIT_HASH = raven.fetch_git_sha(os.path.dirname(os.pardir))
+
+LOGINAS_REDIRECT_URL = '/'
