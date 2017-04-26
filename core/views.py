@@ -24,7 +24,8 @@ MAX_JOBS_PER_USER = 10
 def index(request):
     from config.celery import import_graph_data, retrieve_graph_data
 
-    if not request.user.is_superuser and models.Graph.objects.filter(user=request.user).count() > MAX_JOBS_PER_USER:
+    user_jobs = models.Graph.objects.filter(user=request.user).order_by('-pk')
+    if not request.user.is_superuser and user_jobs.count() > MAX_JOBS_PER_USER:
         messages = [('danger', 'You are limited to %d jobs, please delete previous ones before importing a new one' % MAX_JOBS_PER_USER)]
         return HttpResponse(templates.index(
             request,
@@ -161,6 +162,16 @@ def index(request):
                     graph = make_graph('CSV import of %s' % (filename))
                     import_graph_data.delay(graph.pk, content)
                     return redirect('/jobs/')
+            elif 'choice_prev_job' in request.POST:
+                prev_job_pk = int(request.POST['job_dropdown'])
+                prev_job = models.Graph.objects.get(pk=prev_job_pk)
+                if prev_job.user.pk == request.user.pk:
+                    graph = models.Graph(name=prev_job.name,
+                        user=request.user, directed=prev_job.directed,
+                        labels=prev_job.labels,
+                        tdm=prev_job.tdm,
+                        edges=prev_job.edges,
+                        dictionnary=prev_job.dictionnary)
             if graph:
                 if len(graph.labels.strip()) < 2:
                     messages.append(['danger', 'There is no data for this graph'])
@@ -179,7 +190,8 @@ def index(request):
     return HttpResponse(templates.index(
         request,
         messages,
-        request.GET.get('import_type')
+        request.GET.get('import_type'),
+        user_jobs=user_jobs,
     ))
 
 @login_required

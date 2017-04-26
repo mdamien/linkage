@@ -203,7 +203,7 @@ def api_result(request, graph, result):
     return serialize_graph(graph, result)
 
 
-def index(request, messages, import_type_selected='coauth', quota_exceeded=False):
+def index(request, messages, import_type_selected='coauth', quota_exceeded=False, user_jobs=None):
     if not import_type_selected:
         import_type_selected = 'coauth'
     return base((
@@ -227,6 +227,8 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                             href='?import_type=csv') / 'CSV',
                         L.a('.list-group-item' + ('.active' if import_type_selected == 'sample' else ''),
                             href='?import_type=sample') / 'Sample',
+                        (L.a('.list-group-item' + ('.active' if import_type_selected == 'prev_job' else ''),
+                            href='?import_type=prev_job') / 'Existing job') if user_jobs else None,
                     ),
                 ),
                 L.div('.col-md-9') / (
@@ -332,6 +334,20 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                                 )
                             ),
                         ) if import_type_selected == 'sample' else None,
+                        (
+                            L.div('.row') / (
+                                L.div('.col-md-7') / (
+                                    L.select('.form-control', name='job_dropdown') / (
+                                        (
+                                            L.option(value=str(job.pk)) / str(job)
+                                        ) for job in user_jobs
+                                    )
+                                ),
+                                L.div('.col-md-5') / (
+                                    L.input('.btn.btn-primary.btn-large', name='choice_prev_job', type='submit', value='Import'),
+                                )
+                            ),
+                        ) if import_type_selected == 'prev_job' and user_jobs else None,
                         L.hr,
                         L.div('.form-group') / (
                             L.div('.col-md-3.control-label') / (L.strong / 'Clustering'),
