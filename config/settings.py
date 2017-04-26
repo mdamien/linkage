@@ -116,3 +116,4 @@ import raven
 COMMIT_HASH = raven.fetch_git_sha(os.path.dirname(os.pardir))
 
 LOGINAS_REDIRECT_URL = '/'
+CAN_LOGIN_AS = lambda request, target_user: request.user.is_superuser
