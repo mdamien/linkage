@@ -76,45 +76,51 @@ def pubmed_to_csv(q, limit=500):
     if len(ids) == 0:
         return ''
 
-    params = {
-        'db': 'pubmed',
-        'retmode': 'xml',
-        'id': ','.join(ids),
-    }
-    resp = requests.get(BASE + 'efetch.fcgi', params=params)
-    xml = xmltodict.parse(resp.text)
+    def chunks(l, n):
+        """Yield successive n-sized chunks from l."""
+        for i in range(0, len(l), n):
+            yield l[i:i + n]
 
-    for pubarticle in xml['PubmedArticleSet']['PubmedArticle']:
-        article = pubarticle['MedlineCitation']['Article']
-        authors = []
-        if 'AuthorList' not in article:
-            print('ERROR: NO author list for ', article.get('ArticleTitle'))
-            continue
-        raw_authors = article['AuthorList']['Author']
-        if type(raw_authors) is not list:
-            raw_authors = [raw_authors]
-        raw_authors = raw_authors[:7] # constrain the authors to avoid exponential edge growth
-        for author in raw_authors:
-            if 'CollectiveName' in author:
-                authors.append(author['CollectiveName'])
-            else:
-                if 'LastName' or 'ForeName' in authors:
-                    authors.append(author.get('LastName', '') + ' ' + author.get('ForeName', ''))
+    for chunk in chunks(ids, 100):
+        params = {
+            'db': 'pubmed',
+            'retmode': 'xml',
+            'id': ','.join(chunk),
+        }
+        resp = requests.get(BASE + 'efetch.fcgi', params=params)
+        xml = xmltodict.parse(resp.text)
+
+        for pubarticle in xml['PubmedArticleSet']['PubmedArticle']:
+            article = pubarticle['MedlineCitation']['Article']
+            authors = []
+            if 'AuthorList' not in article:
+                print('ERROR: NO author list for ', article.get('ArticleTitle'))
+                continue
+            raw_authors = article['AuthorList']['Author']
+            if type(raw_authors) is not list:
+                raw_authors = [raw_authors]
+            raw_authors = raw_authors[:7] # constrain the authors to avoid exponential edge growth
+            for author in raw_authors:
+                if 'CollectiveName' in author:
+                    authors.append(author['CollectiveName'])
                 else:
-                    raise Exception('Author with no infos:', author)
-        abstract = []
-        if 'Abstract' in article:
-            abstract = article['Abstract']['AbstractText']
-            if type(abstract) is not list:
-                abstract = [abstract]
-            abstract = [x['#text'] if '#text' in x else x for x in abstract if not (not '#text' in x and '@Label' in x)]
-        title = []
-        if 'ArticleTitle' in article:
-            title = [article['ArticleTitle']]
-        text = '\n'.join(title + abstract)
-        for i, author in enumerate(authors):
-            for author2 in authors[i+1:]:
-                writer.writerow([author, author2, text])
+                    if 'LastName' or 'ForeName' in authors:
+                        authors.append(author.get('LastName', '') + ' ' + author.get('ForeName', ''))
+                    else:
+                        raise Exception('Author with no infos:', author)
+            abstract = []
+            if 'Abstract' in article:
+                abstract = article['Abstract']['AbstractText']
+                if type(abstract) is not list:
+                    abstract = [abstract]
+                abstract = [x['#text'] if '#text' in x else x for x in abstract if not (not '#text' in x and '@Label' in x)]
+            title = []
+            if 'ArticleTitle' in article:
+                title = [article['ArticleTitle']]
+            text = '\n'.join(title + abstract)
+            for i, author in enumerate(authors):
+                for author2 in authors[i+1:]:
+                    writer.writerow([author, author2, text])
 
     return output.getvalue()
 
