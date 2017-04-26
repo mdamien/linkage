@@ -5,7 +5,7 @@ npm i
 webpack --env=prod
 cd ..
 vf activate linkage
-pip install -r requirements_prod.txt
+pip install -r -U requirements_prod.txt
 rm -rf collected_static/
 python manage.py collectstatic --noinput
 python manage.py migrate
