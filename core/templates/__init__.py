@@ -375,12 +375,11 @@ def login(request, message, signup_form):
             header(request),
             L.div('.row') / (
                 L.div('.col-md-6.center-block', style='float:none') / (
-                    (L.div('.alert.alert-danger') / message) if message else (
-                        L.div('.alert.alert-info') / 'You need to login or sign up to access this application'
-                    ),
+                    L.div('.alert.alert-info') / 'You need to login or sign up to access this application',
                     L.div('.row') / (
                         L.div('.col-md-5') / (
                             L.h3 / 'Login',
+                            (L.div('.alert.alert-danger') / message) if message else None,
                             L.form(method='post') / (
                                 L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
                                 L.div('.form-group') / (
@@ -407,7 +406,6 @@ def login(request, message, signup_form):
 
                         L.div('.col-md-5') / (
                             L.h3 / 'Sign up',
-                            (L.div('.alert.alert-danger') / message) if message else None,
                             L.form(method='post', action='/accounts/signup/') / (
                                 L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
                                 L.div('.form-group') / (
