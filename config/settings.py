@@ -80,7 +80,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTHENTICATION_BACKENDS = (
-    'social_core.backends.google.GoogleOAuth2',
+    # 'social_core.backends.google.GoogleOAuth2', # be careful when enabling it, it crashes token confirmation
     'django.contrib.auth.backends.ModelBackend',
 )
 

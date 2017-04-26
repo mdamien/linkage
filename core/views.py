@@ -364,11 +364,11 @@ def signup(request):
 
                 token = str(user.pk) + 'p' + get_user_token(user)
 
-                send_mail('[linkage.fr] Account confirmation', """
-                    Welcome to linkage.fr.
+                send_mail('[linkage.fr] Account confirmation', """Welcome to linkage.fr.
 
-                    You are just one click away from getting an account, click on the following link: https://linkage.fr/?confirm_email_token=%s
-                """ % token, 'no-reply@linkage.fr', [email], fail_silently=False)
+You are just one click away from getting an account, click on the following link to confirm your account:
+https://linkage.fr/?confirm_email_token=%s
+""" % token, 'no-reply@linkage.fr', [email], fail_silently=False)
 
                 messages.success(request, 'An email has been sent to %s to confirm the account creation' % email)
 
