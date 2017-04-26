@@ -82,8 +82,13 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
 @task()
 def retrieve_graph_data(graph_pk, method, **params):
     from core import third_party_import, models
-    links = getattr(third_party_import, method)(params['q'], params['limit'])
-    if len(links) < 2:
+
+    exception_triggered = None
+    try:
+        links = getattr(third_party_import, method)(params['q'], params['limit'])
+    except Exception as e:
+        exception_triggered = e
+    if exception_triggered or len(links) < 2:
         graph = models.Graph.objects.get(pk=graph_pk)
         error = 'No results for this request'
         if 'hal_' in method:
@@ -94,6 +99,8 @@ def retrieve_graph_data(graph_pk, method, **params):
             error = 'No PubMed results for this request'
         if 'twitter_' in method or 'loklak_' in method:
             error = 'No Twitter results for this request'
+        if exception_triggered:
+            error = 'Error while importing'
         graph.job_error_log = error
         graph.job_progress = 1.0
         graph.save()
@@ -101,6 +108,8 @@ def retrieve_graph_data(graph_pk, method, **params):
         Group("jobs-%d" % graph.user.pk).send({
             'text': '%d - ERROR' % graph.pk
         })
+        if exception_triggered:
+            raise e
         return
     import_graph_data(graph_pk, links, ignore_self_loop=params.get('ignore_self_loop', True))
 
@@ -111,10 +120,23 @@ def import_graph_data(graph_pk, csv_content, ignore_self_loop=True):
     # print('received csv_content:', csv_content[:100])
     from core import models
     graph = models.Graph.objects.get(pk=graph_pk)
-    data = models.graph_data_from_links(csv_content, ignore_self_loop=ignore_self_loop)
-    for key in data:
-        setattr(graph, key, data[key])
-    graph.save()
+
+    error = None
+    try:
+        data = models.graph_data_from_links(csv_content, ignore_self_loop=ignore_self_loop)
+        for key in data:
+            setattr(graph, key, data[key])
+        graph.save()
+    except Exception as e:
+        graph.job_error_log = 'Error while importing'
+        graph.job_progress = 1.0
+        graph.save()
+        time.sleep(1)
+        Group("jobs-%d" % graph.user.pk).send({
+            'text': '%d - ERROR' % graph.pk
+        })
+        raise e
+
     if len(graph.labels.strip()) < 2:
         graph.job_error_log = 'No data to process for this graph'
         graph.job_progress = 1.0
