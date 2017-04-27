@@ -390,10 +390,15 @@ def _very_basic_captcha():
     y = random.randint(1, 10)
     return L.div('.form-group') / (
         L.label('.control-label') / (
-            'Captcha: ', str(x), ' + ', str(y), ' = ',
+            'Captcha ',
         ),
-        L.input(type='hidden', name='simple_captcha_answer', value=str(x+y)),
-        L.input('.form-control', name='simple_captcha'),
+        L.div / (
+            L.i / (
+                str(x), ' + ', str(y), ' = ',
+            ),
+            L.input(type='hidden', name='simple_captcha_answer', value=str(x+y)),
+            L.input('.form-control.input-sm', name='simple_captcha', style='display:inline;width:40%'),
+        ),
     )
 
 def login(request, message, signup_form):
