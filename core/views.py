@@ -358,33 +358,41 @@ def signup(request):
     form = SignupForm()
     if request.method == 'POST':
         form = SignupForm(data=request.POST)
-        if form.is_valid():
+        if request.POST['simple_captcha'] != request.POST['simple_captcha_answer']:
+            message = 'Wrong answer for the captcha, please retry'
+            try:
+                raise Exception('wrong captcha')
+            except:
+                client.captureException()
+        elif not request.POST.get('accept_terms'):
+            message = 'You must accept the terms of services'
+        elif form.is_valid():
             email, password = form.cleaned_data['email'], form.cleaned_data['password']
             email_domain = email.split('@')[1]
-            if email_domain not in ('parisdescartes.fr', 'univ-paris1.fr', 'dam.io'):
-                message = 'Email domain is restricted during the beta period, please contact us if you want an account'
-            else:
-                user = User.objects.create_user(email, email, password)
-                models.UserProfile(user=user, org_type=form.cleaned_data['org']).save()
-                user.is_active = False
-                user.save()
+            # if email_domain not in ('parisdescartes.fr', 'univ-paris1.fr', 'dam.io'):
+            #     message = 'Email domain is restricted during the beta period, please contact us if you want an account'
+            # else:
+            user = User.objects.create_user(email, email, password)
+            models.UserProfile(user=user, org_type=form.cleaned_data['org']).save()
+            user.is_active = False
+            user.save()
 
-                try:
-                    raise Exception('User created: {}'.format(email))
-                except:
-                    client.captureException()
+            try:
+                raise Exception('User created: {}'.format(email))
+            except:
+                client.captureException()
 
-                token = str(user.pk) + 'p' + get_user_token(user)
+            token = str(user.pk) + 'p' + get_user_token(user)
 
-                send_mail('[linkage.fr] Account confirmation', """Welcome to linkage.fr.
+            send_mail('[linkage.fr] Account confirmation', """Welcome to linkage.fr.
 
 You are just one click away from getting an account, click on the following link to confirm your account:
 https://linkage.fr/?confirm_email_token=%s
 """ % token, 'no-reply@linkage.fr', [email], fail_silently=False)
 
-                messages.success(request, 'An email has been sent to %s to confirm the account creation' % email)
+            messages.success(request, 'An email has been sent to %s to confirm the account creation' % email)
 
-                return redirect('/')
+            return redirect('/')
         else:
             message = 'Invalid email/password'
 

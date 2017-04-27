@@ -385,6 +385,17 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
         L.script(src='/static/js/import.js?v=' + COMMIT_HASH),
     ))
 
+def _very_basic_captcha():
+    x = random.randint(1, 10)
+    y = random.randint(1, 10)
+    return L.div('.form-group') / (
+        L.label('.control-label') / (
+            'Captcha: ', str(x), ' + ', str(y), ' = ',
+        ),
+        L.input(type='hidden', name='simple_captcha_answer', value=str(x+y)),
+        L.input('.form-control', name='simple_captcha'),
+    )
+
 def login(request, message, signup_form):
     return base((
         L.div('.container') / (
@@ -440,6 +451,7 @@ def login(request, message, signup_form):
                                         L.option(value='pro') / 'Company',
                                     )
                                 ),
+                                _very_basic_captcha(),
                                 L.div('.form-group') / (
                                     L.div('.checkbox') / (
                                         L.label / (
@@ -490,6 +502,7 @@ def signup(request, form, message):
                                 L.option(value='pro') / 'Company',
                             )
                         ),
+                        _very_basic_captcha(),
                         L.div('.form-group') / (
                             L.div('.checkbox') / (
                                 L.label / (
