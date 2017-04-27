@@ -3,43 +3,64 @@ import ReactDOM from 'react-dom';
 import Slider from 'rc-slider';
 import Tooltip from 'rc-tooltip';
 
-// import { styles } from 'react-autocomplete/lib/utils'
-// import Autocomplete from 'react-autocomplete'
+import Autocomplete from 'react-autocomplete'
 
 import { get_color, hashedColor, n_best_elems } from './utils';
-import { init, display_loading } from '../graph';
+import { init, display_loading, zoom_on } from '../graph';
 
 var ColorSquare = (color, content=' ')  => <span className='label' style={{ backgroundColor: color, marginRight: 10 }}>{content}</span>;
 
 
-export function sortStates (a, b, value) {
+function sortStates (a, b, value) {
   return (
     a.toLowerCase().indexOf(value.toLowerCase()) >
     b.toLowerCase().indexOf(value.toLowerCase()) ? 1 : -1
   )
 }
-/*
-let App = React.createClass({
+
+const searchStyles = {
+  item: {
+    padding: '2px 6px',
+    cursor: 'default'
+  },
+
+  highlightedItem: {
+    color: 'white',
+    background: 'hsl(200, 50%, 50%)',
+    padding: '2px 6px',
+    cursor: 'default'
+  },
+
+  menu: {
+    border: 'solid 1px #ccc'
+  }
+}
+
+let SearchBar = React.createClass({
   getInitialState() {
     return { value: '' }
   },
   render () {
     return (
       <div className='panel panel-default panel-body'>
-        <label htmlFor="states-autocomplete">Search</label>{' '}
+        <label htmlFor="states-autocomplete">Search</label><br/>
         <Autocomplete
           value={this.state.value}
           inputProps={{name: "US state", id: "states-autocomplete"}}
           items={this.props.choices}
+          className='form-control'
           getItemValue={(item) => item}
           shouldItemRender={(item, value) => 
             item.toLowerCase().indexOf(value.toLowerCase()) !== -1
           }
           onChange={(event, value) => this.setState({ value })}
-          onSelect={value => this.setState({ value })}
+          onSelect={value => {
+            this.setState({ value });
+            this.props.onSelect(value);
+          }}
           renderItem={(item, isHighlighted) => (
             <div
-              style={isHighlighted ? styles.highlightedItem : styles.item}
+              style={isHighlighted ? searchStyles.highlightedItem : searchStyles.item}
               key={item}
             >{item}</div>
           )}
@@ -59,7 +80,6 @@ let App = React.createClass({
     )
   }
 })
-*/
 
 const EPS_TOPICS = 0.0000001;
 
@@ -204,7 +224,8 @@ class Sidebar extends React.Component {
         marks_topics[GRAPH.job_param_topics_max] = GRAPH.job_param_topics_max;
 
         return <div>
-            {/*<App choices={state.labels} />*/}
+            <SearchBar choices={state.labels}
+              onSelect={value => zoom_on(state.labels.indexOf(value))}/>
             <div className='panel panel-primary'>
                 <div className='panel-heading'>
                     <h3 className='panel-title'>{GRAPH.name}</h3>

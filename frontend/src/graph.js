@@ -144,6 +144,7 @@ function init(state_init = {}) {
   RENDERER.pause_in(2000);
 
   RENDERER.layout = layout;
+  RENDERER.graph = graph;
 
   renderSidebar(STATE);
   renderGraphSidebar({
@@ -170,7 +171,7 @@ function parse_txt_mat(mat) {
 
 function fit_graph() {
   // https://github.com/anvaka/VivaGraphJS/blob/a5c5c92cdecd6964b0bb0c1cb0aaa63c30ffc9e4/demos/other/precompute-advanced.html#L62-L77
-  var graphRect = R.ENDERER.layout.getGraphRect();
+  var graphRect = RENDERER.layout.getGraphRect();
   var graphSize = Math.min(graphRect.x2 - graphRect.x1, graphRect.y2 - graphRect.y1);
   var g = $('#_graph svg')[0];
   var screenSize = Math.min(g.clientWidth, g.clientHeight);
@@ -178,6 +179,16 @@ function fit_graph() {
   RENDERER.moveTo((graphRect.x2 + graphRect.x1)/2, (graphRect.y2 + graphRect.y1)/2);
   RENDERER.scale(desiredScale);
 }
+
+function zoom_on(node_id) {
+  if (RENDERER.graph.getNode(node_id)) {
+    var pos = RENDERER.layout.getNodePosition(node_id);
+    RENDERER.moveTo(pos.x, pos.y);
+  } else {
+    alert('The selected node is not visible');
+  }
+}
+
 
 function expand_cluster(cluster_name, graph, X, clusters) {
   // remove current node
@@ -612,4 +623,5 @@ var display_loading = () => {
 export {
   init,
   display_loading,
+  zoom_on,
 };
