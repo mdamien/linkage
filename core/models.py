@@ -12,8 +12,8 @@ class Graph(models.Model): # = Job
     job_progress = models.FloatField(default=0)
     job_param_clusters = models.IntegerField(default=2)
     job_param_topics = models.IntegerField(default=2)
-    job_param_clusters_max = models.IntegerField(default=5)
-    job_param_topics_max = models.IntegerField(default=5)
+    job_param_clusters_max = models.IntegerField(default=10)
+    job_param_topics_max = models.IntegerField(default=10)
     job_error_log = models.TextField(blank=True, default='')
 
     # array of labels for each node
