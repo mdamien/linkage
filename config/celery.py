@@ -109,7 +109,7 @@ def retrieve_graph_data(graph_pk, method, **params):
             'text': '%d - ERROR' % graph.pk
         })
         if exception_triggered:
-            raise e
+            raise exception_triggered
         return
     import_graph_data(graph_pk, links, ignore_self_loop=params.get('ignore_self_loop', True))
 

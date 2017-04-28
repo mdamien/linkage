@@ -57,6 +57,8 @@ class ProcessingResult(models.Model):
     # topics in clust => clust
     theta_qr_mat = models.TextField(blank=True, default='')
 
+    clusters_labels = models.TextField(blank=True, default='')
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -74,6 +76,7 @@ class ProcessingResult(models.Model):
             'crit': self.crit,
             'param_clusters': self.param_clusters,
             'param_topics': self.param_topics,
+            'clusters_labels': self.clusters_labels,
         }
 
 

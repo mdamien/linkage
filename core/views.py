@@ -331,6 +331,26 @@ def api_cluster(request, pk):
 
     return JsonResponse({'message': 'ok [clustering-launched]'})
 
+@login_required
+def api_clusters_labels(request, pk):
+    graph = get_object_or_404(models.Graph, pk=pk)
+    if request.user.pk != graph.user.pk:
+        raise PermissionDenied
+
+    clusters = int(request.POST['clusters'])
+    topics = int(request.POST['topics'])
+    result = models.ProcessingResult.objects \
+        .get(graph=graph,
+            param_clusters=clusters,
+            param_topics=topics)
+
+    result.clusters_labels = request.POST['clusters_labels']
+
+    result.save()
+
+    return JsonResponse({'message': 'ok [labels-saved]'})
+
+
 
 from django.contrib.auth.views import login as login_view
 

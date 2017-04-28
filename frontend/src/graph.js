@@ -70,6 +70,12 @@ function init(state_init = {}) {
 
     STATE.pi = parse_txt_mat(GRAPH.result.pi_mat);
 
+    STATE.clusters_labels = GRAPH.result.clusters_labels.split('|');
+
+    if (!STATE.clusters_labels || STATE.clusters_labels.length !== Object.keys(STATE.clusterToNodes).length) {
+      STATE.clusters_labels = Object.keys(STATE.clusterToNodes).map(x => x.toString());
+    }
+
     _add_clusters(graph, X, nodeToCluster);
   } else {
     X.forEach(function(line, i) {
@@ -189,6 +195,15 @@ function zoom_on(node_id) {
   }
 }
 
+function update_cluster_label(cluster, label) {
+  STATE.clusters_labels[cluster] = label;
+  renderSidebar(STATE);
+  $.post('/result/' + GRAPH.id + '/update_clusters_labels/', {
+      clusters: GRAPH.result.param_clusters,
+      topics: GRAPH.result.param_topics,
+      clusters_labels: STATE.clusters_labels.join('|'),
+  });
+}
 
 function expand_cluster(cluster_name, graph, X, clusters) {
   // remove current node
@@ -336,6 +351,8 @@ function get_graph_graphics(graph, X, clusters) {
 
         renderGraphSidebar({
           title: node.data && node.data.isCluster ? cluster_name : STATE.labels[node.id],
+          cluster_label: STATE.clusters_labels[cluster_name],
+          update_cluster_label: update_cluster_label,
           is_node: true,
           is_cluster: is_cluster,
           cluster: is_cluster || !clusters ? undefined : clusters[node.id],

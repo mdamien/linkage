@@ -10,6 +10,8 @@ var ColorSquare = (color, content=<span>&nbsp;</span>, width='auto') => <span cl
     display: 'inline-block'
   }}>{content}</span>;
 
+const Icon = props => <span className={'glyphicon glyphicon-' + props.name}></span>;
+
 /*
   params = {title, is_node, topics, renderer}
 */
@@ -28,7 +30,18 @@ function render(params) {
         expand_clusters: params.expand_clusters,
         collapse_clusters: params.collapse_clusters,
       })}>&times;</button>
-      {params.is_cluster ? ColorSquare(get_color(params.title, 'Paired'), params.title) : params.title}
+      {params.is_cluster ? <div>
+        {ColorSquare(get_color(params.title, 'Paired'), params.cluster_label)}
+        <button
+          className='btn btn-xs btn-default btn-warning btn-toolbar'
+          onClick={() => {
+            var name = prompt('Choose a custom label for the cluster:');
+            params.update_cluster_label(params.title, name);
+            render(null);
+          }}>
+          <Icon name='pencil'/>
+        </button>
+      </div> : params.title}
       {params.cluster !== undefined ? <p> - {ColorSquare(get_color(params.cluster, 'Paired'))} {params.cluster}</p> : null}
       {params.words && params.words.length > 0 ? <div>
         {params.words.slice(0, 10).map((v, i) => <span key={i}>
