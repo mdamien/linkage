@@ -196,9 +196,12 @@ function zoom_on(node_id) {
 }
 
 function update_cluster_label(cluster, label) {
+  if (label === '') {
+    label = cluster;
+  }
   STATE.clusters_labels[cluster] = label;
   renderSidebar(STATE);
-  // RENDERER.rerender(): TODO: find a way to re-render a node
+  RENDERER.rerender();
   $.post('/result/' + GRAPH.id + '/update_clusters_labels/', {
       clusters: GRAPH.result.param_clusters,
       topics: GRAPH.result.param_topics,
@@ -333,13 +336,15 @@ function get_graph_graphics(graph, X, clusters) {
         ui.append(circle);
       }
 
-      if (is_cluster && cluster_label != cluster_name) {
+      if (is_cluster) {
         var svgText = Viva.Graph.svg('text')
-          .attr('y', '-' + (node._node_size + 2) + 'px')
-          .attr('x', '-' + (node._node_size + 2) + 'px')
-          .text(cluster_label);
+          .attr('y', '-' + (node._node_size) + 'px')
+          .attr('x', '-' + (node._node_size) + 'px');
         ui.append(svgText);
+        ui._cluster_name = cluster_name;
+        ui._text = svgText; 
       }
+      ui._is_cluster = is_cluster;
 
       // svgText.attr('visibility', 'hidden');
       $(ui).hover(function() {
@@ -401,10 +406,14 @@ function get_graph_graphics(graph, X, clusters) {
 
       return ui;
     }).placeNode(function(nodeUI, pos) {
-        nodeUI.attr('transform',
-                    'translate(' +
-                          (pos.x) + ',' + (pos.y) +
-                    ')');
+      if (nodeUI._is_cluster) {
+        var label = STATE.clusters_labels[nodeUI._cluster_name];
+        nodeUI._text.text(label == nodeUI._cluster_name ? '' : label);
+      }
+      nodeUI.attr('transform',
+                  'translate(' +
+                        (pos.x) + ',' + (pos.y) +
+                  ')');
     });
 
     // To render an arrow we have to address two problems:
