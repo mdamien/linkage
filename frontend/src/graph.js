@@ -198,6 +198,7 @@ function zoom_on(node_id) {
 function update_cluster_label(cluster, label) {
   STATE.clusters_labels[cluster] = label;
   renderSidebar(STATE);
+  // RENDERER.rerender(): TODO: find a way to re-render a node
   $.post('/result/' + GRAPH.id + '/update_clusters_labels/', {
       clusters: GRAPH.result.param_clusters,
       topics: GRAPH.result.param_topics,
@@ -289,6 +290,7 @@ function get_graph_graphics(graph, X, clusters) {
     graphics.node(function(node) {
       var is_cluster = node.data && node.data.isCluster;
       var cluster_name = is_cluster ? parseInt(node.id.split('-')[1]) : null;
+      var cluster_label = is_cluster ? STATE.clusters_labels[cluster_name] : null;
 
       var color = '#aaa';
 
@@ -300,7 +302,6 @@ function get_graph_graphics(graph, X, clusters) {
         color = get_color(clusters[node.id], 'Paired');
       }
       var ui = Viva.Graph.svg('g'),
-          // svgText = Viva.Graph.svg('text').attr('y', '-6px').text(node.id),
           circle = Viva.Graph.svg('circle')
             .attr('cx', 0)
             .attr('cy', 0)
@@ -312,7 +313,6 @@ function get_graph_graphics(graph, X, clusters) {
             .attr('stroke', 'black')
             .attr('stroke-width', '0')
             .attr('style', 'fill: ' + color);
-      // ui.append(svgText);
       if (is_cluster) {
         var sorted = n_best_elems(STATE.rho, false, v => v[0]);
         var max = sorted[0][1][0];
@@ -331,6 +331,14 @@ function get_graph_graphics(graph, X, clusters) {
       } else {
         node._node_size = 7*2;
         ui.append(circle);
+      }
+
+      if (is_cluster && cluster_label != cluster_name) {
+        var svgText = Viva.Graph.svg('text')
+          .attr('y', '-' + (node._node_size + 2) + 'px')
+          .attr('x', '-' + (node._node_size + 2) + 'px')
+          .text(cluster_label);
+        ui.append(svgText);
       }
 
       // svgText.attr('visibility', 'hidden');
