@@ -49,10 +49,11 @@ def hal_to_csv(q, limit=500):
 
     print('HAL search for', q, '; results:', N)
     for result in results:
-        authors = result['authFullName_s'][:7] # constrain the authors to avoid exponential edge growth
-        for i, author in enumerate(authors):
-            for author2 in authors[i+1:]:
-                writer.writerow([author, author2, result['title_s'][0] + '\n' + result.get('abstract_s', [''])[0]])
+        if 'authFullName_s' in result:
+            authors = result['authFullName_s'][:7] # constrain the authors to avoid exponential edge growth
+            for i, author in enumerate(authors):
+                for author2 in authors[i+1:]:
+                    writer.writerow([author, author2, result['title_s'][0] + '\n' + result.get('abstract_s', [''])[0]])
 
     return output.getvalue()
 
