@@ -211,9 +211,12 @@ def result(request, pk):
     # export scores for histogram
     scores = models.ProcessingResult.objects \
             .filter(graph=graph).values_list('param_clusters', 'param_topics', 'crit')
-    scores = sorted(scores, key=lambda s:s[1])
-    scores = sorted(scores, key=lambda s:s[0])
-    scores = [(k,list(v)) for k,v in itertools.groupby(scores, lambda s:s[0])]
+    if len(scores) < 2:
+        scores = None
+    else:
+        scores = sorted(scores, key=lambda s:s[1])
+        scores = sorted(scores, key=lambda s:s[0])
+        scores = [(k,list(v)) for k,v in itertools.groupby(scores, lambda s:s[0])]
 
     return HttpResponse(templates.result(request, graph, result, scores=scores))
 
