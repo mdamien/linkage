@@ -250,7 +250,11 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                             ),
                             L.br,
                             L.div('.form-group') / (
-                                L.div('.col-md-3.control-label') / (L.strong / 'Limit'),
+                                L.div('.col-md-3.control-label') / (
+                                    L.strong / (
+                                        L.abbr(title='The maximum number of papers to be retrieved') / 'Limit',
+                                    ),
+                                ),
                                 L.div('.col-md-2') / (
                                     L.input('.form-control', name='limit', value='500', type='number'),
                                 ),
@@ -276,7 +280,11 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                                 ),
                             ),
                             L.div('.form-group') / (
-                                L.div('.col-md-3.control-label') / (L.strong / 'Limit'),
+                                L.div('.col-md-3.control-label') / (
+                                    L.strong / (
+                                        L.abbr(title='The maximum number of tweet to be retrieved') / 'Limit',
+                                    ),
+                                ),
                                 L.div('.col-md-2') / (
                                     L.input('.form-control', name='limit', value='500', type='number'),
                                 ),
@@ -355,12 +363,14 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                             L.div('.col-md-9') / (
                                 L.div('.radio') / (
                                     L.label / (
-                                        L.input(name='clustering', value='auto', checked='', type='radio'), 'Auto',
+                                        L.input(name='clustering', value='auto', checked='', type='radio'),
+                                        L.abbr(title='scan between 2 and 10 clusters and topics (slow)') / 'Auto',
                                     ),
                                 ),
                                 L.div('.radio') / (
                                     L.label / (
-                                        L.input(name='clustering', value='manual', type='radio'), 'Manual',
+                                        L.input(name='clustering', value='manual', type='radio'),
+                                        L.abbr(title='use an user specified number of topic/cluster (fast)') / 'Manual',
                                     ),
                                 )
                             ),
@@ -607,7 +617,10 @@ Linkage allows you to cluster the nodes of networks with textual edges while ide
                         SHORT_SPACER,
                         'The statistical method behind the platform',
                     ),
-                    L.p / """Linkage is based on advanced statistical  clustering methods for networks with textual edges. The methodology implemented is partly related to an article published in the journal « Statistics and Computing ». The reference to cite in case of academic use of the platform is « C. Bouveyron, P. Latouche and R. Zreik, The Stochastic Topic Block Model for the Clustering of Networks with Textual Edges, Statistics and Computing, in press, 2017. DOI: 10.1007/s11222-016-9713-7 »."""
+                    L.p / (
+                        """Linkage is based on advanced statistical clustering methods for networks with textual edges. The methodology implemented is partly related to an article published in the journal « Statistics and Computing ». The reference to cite in case of academic use of the platform is """,
+                        L.a(href='https://arxiv.org/abs/1610.02427v2') / """« C. Bouveyron, P. Latouche and R. Zreik, The Stochastic Topic Block Model for the Clustering of Networks with Textual Edges, Statistics and Computing, in press, 2017. DOI: 10.1007/s11222-016-9713-7 ».""",
+                    )
                 ),
                 L.div('.col-md-6') / (
                     L.h4(style='color:#e95420') / (

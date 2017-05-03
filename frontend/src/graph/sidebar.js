@@ -294,6 +294,9 @@ class Sidebar extends React.Component {
                     </div>
                 </div> : null}
             </div>
+            <hr/>
+            <h3>Advanced</h3>
+            <br/>
             <div className='panel panel-default'>
                 <div className='panel-heading'>
                     <h3 className='panel-title'>Result</h3>
@@ -318,7 +321,8 @@ class Sidebar extends React.Component {
             </div>
             <div className='panel panel-default'>
                 <div className='panel-heading'>
-                    <h3 className='panel-title'>cluster-to-cluster cutoff - {this.state.cutoff}</h3>
+                    <h3 className='panel-title'>
+                      <abbr title='minimum value of connectivity (PI) between clusters to show a link between them'>cluster-to-cluster cutoff</abbr> - {this.state.cutoff}</h3>
                 </div>
                 <div className='panel-body'>
                     <Slider step={0.00001} defaultValue={this.state.cutoff}
@@ -331,7 +335,7 @@ class Sidebar extends React.Component {
             </div>
             {GRAPH.scores && GRAPH.scores.length > 0 ? <div className='panel panel-default'>
                 <div className='panel-heading'>
-                    <h3 className='panel-title'>Results Scores</h3>
+                    <h3 className='panel-title'>Quick view of the score of the each clustering</h3>
                 </div>
                 <div className='panel-body'>
                   {GRAPH.scores.map((v,i) => {
