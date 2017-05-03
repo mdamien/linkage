@@ -43,7 +43,8 @@ def process(X, tdm, n_clusters, n_topics, id=0,
             n_done += 1
         
         diff = time.time() - last_update
-        if diff > 5 or '[linkage-web-signal] - (K|Q) finished' in line:
+        # if diff > 5 or '[linkage-web-signal] - (K|Q) finished' in line:
+        if '[linkage-web-signal] - (K|Q) finished' in line:
             update(log, n_done, line.strip())
             last_update = time.time()
     print('processing done')
