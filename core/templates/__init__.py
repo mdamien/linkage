@@ -128,7 +128,7 @@ def top_nodes_per_clusters(graph, result):
     return top_nodes # [ [label1_for_cluster_1, label2], [label4_for_cluster_2, label3],.. ]
 
 
-def serialize_graph(graph, result, simple=False, scores=None):
+def serialize_graph(graph, result, simple=False):
     data = {
         'id': graph.pk,
         'name': graph.name,
@@ -149,7 +149,6 @@ def serialize_graph(graph, result, simple=False, scores=None):
         'job_param_topics_max': graph.job_param_topics_max,
         'job_error_log': graph.job_error_log,
         'magic_too_big_to_display_X': graph.magic_too_big_to_display_X,
-        'scores': scores,
     }
     if graph.magic_too_big_to_display_X:
         data['edges'] = '0 0 1'
@@ -170,7 +169,7 @@ def serialize_graph(graph, result, simple=False, scores=None):
             data['result']['top_nodes'] = top_nodes_per_clusters(graph, result)
     return data
 
-def result(request, graph, result, scores):
+def result(request, graph, result):
     return base((
         L.div('.container-fluid') / (
             header(request),
@@ -194,7 +193,7 @@ def result(request, graph, result, scores):
         JS_LIBS,
         L.script(src='/static/js/vendor/vivagraph.js'),
         L.script(src='/static/js/vendor/papaparse.js'),
-        L.script / raw("var GRAPH = {};".format(json.dumps(serialize_graph(graph, result, scores=scores)))),
+        L.script / raw("var GRAPH = {};".format(json.dumps(serialize_graph(graph, result)))),
         L.script(src='/static/js/dist/vendor.js?v=' + COMMIT_HASH),
         L.script(src='/static/js/dist/graph.js?v=' + COMMIT_HASH),
     ), title=graph.name)

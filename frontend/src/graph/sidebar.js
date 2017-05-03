@@ -329,35 +329,6 @@ class Sidebar extends React.Component {
                     <br/>
                 </div>
             </div>
-            {GRAPH.scores && GRAPH.scores.length > 0 ? <div className='panel panel-default'>
-                <div className='panel-heading'>
-                    <h3 className='panel-title'>Results Scores</h3>
-                </div>
-                <div className='panel-body'>
-                  {GRAPH.scores.map((v,i) => {
-                    var n_clusters = v[0];
-                    var max_score = n_best_elems(v[1], 1, v => v[2])[0][1][2];
-                    var min_score = n_best_elems(v[1], 1, v => -v[2])[0][1][2];
-                    min_score = min_score - (max_score - min_score)*0.2;
-                    return <div key={i}>
-                      <i>{n_clusters} clusters</i>
-                      <div className='histogram'>
-                        {v[1].map((score, i) => {
-                          var style = {};
-                          var height = (score[2] - min_score) / (max_score - min_score) * 100;
-                          if (Number.isNaN(height) || !score[2]) {
-                            height = 10;
-                            style['background'] = '#b94a48';
-                          }
-                          style.height = height.toFixed(2) + '%';
-                          return <span key={i} title={score[1] + " topics: " + score[2]}
-                            style={style}></span>;
-                        })}
-                      </div>
-                    </div>;
-                  })}
-                </div>
-            </div> : null}
         </div>;
     }
 }
