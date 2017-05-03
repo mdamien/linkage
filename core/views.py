@@ -2,6 +2,7 @@ from io import TextIOWrapper
 import hashlib
 
 from django import forms
+from django.db import IntegrityError
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
@@ -392,27 +393,34 @@ def signup(request):
             # if email_domain not in ('parisdescartes.fr', 'univ-paris1.fr', 'dam.io'):
             #     message = 'Email domain is restricted during the beta period, please contact us if you want an account'
             # else:
-            user = User.objects.create_user(email, email, password)
-            models.UserProfile(user=user, org_type=form.cleaned_data['org']).save()
-            user.is_active = False
-            user.save()
-
+            user = None
             try:
-                raise Exception('User created: {}'.format(email))
-            except:
+                user = User.objects.create_user(email, email, password)
+            except IntegrityError as e:
                 client.captureException()
+                message = 'An user with the same email already exists. If you already tried to sign up, you should check your emails for a confirmation link'
+            if user:
+                models.UserProfile(user=user, org_type=form.cleaned_data['org']).save()
+                user.is_active = False
+                user.save()
 
-            token = str(user.pk) + 'p' + get_user_token(user)
+                try:
+                    raise Exception('User created: {}'.format(email))
+                except:
+                    client.captureException()
 
-            send_mail('[linkage.fr] Account confirmation', """Welcome to linkage.fr.
+                token = str(user.pk) + 'p' + get_user_token(user)
+
+                send_mail('[linkage.fr] Account confirmation', """Welcome to linkage.fr.
 
 You are just one click away from getting an account, click on the following link to confirm your account:
 https://linkage.fr/?confirm_email_token=%s
 """ % token, 'no-reply@linkage.fr', [email], fail_silently=False)
 
-            messages.success(request, 'An email has been sent to %s to confirm the account creation' % email)
+                messages.success(request, 'An email has been sent to %s to confirm the account creation' % email)
 
-            return redirect('/')
+                return redirect('/')
+
         else:
             message = 'Invalid email/password'
 
