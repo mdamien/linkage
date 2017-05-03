@@ -1,5 +1,6 @@
 from io import TextIOWrapper
 import hashlib, itertools
+from smtplib import SMTPRecipientsRefused
 
 from django import forms
 from django.db import IntegrityError
@@ -422,15 +423,18 @@ def signup(request):
 
                 token = str(user.pk) + 'p' + get_user_token(user)
 
-                send_mail('[linkage.fr] Account confirmation', """Welcome to linkage.fr.
+                try:
+                    send_mail('[linkage.fr] Account confirmation', """Welcome to linkage.fr.
 
-You are just one click away from getting an account, click on the following link to confirm your account:
-https://linkage.fr/?confirm_email_token=%s
-""" % token, 'no-reply@linkage.fr', [email], fail_silently=False)
+    You are just one click away from getting an account, click on the following link to confirm your account:
+    https://linkage.fr/?confirm_email_token=%s
+    """ % token, 'no-reply@linkage.fr', [email], fail_silently=False)
+                    messages.success(request, 'An email has been sent to %s to confirm the account creation' % email)
+                    return redirect('/')
+                except SMTPRecipientsRefused:
+                    message = "Failed to send the confirmation link to your email, please verify it's correct"
+                    user.delete()
 
-                messages.success(request, 'An email has been sent to %s to confirm the account creation' % email)
-
-                return redirect('/')
 
         else:
             message = 'Invalid email/password'
