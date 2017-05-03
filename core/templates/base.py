@@ -11,7 +11,19 @@ CSS = L.style / raw("""
 body { background: #eee }
 .container { background: white; margin-top: 10px; border-radius: 4px }
 .container-fluid { background: white; margin: 10px; border-radius: 4px }
-""")
+.histogram > span {
+    background: #3a87ad;
+    height: 20%;
+    display: inline-block;
+    width: 30px;
+    margin-top: auto;
+}
+
+.histogram {
+    height: 50px;
+    display: flex;
+}
+""".replace('\n', ' '))
 
 def basic_frame(*content, title=''):
     return render((

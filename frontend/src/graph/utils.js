@@ -81,6 +81,14 @@ var edgesArr = X => {
 const n_best_elems = (arr, n, key=v => v) => {
     var keyed_arr = arr.map((v, i) => [i, v]);
     var result = keyed_arr.sort((a, b) => {
+
+      // make null the smallest elem instead of just "0"
+      if (key(a[1]) === null) {
+        return 1;
+      }
+      if (key(b[1]) === null) {
+        return -1;
+      }
       if (key(a[1]) < key(b[1])) {
         return 1;
       }
