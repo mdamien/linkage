@@ -24,7 +24,7 @@ function render(params) {
   if (params.title !== undefined || (params.topics && params.topics.length > 0)) {
     popup = <div
         className="alert alert-dismissible alert-info"
-        style={{ position: 'absolute', top: 10, right: 10, width: '40%'}}>
+        style={{ position: 'absolute', top: 10, right: 10, width: '40%', maxHeight: 300, overflow: 'auto'}}>
       <button type="button" className="close" onClick={() => render({
         renderer: params.renderer,
         expand_clusters: params.expand_clusters,
@@ -59,7 +59,7 @@ function render(params) {
       </div> : null}
       {params.top_nodes && params.top_nodes.length > 0 ? <div>
         <br/>
-        <h4>Sample of nodes</h4>
+        <h4>Nodes</h4>
         <ul>
         {params.top_nodes.map((v, i) => <li key={i}>
           {v}

@@ -122,7 +122,8 @@ def top_nodes_per_clusters(graph, result):
     def top_10(cluster):
         nodes = clusters_nodes.get(cluster, {})
         return [labels[node] for node, _ in
-                    sorted(nodes.items(), key=lambda it: -it[1])[:10]]
+                    sorted(nodes.items(), key=lambda it: -it[1]) #[:10]
+                ]
     top_nodes = [top_10(cluster) for cluster in range(max(clusters) + 1)]
 
     return top_nodes # [ [label1_for_cluster_1, label2], [label4_for_cluster_2, label3],.. ]
@@ -401,7 +402,7 @@ def _very_basic_captcha():
     y = random.randint(1, 10)
     return L.div('.form-group') / (
         L.label('.control-label') / (
-            'Captcha ',
+            L.abbr(title='Simple question to prevent automated registration') / 'Captcha ',
         ),
         L.div / (
             L.i / (
