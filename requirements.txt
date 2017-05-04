@@ -18,3 +18,4 @@ social-auth-core
 TwitterAPI
 django-cors-headers
 https://github.com/skorokithakis/django-loginas/archive/master.zip
+psycopg2
