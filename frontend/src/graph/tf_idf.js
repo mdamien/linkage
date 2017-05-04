@@ -101,7 +101,7 @@ export default function score_words_by_entropy(beta) {
     return freqs.map((freq, i) => {
       return {
         freq: freq,
-        tfidf: GRAPH.magic_too_big_to_display_X ? freq : spec[k][i],
+        tfidf: spec[k][i],
       };
     })
   });
