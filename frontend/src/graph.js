@@ -70,11 +70,7 @@ function init(state_init = {}) {
 
     STATE.pi = parse_txt_mat(GRAPH.result.pi_mat);
 
-    STATE.clusters_labels = GRAPH.result.clusters_labels.split('|');
-
-    if (!STATE.clusters_labels || STATE.clusters_labels.length !== Object.keys(STATE.clusterToNodes).length) {
-      STATE.clusters_labels = Object.keys(STATE.clusterToNodes).map(x => x.toString());
-    }
+    STATE.nodes_meta = GRAPH.result.nodes_meta ? JSON.parse(GRAPH.result.nodes_meta) : {};
 
     _add_clusters(graph, X, nodeToCluster);
   } else {
@@ -199,13 +195,16 @@ function update_cluster_label(cluster, label) {
   if (label === '') {
     label = cluster;
   }
-  STATE.clusters_labels[cluster] = label;
+  STATE.nodes_meta['c-' + cluster] = {
+    label
+  };
+  GRAPH.result.nodes_meta = JSON.stringify(STATE.nodes_meta);
   renderSidebar(STATE);
   RENDERER.rerender();
   $.post('/result/' + GRAPH.id + '/update_clusters_labels/', {
       clusters: GRAPH.result.param_clusters,
       topics: GRAPH.result.param_topics,
-      clusters_labels: STATE.clusters_labels.join('|'),
+      nodes_meta: JSON.stringify(STATE.nodes_meta),
   });
 }
 
@@ -284,6 +283,20 @@ function collapse_clusters(graph, X, clusters) {
   RENDERER.pause_in(2000);
 }
 
+function save_clusters_pos(graph) {
+  var positions = {};
+  graph.forEachNode(node => {
+    if (node.data && node.data.isCluster) {
+      var pos = RENDERER.layout.getNodePosition(node.id);
+      positions[node.id] = {
+        x: pos.x,
+        y: pos.y,
+      };
+    }
+  });
+  console.log('sending', JSON.stringify(positions, null, 2));
+}
+
 function get_graph_graphics(graph, X, clusters) {
     var last_mouse_down_event = null;
 
@@ -293,7 +306,12 @@ function get_graph_graphics(graph, X, clusters) {
     graphics.node(function(node) {
       var is_cluster = node.data && node.data.isCluster;
       var cluster_name = is_cluster ? parseInt(node.id.split('-')[1]) : null;
-      var cluster_label = is_cluster ? STATE.clusters_labels[cluster_name] : null;
+      var cluster_label = null;
+      if (STATE.nodes_meta[node.id] && STATE.nodes_meta[node.id]['label']) {
+        cluster_label = STATE.nodes_meta[node.id]['label'];
+      } else {
+        cluster_label = '' + cluster_name;
+      }
 
       var color = '#aaa';
 
@@ -338,10 +356,10 @@ function get_graph_graphics(graph, X, clusters) {
 
       if (is_cluster) {
         var svgText = Viva.Graph.svg('text')
-          .attr('y', '-' + (node._node_size) + 'px')
-          .attr('x', '-' + (node._node_size) + 'px');
+          .attr('y', '5px')
+          .attr('x', (node._node_size / 2 + 5) + 'px');
         ui.append(svgText);
-        ui._cluster_name = cluster_name;
+        ui._node_id = node.id;
         ui._text = svgText; 
       }
       ui._is_cluster = is_cluster;
@@ -364,7 +382,7 @@ function get_graph_graphics(graph, X, clusters) {
 
         renderGraphSidebar({
           title: node.data && node.data.isCluster ? cluster_name : STATE.labels[node.id],
-          cluster_label: STATE.clusters_labels[cluster_name],
+          cluster_label: cluster_label,
           update_cluster_label: update_cluster_label,
           is_node: true,
           is_cluster: is_cluster,
@@ -395,6 +413,7 @@ function get_graph_graphics(graph, X, clusters) {
         console.log('clicked on', node);
         if (event.offsetX != last_mouse_down_event.offsetX ||
           event.offsetY != last_mouse_down_event.offsetY) {
+          save_clusters_pos(graph);
           return;
         }
         if (is_cluster) {
@@ -407,8 +426,12 @@ function get_graph_graphics(graph, X, clusters) {
       return ui;
     }).placeNode(function(nodeUI, pos) {
       if (nodeUI._is_cluster) {
-        var label = STATE.clusters_labels[nodeUI._cluster_name];
-        nodeUI._text.text(label == nodeUI._cluster_name ? '' : label);
+        var meta = STATE.nodes_meta[nodeUI._node_id];
+        var label = '';
+        if (meta && meta['label']) {
+          label = meta['label'];
+        }
+        nodeUI._text.text(label);
       }
       nodeUI.attr('transform',
                   'translate(' +

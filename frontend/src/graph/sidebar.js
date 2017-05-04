@@ -281,16 +281,17 @@ class Sidebar extends React.Component {
                 </div> : null}
                 {state.clusterToNodes ? <div className='list-group'>
                     <div className='list-group-item'>
-                      {Object.keys(state.clusterToNodes).map(key => 
-                          <span key={key}>
-                            {ColorSquare(get_color(key, 'Paired'), state.clusterToNodes[key].length
-                                + (
-                                    state.clusters_labels[key] != key ?
-                                      (' <' + state.clusters_labels[key] + '>')
-                                      : ''))
-                            }{' '}
-                          </span>
-                      )}
+                      {Object.keys(state.clusterToNodes).map(key => {
+                        var meta = state.nodes_meta['c-' - key];
+                        return <span key={key}>
+                          {ColorSquare(get_color(key, 'Paired'), state.clusterToNodes[key].length
+                              + (
+                                  meta && meta['label'] != key ?
+                                    (' <' + meta['label'] + '>')
+                                    : ''))
+                          }{' '}
+                        </span>;
+                      })}
                     </div>
                 </div> : null}
             </div>

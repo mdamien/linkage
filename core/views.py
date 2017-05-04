@@ -357,11 +357,11 @@ def api_clusters_labels(request, pk):
             param_clusters=clusters,
             param_topics=topics)
 
-    result.clusters_labels = request.POST['clusters_labels']
+    result.nodes_meta = request.POST['nodes_meta']
 
     result.save()
 
-    return JsonResponse({'message': 'ok [labels-saved]'})
+    return JsonResponse({'message': 'ok [nodes-meta-saved]'})
 
 
 
@@ -422,20 +422,17 @@ def signup(request):
                     client.captureException()
 
                 token = str(user.pk) + 'p' + get_user_token(user)
-
                 try:
                     send_mail('[linkage.fr] Account confirmation', """Welcome to linkage.fr.
 
-    You are just one click away from getting an account, click on the following link to confirm your account:
-    https://linkage.fr/?confirm_email_token=%s
-    """ % token, 'no-reply@linkage.fr', [email], fail_silently=False)
+You are just one click away from getting an account, click on the following link to confirm your account:
+https://linkage.fr/?confirm_email_token=%s
+""" % token, 'no-reply@linkage.fr', [email], fail_silently=False)
                     messages.success(request, 'An email has been sent to %s to confirm the account creation' % email)
                     return redirect('/')
                 except SMTPRecipientsRefused:
                     message = "Failed to send the confirmation link to your email, please verify it's correct"
                     user.delete()
-
-
         else:
             message = 'Invalid email/password'
 
