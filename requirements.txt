@@ -1,6 +1,6 @@
 django==1.10
 lys
-arxiv
+-e git+https://github.com/mdamien/arxiv.py.git@patch-1#egg=arxiv
 django-celery
 redis
 nltk
