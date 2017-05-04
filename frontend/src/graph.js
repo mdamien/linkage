@@ -148,6 +148,8 @@ function init(state_init = {}) {
   RENDERER.layout = layout;
   RENDERER.graph = graph;
 
+  STATE.update_topic_name = update_topic_name;
+
   renderSidebar(STATE);
   renderGraphSidebar({
     renderer: RENDERER,
@@ -196,6 +198,20 @@ function update_cluster_label(cluster, label) {
     label = cluster;
   }
   STATE.nodes_meta['c-' + cluster] = {
+    label
+  };
+  GRAPH.result.nodes_meta = JSON.stringify(STATE.nodes_meta);
+  renderSidebar(STATE);
+  RENDERER.rerender();
+  $.post('/result/' + GRAPH.id + '/update_clusters_labels/', {
+      clusters: GRAPH.result.param_clusters,
+      topics: GRAPH.result.param_topics,
+      nodes_meta: JSON.stringify(STATE.nodes_meta),
+  });
+}
+
+function update_topic_name(topic, label) {
+  STATE.nodes_meta['t-' + topic] = {
     label
   };
   GRAPH.result.nodes_meta = JSON.stringify(STATE.nodes_meta);

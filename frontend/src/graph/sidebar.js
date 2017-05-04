@@ -10,6 +10,7 @@ import { init, display_loading, zoom_on } from '../graph';
 
 var ColorSquare = (color, content=' ')  => <span className='label' style={{ backgroundColor: color, marginRight: 10 }}>{content}</span>;
 
+const Icon = props => <span className={'glyphicon glyphicon-' + props.name}></span>;
 
 function sortStates (a, b, value) {
   return (
@@ -95,10 +96,28 @@ class TopicWords extends React.Component {
         this.setState({showAll: !this.state.showAll});
     }
     render() {
-        let {i, words, dictionnary} = this.props;
+        let {i, words, dictionnary, nodes_meta, update_topic_name} = this.props;
+        var best5 = n_best_elems(words, 5, v => v.tfidf);
+        var label = dictionnary[best5[0][0]];
+        var topic_meta = nodes_meta['t-' + i];
+        if (topic_meta && topic_meta['label']) {
+          label = topic_meta['label'];
+        }
         return <div className='list-group-item'>
-            {ColorSquare(get_color(i))}
-            ex: {n_best_elems(words, 5, v => v.tfidf).map((t, i) => {
+            <p>
+              {ColorSquare(get_color(i), label)}
+              {' '}
+              <a
+                title='Edit topic label'
+                className='btn btn-warning btn-xs'
+                onClick={() => {
+                  var name = prompt('Choose a custom label for the topic:');
+                  update_topic_name(i, name);
+                }}>
+                <Icon name='pencil'/>
+              </a>
+            </p>
+            ex: {best5.map((t, i) => {
                 return <span key={i}>
                     <span
                         className="label label-default"
@@ -108,7 +127,7 @@ class TopicWords extends React.Component {
             })}
             <p style={{marginTop: 10}}>
                 <a className='btn btn-warning btn-xs' onClick={this.toggleShow}>
-                    {this.state.showAll ? 'hide' : 'show'} details
+                  {this.state.showAll ? 'hide' : 'show'} details
                 </a>
             </p>
             {this.state.showAll ? <table className='table table-striped table-bordered'>
@@ -259,7 +278,14 @@ class Sidebar extends React.Component {
                 </div> : null}
                 {state.topicToTermsTFIDF ? <div className='list-group'>
                     {state.topicToTermsTFIDF.map((v, i) => 
-                        <TopicWords words={v} i={i} key={i} dictionnary={state.dictionnary}/>
+                        <TopicWords
+                          words={v}
+                          i={i}
+                          key={i}
+                          dictionnary={state.dictionnary}
+                          nodes_meta={state.nodes_meta}
+                          update_topic_name={state.update_topic_name}
+                          />
                     )}
                 </div> : null}
             </div>

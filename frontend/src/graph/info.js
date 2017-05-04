@@ -33,6 +33,7 @@ function render(params) {
       {params.is_cluster ? <div>
         {ColorSquare(get_color(params.title, 'Paired'), params.cluster_label)}
         <button
+          title='Edit cluster label'
           className='btn btn-xs btn-default btn-warning btn-toolbar'
           onClick={() => {
             var name = prompt('Choose a custom label for the cluster:');
