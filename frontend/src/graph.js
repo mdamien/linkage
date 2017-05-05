@@ -188,6 +188,8 @@ function zoom_on(node_id) {
   if (RENDERER.graph.getNode(node_id)) {
     var pos = RENDERER.layout.getNodePosition(node_id);
     RENDERER.moveTo(pos.x, pos.y);
+    STATE.node_selected = node_id;
+    RENDERER.rerender();
   } else {
     alert('The selected node is not visible');
   }
@@ -367,6 +369,7 @@ function get_graph_graphics(graph, X, clusters) {
         ui.append(square);
       } else {
         node._node_size = 7*2;
+        ui._circle = circle;
         ui.append(circle);
       }
 
@@ -375,13 +378,17 @@ function get_graph_graphics(graph, X, clusters) {
           .attr('y', '5px')
           .attr('x', (node._node_size / 2 + 5) + 'px');
         ui.append(svgText);
-        ui._node_id = node.id;
         ui._text = svgText; 
       }
+      ui._node_id = node.id;
       ui._is_cluster = is_cluster;
 
       // svgText.attr('visibility', 'hidden');
       $(ui).hover(function() {
+        if (STATE.node_selected) {
+          delete STATE.node_selected;
+          RENDERER.rerender();
+        }
         // svgText.attr('visibility', 'visible');
         circle.attr('stroke-width', '1');
         square.attr('stroke-width', '1');
@@ -448,6 +455,11 @@ function get_graph_graphics(graph, X, clusters) {
           label = meta['label'];
         }
         nodeUI._text.text(label);
+      }
+      if (nodeUI._node_id == STATE.node_selected) {
+        nodeUI._circle.attr('stroke-width', 5);
+      } else if (nodeUI._circle) {
+        nodeUI._circle.attr('stroke-width', 0);
       }
       nodeUI.attr('transform',
                   'translate(' +
