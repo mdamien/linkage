@@ -586,7 +586,13 @@ function get_graph_graphics(graph, X, clusters) {
             title: ' ', // cluster_to_cluster ? prev.id + '→' + to.id : ' ',
             words,
             topics: topics_perc || cluster_topic_perc,
-            topicsName: STATE.topicsName,
+            topicsName: STATE.topicsName.map((name, i) => {
+              var meta = STATE.nodes_meta['t-' + i];
+              if (meta && meta['label']) {
+                return meta['label'];
+              }
+              return name;
+            }),
             renderer: RENDERER,
             pi_value: cluster_to_cluster ? STATE.pi[prev_cluster_name][to_cluster_name] : undefined,
             expand_clusters: expand_clusters.bind(this, graph, X, clusters),

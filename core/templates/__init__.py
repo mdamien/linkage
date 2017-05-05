@@ -240,7 +240,7 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                         L.input(type='hidden', name='action', value='import'),
                         (
                             L.div('.row') / (
-                                L.div('.col-md-5') / L.input('.form-control', type='text', name='q', placeholder="'security', 'defense', 'weapons', 'deep learning',..."),
+                                L.div('.col-md-5') / L.input('.form-control', type='text', name='q', placeholder="'Deep Learning', 'Speech Synthesis', 'qubit', 'graphene',…"),
                                 L.div('.col-md-7') / (
                                     L.input('.btn.btn-primary.btn-large', name='choice_arxiv', type='submit', value='search arXiv'),
                                     SPACER,
@@ -580,9 +580,9 @@ Linkage allows you to cluster the nodes of networks with textual edges while ide
                     L.h4(style='color:#e95420') / (
                         icon('certificate'),
                         SHORT_SPACER,
-                        'How Linkage works ?'
+                        'How Linkage works?'
                     ),
-                    L.p / """Linkage is build upon a sound statistical model for networks with textual edges and implement an innovative  and efficient inference algorithm to fit the model on your data. Model selection allows to find in a fully automatic way the best number of groups and topics."""
+                    L.p / """Linkage is built upon a sound statistical model for networks with textual edges and implement an innovative  and efficient inference algorithm to fit the model on your data. Model selection allows to find in a fully automatic way the best number of groups and topics."""
                 ),
                 L.div('.col-md-6') / (
                     L.h4(style='color:#e95420') / (
