@@ -362,7 +362,7 @@ class Sidebar extends React.Component {
             </div>
             {GRAPH.scores && GRAPH.scores.length > 0 ? <div className='panel panel-default'>
                 <div className='panel-heading'>
-                    <h3 className='panel-title'>Quick view of the score of the each clustering</h3>
+                    <h3 className='panel-title'>Quick view of the score of each clustering</h3>
                 </div>
                 <div className='panel-body'>
                   {GRAPH.scores.map((v,i) => {
