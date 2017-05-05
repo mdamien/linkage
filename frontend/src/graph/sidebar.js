@@ -308,11 +308,11 @@ class Sidebar extends React.Component {
                 {state.clusterToNodes ? <div className='list-group'>
                     <div className='list-group-item'>
                       {Object.keys(state.clusterToNodes).map(key => {
-                        var meta = state.nodes_meta['c-' - key];
+                        var meta = state.nodes_meta['c-' + key];
                         return <span key={key}>
                           {ColorSquare(get_color(key, 'Paired'), state.clusterToNodes[key].length
                               + (
-                                  meta && meta['label'] != key ?
+                                  meta && meta['label'] ?
                                     (' <' + meta['label'] + '>')
                                     : ''))
                           }{' '}
