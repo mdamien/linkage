@@ -4288,6 +4288,18 @@ function renderer(graph, settings) {
       return scale(false);
     },
 
+    _experimental_scale: function(scaleFactor) {
+      var containerSize = getDimension(container);
+      scrollPoint = {
+        x: containerSize.width / 2,
+        y: containerSize.height / 2
+      };
+      transform.scale = graphics.scale2(scaleFactor, scrollPoint);
+
+      renderGraph();
+      publicEvents.fire('scale', transform.scale);
+    },
+
     /**
      * Centers renderer at x,y graph's coordinates
      */
@@ -4799,6 +4811,33 @@ function svgGraphics() {
             svgContainer.attr("transform", transform);
         },
 
+        scale2 : function (scaleFactor, scrollPoint) {
+            var p = svgRoot.createSVGPoint();
+            p.x = scrollPoint.x;
+            p.y = scrollPoint.y;
+
+            p = p.matrixTransform(svgContainer.getCTM().inverse()); // translate to SVG coordinates
+
+            // Compute new scale matrix in current mouse position
+            var k = svgRoot // k = transformation matrix
+                    .createSVGMatrix()
+                    .translate(p.x, p.y)
+                    .scale(scaleFactor)
+                    .translate(-p.x, -p.y),
+                t = svgContainer.getCTM().multiply(k); // transform the current matrix with t
+
+            t = k;
+
+            actualScale = t.a;
+            offsetX = t.e;
+            offsetY = t.f;
+            var transform = "matrix(" + t.a + ", 0, 0," + t.d + "," + t.e + "," + t.f + ")";
+            svgContainer.attr("transform", transform);
+
+            fireRescaled(this);
+            return actualScale;
+        },
+
         scale : function (scaleFactor, scrollPoint) {
             var p = svgRoot.createSVGPoint();
             p.x = scrollPoint.x;
@@ -4807,7 +4846,11 @@ function svgGraphics() {
             p = p.matrixTransform(svgContainer.getCTM().inverse()); // translate to SVG coordinates
 
             // Compute new scale matrix in current mouse position
-            var k = svgRoot.createSVGMatrix().translate(p.x, p.y).scale(scaleFactor).translate(-p.x, -p.y),
+            var k = svgRoot // k = transformation matrix
+                    .createSVGMatrix()
+                    .translate(p.x, p.y)
+                    .scale(scaleFactor)
+                    .translate(-p.x, -p.y),
                 t = svgContainer.getCTM().multiply(k);
 
             actualScale = t.a;
