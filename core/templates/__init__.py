@@ -365,27 +365,37 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                                 L.div('.radio') / (
                                     L.label / (
                                         L.input(name='clustering', value='auto', checked='', type='radio'),
-                                        L.abbr(title='scan between 2 and 10 clusters and topics (slow)') / 'Auto',
+                                        L.abbr(title='scan between 2 and 5 clusters and topics (slow)') / 'Auto',
                                     ),
                                 ),
                                 L.div('.radio') / (
                                     L.label / (
                                         L.input(name='clustering', value='manual', type='radio'),
-                                        L.abbr(title='use an user specified number of topic/cluster (fast)') / 'Manual',
+                                        L.abbr(title='Scan your own range of topic/cluster (fast)') / 'Custom range',
                                     ),
                                 )
                             ),
                         ),
                         L.div('.form-group._clustering-options.hide') / (
-                            L.div('.col-md-3.control-label') / (L.strong / 'Clusters (Q)'),
+                            L.div('.col-md-3.control-label') / (L.strong / 'Clusters'),
+                            L.div('.col-md-1.control-label') / 'min',
                             L.div('.col-md-2') / (
-                                L.input('.form-control', name='clusters', value='10', type='number'),
+                                L.input('.form-control', name='clusters_min', value='2', type='number'),
+                            ),
+                            L.div('.col-md-1.control-label') / 'max',
+                            L.div('.col-md-2') / (
+                                L.input('.form-control', name='clusters_max', value='10', type='number'),
                             ),
                         ),
                         L.div('.form-group._clustering-options.hide') / (
-                            L.div('.col-md-3.control-label') / (L.strong / 'Topics (K)'),
+                            L.div('.col-md-3.control-label') / (L.strong / 'Topics'),
+                            L.div('.col-md-1.control-label') / 'min',
                             L.div('.col-md-2') / (
-                                L.input('.form-control', name='topics', value='10', type='number'),
+                                L.input('.form-control', name='topics_min', value='2', type='number'),
+                            ),
+                            L.div('.col-md-1.control-label') / 'max',
+                            L.div('.col-md-2') / (
+                                L.input('.form-control', name='topics_max', value='10', type='number'),
                             ),
                         ),
                     ) if not quota_exceeded else None,

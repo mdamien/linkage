@@ -39,13 +39,17 @@ def index(request):
     messages = []
     graph = None
     if request.POST and request.POST['action'] == 'import':
-        clusters, topics, limit, valid_parameters = None, None, 200, True
+        clusters_min, clusters_max,topics_min, topics_max, \
+            limit, valid_parameters = None, None, None, None, 200, True
         if request.POST['clustering'] == 'manual':
             try:
-                clusters = int(request.POST['clusters'])
-                topics = int(request.POST['topics'])
-                if clusters <= 0 or topics <= 0:
-                    messages.append(['danger', 'Invalid cluster parameters'])
+                clusters_min = int(request.POST['clusters_min'])
+                clusters_max = int(request.POST['clusters_max'])
+                topics_min = int(request.POST['topics_min'])
+                topics_max = int(request.POST['topics_max'])
+                if clusters_min <= 0 or topics_min <= 0 \
+                        or clusters_max < clusters_min or topics_max < topics_min:
+                    messages.append(['danger', 'Invalid cluster range'])
                     valid_parameters = False
             except ValueError:
                 messages.append(['danger', 'Invalid cluster parameters']) # todo: proper form validation
@@ -61,11 +65,11 @@ def index(request):
             def make_graph(name, directed=True):
                 graph = models.Graph(name=name,
                     user=request.user, directed=directed)
-                if clusters:
-                    graph.job_param_clusters = clusters
-                    graph.job_param_clusters_max = clusters
-                    graph.job_param_topics = topics
-                    graph.job_param_topics_max = topics
+                if clusters_min:
+                    graph.job_param_clusters = clusters_min
+                    graph.job_param_clusters_max = clusters_max
+                    graph.job_param_topics = topics_min
+                    graph.job_param_topics_max = topics_max
                 graph.save()
                 return graph
 
@@ -178,11 +182,11 @@ def index(request):
                 if len(graph.labels.strip()) < 2:
                     messages.append(['danger', 'There is no data for this graph'])
                 else:
-                    if clusters:
-                        graph.job_param_clusters = clusters
-                        graph.job_param_clusters_max = clusters
-                        graph.job_param_topics = topics
-                        graph.job_param_topics_max = topics
+                    if clusters_min:
+                        graph.job_param_clusters = clusters_min
+                        graph.job_param_clusters_max = clusters_max
+                        graph.job_param_topics = topics_min
+                        graph.job_param_topics_max = topics_max
                     graph.save()
 
                     from config.celery import process_graph
