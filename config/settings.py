@@ -85,7 +85,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTHENTICATION_BACKENDS = (
-    # 'social_core.backends.google.GoogleOAuth2', # be careful when enabling it, it crashes token confirmation
+    'social_core.backends.google.GoogleOAuth2', # be careful when enabling it, it crashes token confirmation
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -121,3 +121,6 @@ COMMIT_HASH = raven.fetch_git_sha(os.path.dirname(os.pardir))
 
 LOGINAS_REDIRECT_URL = '/'
 CAN_LOGIN_AS = lambda request, target_user: request.user.is_superuser
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '620338696601-94u7gvh4avrlocro69mq73oudr3n5ar5.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '7SQfgD3rVDFTdQinUxzCTa68a'

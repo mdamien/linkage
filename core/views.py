@@ -245,7 +245,7 @@ def landing(request):
         if get_user_token(user) == token and not user.is_active:
             user.is_active = True
             user.save()
-            auth_login(request, user)
+            auth_login(request, user, 'django.contrib.auth.backends.ModelBackend')
             messages.success(request, 'Account %s confirmed' % user.email)
         return redirect('/')
     return HttpResponse(templates.landing(request))
