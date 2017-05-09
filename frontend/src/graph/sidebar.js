@@ -133,11 +133,12 @@ class TopicWords extends React.Component {
             {this.state.showAll ? <table className='table table-striped table-bordered'>
                 <tbody>
                     {n_best_elems(words, 1000, v => v.tfidf).map((t, i) => {
-                        return <tr key={i}>
-                            <td>{dictionnary[t[0]]}</td>
-                            <td className='text-right'>{(t[1].freq * 100).toFixed(3)} %</td>
-                            {/*<td className='text-right'>{(t[1].tfidf * 100).toFixed(2)}</td>*/}
-                        </tr>;
+                      if (t[1].freq < EPS_TOPICS) return;
+                      return <tr key={i}>
+                          <td>{dictionnary[t[0]]}</td>
+                          <td className='text-right'>{(t[1].freq * 100).toFixed(3)} %</td>
+                          {/*<td className='text-right'>{(t[1].tfidf * 100).toFixed(2)}</td>*/}
+                      </tr>;
                     })}
                 </tbody>
             </table> : null}
