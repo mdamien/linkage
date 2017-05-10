@@ -113,6 +113,7 @@ function init(state_init = {}) {
     });
     timeout = setTimeout(function() {
       RENDERER.pause();
+      pin_cluster_nodes();
       STATE.graph_layout_running = false;
       renderGraphButtons({
         renderer: RENDERER,
@@ -143,7 +144,7 @@ function init(state_init = {}) {
 
   STATE.graph_layout_running = true;
   RENDERER.run();
-  RENDERER.pause_in(2000);
+  RENDERER.pause_in(5000);
 
   RENDERER.layout = layout;
   RENDERER.graph = graph;
@@ -251,6 +252,14 @@ function expand_cluster(cluster_name, graph, X, clusters) {
       }
     }
   });
+}
+
+function pin_cluster_nodes() {
+  RENDERER.graph.forEachNode(node => {
+    if (node.data && node.data.isCluster) {
+      RENDERER.layout.pinNode(node, true);
+    }
+  })
 }
 
 function expand_clusters(graph, X, clusters) {

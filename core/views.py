@@ -433,7 +433,6 @@ You are just one click away from getting an account, click on the following link
 https://linkage.fr/?confirm_email_token=%s
 """ % token, 'no-reply@linkage.fr', [email], fail_silently=False)
                     messages.success(request, 'An email has been sent to %s to confirm the account creation' % email)
-                    return redirect('/')
                 except SMTPRecipientsRefused:
                     message = "Failed to send the confirmation link to your email, please verify it's correct"
                     user.delete()
