@@ -120,7 +120,8 @@ CHANNEL_LAYERS = {
 import raven
 COMMIT_HASH = raven.fetch_git_sha(os.path.dirname(os.pardir))
 
-LOGINAS_REDIRECT_URL = '/'
+LOGINAS_REDIRECT_URL = '/jobs/'
+LOGIN_REDIRECT_URL = '/'
 CAN_LOGIN_AS = lambda request, target_user: request.user.is_superuser
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '620338696601-94u7gvh4avrlocro69mq73oudr3n5ar5.apps.googleusercontent.com'
