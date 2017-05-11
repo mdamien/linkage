@@ -1,10 +1,8 @@
 from django.contrib import admin
 from django.apps import apps
 
-admin.site.site_header = 'Linkage'
-
 # auto-register all models
-app = apps.get_app_config('core')
+app = apps.get_app_config('blog')
 
 for model_name, model in app.models.items():
     try:

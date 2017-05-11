@@ -25,6 +25,7 @@ INSTALLED_APPS = [
 
     'core',
     'pm',
+    'blog',
 ]
 
 MIDDLEWARE_CLASSES = [

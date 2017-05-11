@@ -244,8 +244,6 @@ class Sidebar extends React.Component {
         marks_topics[GRAPH.job_param_topics_max] = GRAPH.job_param_topics_max;
 
         return <div>
-            <SearchBar choices={state.labels}
-              onSelect={value => zoom_on(state.labels.indexOf(value))}/>
             <div className='panel panel-primary'>
                 <div className='panel-heading'>
                     <h3 className='panel-title'>{GRAPH.name}</h3>
@@ -261,6 +259,8 @@ class Sidebar extends React.Component {
                       : null}
                 </div>
             </div>
+            <SearchBar choices={state.labels}
+              onSelect={value => zoom_on(state.labels.indexOf(value))}/>
             <div className='panel panel-default'>
                 <div className='panel-heading'>
                     <h3 className='panel-title'>Topics 

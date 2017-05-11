@@ -8,5 +8,6 @@ urlpatterns = [
     url('', include('social_django.urls', namespace='social')),
     url(r'', include('core.urls')),
     # url(r'pm-data/', include('pm.urls')),
+    url(r'blog/', include('blog.urls')),
     url(r'^admin/', include('loginas.urls')),
 ]
