@@ -448,11 +448,13 @@ function get_graph_graphics(graph, X, clusters) {
           save_clusters_pos(graph);
           return;
         }
+        /* DISABLE SINGLE CLUSTER EXPANDING
         if (is_cluster) {
           expand_cluster(cluster_name, graph, X, clusters);
 
           RENDERER.pause_in(2000);
         }
+        */
       });
 
       return ui;
