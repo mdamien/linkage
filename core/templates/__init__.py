@@ -452,7 +452,7 @@ def login(request, message, signup_form):
                             L.p / (
                                 'Or',
                                 L.a(href=reverse('social:begin', args=['google-oauth2'])) / ' with Google',
-                            ) if False else None,
+                            ),
                         ),
 
                         L.div('.col-md-2') / (

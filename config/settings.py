@@ -124,7 +124,7 @@ LOGINAS_REDIRECT_URL = '/'
 CAN_LOGIN_AS = lambda request, target_user: request.user.is_superuser
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '620338696601-94u7gvh4avrlocro69mq73oudr3n5ar5.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '7SQfgD3rVDFTdQinUxzCTa68a'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '7SQfgD3rVDFTdQinUxzCTa68'
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {'access_type': 'offline'}
 SOCIAL_AUTH_GOOGLE_OAUTH2_REQUEST_TOKEN_EXTRA_ARGUMENTS = {'access_type': 'offline'}
