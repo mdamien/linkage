@@ -452,7 +452,7 @@ def login(request, message, signup_form):
                             L.p / (
                                 'Or',
                                 L.a(href=reverse('social:begin', args=['google-oauth2'])) / ' with Google',
-                            ) if True else None,
+                            ) if False else None,
                         ),
 
                         L.div('.col-md-2') / (
@@ -754,7 +754,7 @@ def api_jobs(graphs):
 
 
 
-def article(request, article):
+def tpl_article(request, article):
     return base((
         L.div('.container') / (
             header(request, 'blog'),
@@ -768,3 +768,23 @@ def article(request, article):
         ),
         SENTRY,
     ), title=article.title)
+
+
+
+def tpl_article_list(request, articles):
+    return base((
+        L.div('.container') / (
+            header(request, 'blog'),
+            L.div('.row') / (
+                L.div('.col-md-12') / (
+                    (
+                        L.p / (
+                            L.a(href='/blog/' + article.slug + '/') / article.title,
+                        ),
+                    ) for article in articles
+                ),
+            ),
+            FOOTER
+        ),
+        SENTRY,
+    ), title='Blog')
