@@ -23,6 +23,15 @@ body { background: #eee }
     height: 50px;
     display: flex;
 }
+
+.blog-article img {
+    box-shadow: 0 0 48px #8a8a8a;
+    max-width: 50%;
+    display: block;
+    margin: auto;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
 """.replace('\n', ' '))
 
 def basic_frame(*content, title=''):

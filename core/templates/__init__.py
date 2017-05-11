@@ -759,9 +759,23 @@ def tpl_article(request, article):
         L.div('.container') / (
             header(request, 'blog'),
             L.div('.row') / (
-                L.article('.col-md-12') / (
-                    L.h2 / article.title,
-                    L.p / raw(mistune.markdown(article.content)),
+                L.article('blog-article.col-md-12', style='font-size: 1.3em;') / (
+                    L.h2(style="""
+    max-width: 50%;
+    margin-bottom: 50px;
+    border-bottom: 9px solid #e95420;
+    padding-bottom: 20px;
+    background: whitesmoke;
+    padding: 20px 10px;
+    margin-top: 0;
+                        """) / (
+                        L.a('text-muted', href='/blog/', style="""
+                            display: block;
+    margin-bottom: 10px;
+    font-size: 18px;""") / 'Blog',
+                        article.title
+                    ),
+                    L.p / raw(mistune.markdown(article.content, escape=False)),
                 ),
             ),
             FOOTER
@@ -776,12 +790,17 @@ def tpl_article_list(request, articles):
         L.div('.container') / (
             header(request, 'blog'),
             L.div('.row') / (
-                L.div('.col-md-12') / (
-                    (
-                        L.p / (
-                            L.a(href='/blog/' + article.slug + '/') / article.title,
-                        ),
-                    ) for article in articles
+                L.div('.col-md-12', style='font-size: 1.3em;') / (
+                    L.h4 / 'Published articles',
+                    L.div('.list-group') / (
+                        (
+                            L.div('.list-group-item') / (
+                                L.div('.list-group-item-heading') / (
+                                    L.a(href='/blog/' + article.slug + '/') / article.title,
+                                ),
+                            ),
+                        ) for article in articles
+                    ),
                 ),
             ),
             FOOTER
