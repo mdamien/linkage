@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.messages import get_messages
 from django.urls import reverse
 
+import mistune
 from lys import L, raw
 
 from .base import base
@@ -750,3 +751,20 @@ def jobs(request, graphs):
 
 def api_jobs(graphs):
     return [serialize_graph(g, None, simple=True) for g in graphs]
+
+
+
+def article(request, article):
+    return base((
+        L.div('.container') / (
+            header(request, 'blog'),
+            L.div('.row') / (
+                L.article('.col-md-12') / (
+                    L.h2 / article.title,
+                    L.p / raw(mistune.markdown(article.content)),
+                ),
+            ),
+            FOOTER
+        ),
+        SENTRY,
+    ), title=article.title)
