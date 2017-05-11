@@ -8,6 +8,6 @@ vf activate linkage
 pip install -U -r requirements_prod.txt
 rm -rf collected_static/
 python manage.py collectstatic --noinput --link
-python manage.py migrate
+python manage.py migrate --settings config.settings_prod
 cowsay 'restart celery and app server plz :)' | lolcat
 vf deactivate
