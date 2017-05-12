@@ -353,7 +353,7 @@ class Sidebar extends React.Component {
                 <div className='panel-heading'>
                     <h3 className='panel-title'>{GRAPH.name}</h3>
                 </div>
-                <div className='panel-body'>
+                {!GRAPH.magic_too_big_to_display_X ? <div className='panel-body'>
                     <strong>{state.n_edges}</strong> edges, <strong>{state.n_nodes}</strong> nodes
                     <br/>
                     imported <strong>{GRAPH.created_at}</strong><br/>
@@ -362,12 +362,12 @@ class Sidebar extends React.Component {
                         clustering score: <strong>{GRAPH.result.crit}</strong>
                       </span>
                       : null}
-                </div>
+                </div> : null}
             </div>
             <hr/>
             <h3>Advanced</h3>
             <br/>
-            <div className='panel panel-default'>
+            {!GRAPH.magic_too_big_to_display_X ? <div className='panel panel-default'>
                 <div className='panel-heading'>
                     <h3 className='panel-title'>Result</h3>
                 </div>
@@ -388,7 +388,7 @@ class Sidebar extends React.Component {
                         'An error occured while processing.'
                         : 'Processing graph...'}
                 </div>}
-            </div>
+            </div> : null}
             <div className='panel panel-default'>
                 <div className='panel-heading'>
                     <h3 className='panel-title'>

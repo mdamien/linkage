@@ -12,6 +12,38 @@ var ColorSquare = (color, content=<span>&nbsp;</span>, width='auto') => <span cl
 
 const Icon = props => <span className={'glyphicon glyphicon-' + props.name}></span>;
 
+class ClusterNodes extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        showAll: false,
+      };
+      this.toggleShow = this.toggleShow.bind(this);
+    }
+    toggleShow() {
+        this.setState({showAll: !this.state.showAll});
+    }
+    render() {
+        let {nodes} = this.props;
+        const sorted_nodes = nodes.concat().sort();
+        return <p>
+            <p style={{marginTop: 10}}>
+                <a className='btn btn-warning btn-xs' onClick={this.toggleShow}>
+                  {this.state.showAll ? 'hide' : 'show'} all nodes
+                </a>
+            </p>
+            {this.state.showAll ? <div>
+              <h5>All nodes:</h5>
+                <ul>
+                    {sorted_nodes.map((t, i) => {
+                      return <li key={i}>{t}</li>;
+                    })}
+                </ul>
+              </div> : null}
+        </p>
+    }
+}
+
 /*
   params = {title, is_node, topics, renderer}
 */
@@ -24,7 +56,7 @@ function render(params) {
   if (params.title !== undefined || (params.topics && params.topics.length > 0)) {
     popup = <div
         className="alert alert-dismissible alert-info"
-        style={{ position: 'absolute', top: 10, right: 10, width: '40%', maxHeight: 300, overflow: 'auto'}}>
+        style={{ position: 'absolute', top: 10, right: 10, width: '40%', maxHeight: '70%', overflow: 'auto'}}>
       <button type="button" className="close" onClick={() => render({
         renderer: params.renderer,
         expand_clusters: params.expand_clusters,
@@ -64,8 +96,10 @@ function render(params) {
         <ul>
         {params.top_nodes.slice(0, 5).map((v, i) => <li key={i}>
           {v}
-        </li>)}
+        </li>
+        )}
       </ul>
+      <ClusterNodes nodes={params.top_nodes} />
       </div> : null}
     </div>;
   }
