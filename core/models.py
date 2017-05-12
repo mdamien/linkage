@@ -29,6 +29,7 @@ class Graph(models.Model): # = Job
 
     magic_too_big_to_display_X = models.BooleanField(default=False)
     directed = models.BooleanField(default=True)
+    public = models.BooleanField(default=False)
     user = models.ForeignKey(User)
     created_at = models.DateTimeField(auto_now_add=True)
 

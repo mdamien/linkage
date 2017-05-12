@@ -150,6 +150,7 @@ function init(state_init = {}) {
   RENDERER.graph = graph;
 
   STATE.update_topic_name = update_topic_name;
+  STATE.update_cluster_label = update_cluster_label;
 
   renderSidebar(STATE);
   renderGraphSidebar({
@@ -405,7 +406,7 @@ function get_graph_graphics(graph, X, clusters) {
         var top_nodes = [];
         if (is_cluster) {
           if (GRAPH.result && GRAPH.result.top_nodes) {
-            top_nodes = GRAPH.result.top_nodes[cluster_name];
+            top_nodes = GRAPH.result.top_nodes[cluster_name].slice(0, 5);
           } else {
             top_nodes = STATE.clusterToNodes[cluster_name].slice(0, 5).map(x => STATE.labels[x])
             .filter(x => x);

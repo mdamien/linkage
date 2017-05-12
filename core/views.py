@@ -200,11 +200,11 @@ def index(request):
         user_jobs=user_jobs,
     ))
 
-@login_required
+
 def result(request, pk):
     graph = get_object_or_404(models.Graph, pk=pk)
-    if request.user.pk != graph.user.pk:
-        raise PermissionDenied
+    if not graph.public and (request.user.is_anonymous or request.user.pk != graph.user.pk):
+        raise permissiondenied
     result = None
     try:
         result = models.ProcessingResult.objects \
@@ -309,10 +309,9 @@ def api_result(request, pk):
     return JsonResponse(templates.api_result(request, graph, result))
 
 
-@login_required
 def api_cluster(request, pk):
     graph = get_object_or_404(models.Graph, pk=pk)
-    if request.user.pk != graph.user.pk:
+    if not graph.public and (request.user.is_anonymous or request.user.pk != graph.user.pk):
         raise PermissionDenied
 
     if 'cluster_to_cluster_cutoff' in request.POST:

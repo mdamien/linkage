@@ -121,7 +121,6 @@ class TopicWords extends React.Component {
                 return <span key={i}>
                     <span
                         className="label label-default"
-                        key={i}
                     >{dictionnary[t[0]]}</span>{' '}
                 </span>
             })}
@@ -138,6 +137,59 @@ class TopicWords extends React.Component {
                           <td>{dictionnary[t[0]]}</td>
                           <td className='text-right'>{(t[1].freq * 100).toFixed(3)} %</td>
                           {/*<td className='text-right'>{(t[1].tfidf * 100).toFixed(2)}</td>*/}
+                      </tr>;
+                    })}
+                </tbody>
+            </table> : null}
+        </div>
+    }
+};
+
+class ClusterNodes extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        showAll: false,
+      };
+      this.toggleShow = this.toggleShow.bind(this);
+    }
+    toggleShow() {
+        this.setState({showAll: !this.state.showAll});
+    }
+    render() {
+        let {i, size, label, update_label} = this.props;
+        let nodes = GRAPH.result.top_nodes[i];
+        return <div className='list-group-item'>
+            <p>
+              {ColorSquare(get_color(i, 'Paired'), size + (label ? (' <' + label + '>') : ''))}
+              {' '}
+              <a
+                title='Edit cluster label'
+                className='btn btn-warning btn-xs'
+                onClick={() => {
+                  var name = prompt('Choose a custom label for the cluster:');
+                  update_label(i, name);
+                }}>
+                <Icon name='pencil'/>
+              </a>
+            </p>
+            ex: {nodes.slice(0, 5).map((t, i) => {
+                return <span key={i}>
+                    <span
+                        className="label label-default"
+                    >{t}</span>{' '}
+                </span>
+            })}
+            <p style={{marginTop: 10}}>
+                <a className='btn btn-warning btn-xs' onClick={this.toggleShow}>
+                  {this.state.showAll ? 'hide' : 'show'} details
+                </a>
+            </p>
+            {this.state.showAll ? <table className='table table-striped table-bordered'>
+                <tbody>
+                    {nodes.map((t, i) => {
+                      return <tr key={i}>
+                          <td>{t}</td>
                       </tr>;
                     })}
                 </tbody>
@@ -307,19 +359,16 @@ class Sidebar extends React.Component {
                     <br/>
                 </div> : null}
                 {state.clusterToNodes ? <div className='list-group'>
-                    <div className='list-group-item'>
                       {Object.keys(state.clusterToNodes).map(key => {
                         var meta = state.nodes_meta['c-' + key];
-                        return <span key={key}>
-                          {ColorSquare(get_color(key, 'Paired'), state.clusterToNodes[key].length
-                              + (
-                                  meta && meta['label'] ?
-                                    (' <' + meta['label'] + '>')
-                                    : ''))
-                          }{' '}
-                        </span>;
-                      })}
-                    </div>
+                        return <ClusterNodes
+                          i={key}
+                          key={key}
+                          size={state.clusterToNodes[key].length}
+                          label={meta && meta['label'] ? meta['label'] : undefined}
+                          update_label={state.update_cluster_label}
+                          />;
+                    })}
                 </div> : null}
             </div>
             <hr/>
