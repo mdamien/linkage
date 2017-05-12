@@ -85,7 +85,7 @@ def retrieve_graph_data(graph_pk, method, **params):
 
     exception_triggered = None
     try:
-        links = getattr(third_party_import, method)(params['q'], params['limit'])
+        links = getattr(third_party_import, method)(**params)
     except Exception as e:
         exception_triggered = e
     if exception_triggered or len(links) < 2:

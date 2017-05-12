@@ -356,6 +356,17 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                                     L.input('.btn.btn-primary.btn-large', name='choice_gmail', type='submit', value='Import from GMail'),
                                 )
                             ),
+                            L.br,
+                            L.div('.form-group') / (
+                                L.div('.col-md-3.control-label') / (
+                                    L.strong / (
+                                        L.abbr(title='The maximum number of papers to be retrieved') / 'Limit',
+                                    ),
+                                ),
+                                L.div('.col-md-2') / (
+                                    L.input('.form-control', name='limit', value='500', type='number'),
+                                ),
+                            ),
                         ) if import_type_selected == 'gmail' else None,
                         (
                             L.div('.row') / (
@@ -368,7 +379,7 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                                 ),
                                 L.div('.col-md-5') / (
                                     L.input('.btn.btn-primary.btn-large', name='choice_prev_job', type='submit', value='Import'),
-                                )
+                                ),
                             ),
                         ) if import_type_selected == 'prev_job' and user_jobs else None,
                         L.hr,

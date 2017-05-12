@@ -181,6 +181,16 @@ def index(request):
                         tdm=prev_job.tdm,
                         edges=prev_job.edges,
                         dictionnary=prev_job.dictionnary)
+            elif 'choice_gmail' in request.POST:
+                social = request.user.social_auth.get(provider='google-gmail')
+                access_token = social.extra_data['access_token']
+                #access_token = 'ya29.GltIBJMYv32MIzMvW0pTyQMmoHL1J-_iKSzSzKZHZ_lses1BpwzyoDPtvhVFCl87ButA0SnbRnk2ck3RtDIzTFAJfX4Wi-2tqW3o6Lr8Tl3MDHiGod6o5HD-mF1N'
+                graph = make_graph('GMail import')
+                retrieve_graph_data.delay(graph.pk, 'gmail_to_csv',
+                    access_token=access_token,
+                    limit=limit,
+                )
+                return redirect('/jobs/')
             if graph:
                 if len(graph.labels.strip()) < 2:
                     messages.append(['danger', 'There is no data for this graph'])

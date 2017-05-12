@@ -1,7 +1,5 @@
-import io, csv, email, json, re
-
+import io, csv, email, json, re, base64
 from email import header
-from email.utils import getaddresses
 from email.utils import getaddresses
 
 from bs4 import BeautifulSoup
@@ -291,4 +289,83 @@ def mbox_to_csv(mbox, subject_only):
         if mail is not None: # ignore email without headers
             mail += line
     add_mail()  
+    return output.getvalue()
+
+def gmail_to_csv(access_token, limit):
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    params = {'access_token': access_token}
+
+    c = 0
+    while True:
+        response = requests.get(
+            'https://www.googleapis.com/gmail/v1/users/me/messages/',
+            params=params
+        )
+        resp_json = response.json()
+        if 'messages' not in resp_json:
+            print(resp_json)
+        mails = resp_json['messages']
+        print(len(mails), 'mails')
+        for mail_pack in mails:
+            response = requests.get(
+                'https://www.googleapis.com/gmail/v1/users/me/messages/' + mail_pack['id'],
+                params={'access_token': access_token}
+            )
+            mail = response.json()
+            if 'CHAT' in mail['labelIds']: # ignore hangout messages
+                continue
+            subject = None
+            try:
+                header = {}
+                for item in mail['payload']['headers']:
+                    header[item['name'].lower()] = item['value']
+                subject = header['subject']
+            except:
+                pass
+
+            parts = {}
+            if 'parts' in mail['payload']:
+                for part in mail['payload']['parts']:
+                    if 'body' in part and 'data' in part['body']:
+                        data = part['body']['data']
+                        decoded = base64.b64decode(data.replace('-','+').replace('_','/'))
+                        text = decoded.decode('utf-8')
+                        parts[part['mimeType'].lower()] = text
+            else:
+                pass
+                # TODO
+
+            if 'text/plain' in parts:
+                text = parts['text/plain']
+            else:
+                # TODO
+                text = ''
+
+            text = '\n'.join([line for line in text.split('\n') if not line.startswith('>')])
+
+            print(mail_pack['id'])
+            # print(subject)
+            # print(text)
+            sender = getaddresses([header.get('from')])[0][1]
+            for _, dest in getaddresses([header.get('to')] + [header.get('cc','')]):
+                if dest:
+                    # print(sender, '->', dest)
+                    writer.writerow([sender, dest, subject + '\n' + text])
+            c += 1
+            print('mail-',c)
+            if c > limit:
+                break
+            # print()
+        if c > limit:
+            break
+        if 'nextPageToken' in resp_json:
+            print(resp_json['nextPageToken'])
+            params['pageToken'] = resp_json['nextPageToken']
+            print(' -#- next page -#-')
+        else:
+            print(' -#- end pagination -#-')
+            break
+
     return output.getvalue()

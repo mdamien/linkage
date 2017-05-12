@@ -1,12 +1,9 @@
-import requests, base64
+import requests, base64, csv
+from email.utils import getaddresses
 
 # TODO: batch email requests
 
-# user = User.objects.get(...)
-# social = user.social_auth.get(provider='google-oauth2')
-# access_token = social.extra_data['access_token']
-
-access_token = 'ya29.GltIBMOQaF0N0edku5T2CACrWEBel-IbBxa1Vbhk5GOsG1ayDrkPPvzNY52dm9pByerd5GeM4g66e2nMDCuW66LDF_BfWrzcVBO3zbId0UShsU0pHCK2LgT3ARqR'
+access_token = 'ya29.GltIBLbYoOPgOKo-wVFUQZpwkge_2er2BDqt_5a9geenerZ4hrLjtlZ0BLjRVTtAOrAMsZzrqZr65lNWcbVyeQHY9TW2iNFuL-ASsi5PaY585kyMuUHFIGgG-uDr'
 params = {'access_token': access_token} #, 'maxResults': 2}
 
 while True:
@@ -56,11 +53,13 @@ while True:
 
         text = '\n'.join([line for line in text.split('\n') if not line.startswith('>')])
 
-
-
         print(mail_pack['id'])
         print(subject)
         print(text)
+        sender = getaddresses([header.get('from')])[0][1]
+        for _, dest in getaddresses([header.get('to')] + [header.get('cc','')]):
+            if dest:
+                print(sender, '->', dest)
         print()
     if 'nextPageToken' in resp_json:
         print(resp_json['nextPageToken'])
