@@ -230,6 +230,8 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                             href='?import_type=csv') / 'CSV',
                         L.a('.list-group-item' + ('.active' if import_type_selected == 'sample' else ''),
                             href='?import_type=sample') / 'Sample',
+                        (L.a('.list-group-item' + ('.active' if import_type_selected == 'gmail' else ''),
+                            href='?import_type=gmail') / 'GMail') if request.user.is_staff else None,
                         (L.a('.list-group-item' + ('.active' if import_type_selected == 'prev_job' else ''),
                             href='?import_type=prev_job') / 'Existing job') if user_jobs else None,
                     ),
@@ -345,6 +347,16 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                                 )
                             ),
                         ) if import_type_selected == 'sample' else None,
+                        (
+                            L.div('.row') / (
+                                L.div('.col-md-2') / (
+                                    L.a(href=reverse('social:begin', args=['google-gmail'])) / 'authorize Linkage to access your emails',
+                                ),
+                                L.div('.col-md-5') / (
+                                    L.input('.btn.btn-primary.btn-large', name='choice_gmail', type='submit', value='Import from GMail'),
+                                )
+                            ),
+                        ) if import_type_selected == 'gmail' else None,
                         (
                             L.div('.row') / (
                                 L.div('.col-md-7') / (

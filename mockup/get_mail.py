@@ -1,7 +1,6 @@
 import requests, base64
 
 # TODO: batch email requests
-# TODO: remove quote (do normal mbox processing)
 
 # user = User.objects.get(...)
 # social = user.social_auth.get(provider='google-oauth2')
