@@ -405,7 +405,7 @@ class Sidebar extends React.Component {
             </div>
             {GRAPH.scores && GRAPH.scores.length > 0 ? <div className='panel panel-default'>
                 <div className='panel-heading'>
-                    <h3 className='panel-title'>Clustering combinations ordered by score</h3>
+                    <h3 className='panel-title'>Clusterings ordered by score</h3>
                 </div>
                 <div className='panel-body'>
                   <table className='table table-striped table-bordered'>
