@@ -405,31 +405,25 @@ class Sidebar extends React.Component {
             </div>
             {GRAPH.scores && GRAPH.scores.length > 0 ? <div className='panel panel-default'>
                 <div className='panel-heading'>
-                    <h3 className='panel-title'>Quick view of the score of each clustering</h3>
+                    <h3 className='panel-title'>Clustering combinations ordered by score</h3>
                 </div>
                 <div className='panel-body'>
-                  {GRAPH.scores.map((v,i) => {
-                    var n_clusters = v[0];
-                    var max_score = n_best_elems(v[1], 1, v => v[2])[0][1][2];
-                    var min_score = n_best_elems(v[1], 1, v => -v[2])[0][1][2];
-                    min_score = min_score - (max_score - min_score)*0.2;
-                    return <div key={i}>
-                      <i>{n_clusters} clusters</i>
-                      <div className='histogram'>
-                        {v[1].map((score, i) => {
-                          var style = {};
-                          var height = (score[2] - min_score) / (max_score - min_score) * 100;
-                          if (Number.isNaN(height) || !score[2]) {
-                            height = 10;
-                            style['background'] = '#b94a48';
-                          }
-                          style.height = height.toFixed(2) + '%';
-                          return <span key={i} title={score[1] + " topics: " + score[2]}
-                            style={style}></span>;
-                        })}
-                      </div>
-                    </div>;
-                  })}
+                  <table className='table table-striped table-bordered'>
+                    <thead>
+                      <tr>
+                        <th>Clusters</th>
+                        <th>Topics</th>
+                        <th>Score</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {GRAPH.scores.map((v,i) => <tr>
+                        <td>{v[0]}</td>
+                        <td>{v[1]}</td>
+                        <td>{v[2]  ? v[2].toFixed(2) : 'clustering failed'}</td>
+                      </tr>)}
+                    </tbody>
+                  </table>
                 </div>
             </div> : null}
         </div>;

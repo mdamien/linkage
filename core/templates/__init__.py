@@ -449,9 +449,9 @@ def login(request, message, signup_form):
                                     L.button('.btn.btn-primary', type='submit') / 'Login'
                                 )
                             ),
-                            L.p / (
-                                'Or',
-                                L.a(href=reverse('social:begin', args=['google-oauth2'])) / ' with Google',
+                            L.p('.text-center') / (
+                                L.a(href=reverse('social:begin', args=['google-oauth2'])) / 
+                                    L.img(src='/static/img/btn_google_signin_light_normal_web@2x.png', style='width:100%; height:auto'),
                             ),
                         ),
 
