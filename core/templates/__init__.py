@@ -569,11 +569,13 @@ def landing(request):
                         border-top: 1px solid #eee;border-bottom: 1px solid #eee;""") / (
                 L.div('.col-md-12', style="float:none;color: black;font-size: 18px;") / (
                     L.h2(style="""
+                            width: 70%;
                             background: rgba(255, 255, 255, 0.68);
                             padding: 7px 25px;
                             padding-left: 0;
                         """) / "Innovative and efficient cluster analysis of networks with textual edges",
                     L.p(style="""
+                            width: 80%;
                             background: rgba(255, 255, 255, 0.68);
                             padding: 7px 25px;
                             padding-left: 0;
