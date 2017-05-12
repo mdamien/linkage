@@ -51,6 +51,9 @@ def index(request):
                         or clusters_max < clusters_min or topics_max < topics_min:
                     messages.append(['danger', 'Invalid cluster range'])
                     valid_parameters = False
+                elif clusters_max > 10 or topics_max > 10:
+                    messages.append(['danger', 'Invalid cluster range: must be inferior of 10'])
+                    valid_parameters = False
             except ValueError:
                 messages.append(['danger', 'Invalid cluster parameters']) # todo: proper form validation
                 valid_parameters = False

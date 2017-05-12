@@ -10,8 +10,7 @@ function render(params) {
   var buttons = <div style={{ position: 'absolute', bottom: 10, right: 10}}>
     {params.graph_layout_running ? <button href="#" className="btn btn-primary btn-xs" onClick={() => params.renderer.pause_in(0)}>pause auto-layout</button>
     : <button className="btn btn-primary btn-xs" onClick={() => params.renderer.clear_pause_in()}>resume auto-layout</button>}
-    &nbsp;
-    <button href="#" className="btn btn-primary btn-xs" onClick={() => params.expand_clusters()}>expand clusters</button>
+    {GRAPH.magic_too_big_to_display_X ? null : <span>&nbsp;<button href="#" className="btn btn-primary btn-xs" onClick={() => params.expand_clusters()}>expand clusters</button></span>}
     &nbsp;
     <button href="#" className="btn btn-primary btn-xs" onClick={() => params.collapse_clusters()}>collapse clusters</button>
     &nbsp;

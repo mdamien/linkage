@@ -60,12 +60,12 @@ function render(params) {
       </div> : null}
       {params.top_nodes && params.top_nodes.length > 0 ? <div>
         <br/>
-        <h4>Sample of nodes:</h4>
+        <h4>Top nodes:</h4>
         <ul>
-        {params.top_nodes.map((v, i) => <li key={i}>
+        {params.top_nodes.slice(0, 5).map((v, i) => <li key={i}>
           {v}
         </li>)}
-        </ul>
+      </ul>
       </div> : null}
     </div>;
   }

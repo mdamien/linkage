@@ -126,7 +126,7 @@ class TopicWords extends React.Component {
             })}
             <p style={{marginTop: 10}}>
                 <a className='btn btn-warning btn-xs' onClick={this.toggleShow}>
-                  {this.state.showAll ? 'hide' : 'show'} details
+                  {this.state.showAll ? 'hide' : 'show'} words
                 </a>
             </p>
             {this.state.showAll ? <table className='table table-striped table-bordered'>
@@ -173,16 +173,9 @@ class ClusterNodes extends React.Component {
                 <Icon name='pencil'/>
               </a>
             </p>
-            ex: {nodes.slice(0, 5).map((t, i) => {
-                return <span key={i}>
-                    <span
-                        className="label label-default"
-                    >{t}</span>{' '}
-                </span>
-            })}
             <p style={{marginTop: 10}}>
                 <a className='btn btn-warning btn-xs' onClick={this.toggleShow}>
-                  {this.state.showAll ? 'hide' : 'show'} details
+                  {this.state.showAll ? 'hide' : 'show'} nodes
                 </a>
             </p>
             {this.state.showAll ? <table className='table table-striped table-bordered'>
@@ -296,23 +289,8 @@ class Sidebar extends React.Component {
         marks_topics[GRAPH.job_param_topics_max] = GRAPH.job_param_topics_max;
 
         return <div>
-            <div className='panel panel-primary'>
-                <div className='panel-heading'>
-                    <h3 className='panel-title'>{GRAPH.name}</h3>
-                </div>
-                <div className='panel-body'>
-                    <strong>{state.n_edges}</strong> edges, <strong>{state.n_nodes}</strong> nodes
-                    <br/>
-                    imported <strong>{GRAPH.created_at}</strong><br/>
-                    {GRAPH.result && false ? 
-                      <span>
-                        clustering score: <strong>{GRAPH.result.crit}</strong>
-                      </span>
-                      : null}
-                </div>
-            </div>
-            <SearchBar choices={state.labels}
-              onSelect={value => zoom_on(state.labels.indexOf(value))}/>
+            {!state.meta_mode ? <SearchBar choices={state.labels}
+              onSelect={value => zoom_on(state.labels.indexOf(value))}/> : null}
             <div className='panel panel-default'>
                 <div className='panel-heading'>
                     <h3 className='panel-title'>Topics 
@@ -370,6 +348,21 @@ class Sidebar extends React.Component {
                           />;
                     })}
                 </div> : null}
+            </div>
+            <div className='panel panel-primary'>
+                <div className='panel-heading'>
+                    <h3 className='panel-title'>{GRAPH.name}</h3>
+                </div>
+                <div className='panel-body'>
+                    <strong>{state.n_edges}</strong> edges, <strong>{state.n_nodes}</strong> nodes
+                    <br/>
+                    imported <strong>{GRAPH.created_at}</strong><br/>
+                    {GRAPH.result && false ? 
+                      <span>
+                        clustering score: <strong>{GRAPH.result.crit}</strong>
+                      </span>
+                      : null}
+                </div>
             </div>
             <hr/>
             <h3>Advanced</h3>

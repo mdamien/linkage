@@ -256,6 +256,7 @@ function expand_cluster(cluster_name, graph, X, clusters) {
 }
 
 function pin_cluster_nodes() {
+  return; // disabled since we don't do single cluster expand now
   RENDERER.graph.forEachNode(node => {
     if (node.data && node.data.isCluster) {
       RENDERER.layout.pinNode(node, true);
@@ -271,6 +272,8 @@ function expand_clusters(graph, X, clusters) {
   });
 
   RENDERER.pause_in(2000);
+  STATE.meta_mode = false;
+  renderSidebar(STATE);
 }
 
 function _add_clusters(graph, X, nodeToCluster) {
@@ -299,6 +302,8 @@ function _add_clusters(graph, X, nodeToCluster) {
       }
     })
   });
+  STATE.meta_mode = true;
+  renderSidebar(STATE);
 }
 
 function collapse_clusters(graph, X, clusters) {
@@ -406,9 +411,9 @@ function get_graph_graphics(graph, X, clusters) {
         var top_nodes = [];
         if (is_cluster) {
           if (GRAPH.result && GRAPH.result.top_nodes) {
-            top_nodes = GRAPH.result.top_nodes[cluster_name].slice(0, 5);
+            top_nodes = GRAPH.result.top_nodes[cluster_name];
           } else {
-            top_nodes = STATE.clusterToNodes[cluster_name].slice(0, 5).map(x => STATE.labels[x])
+            top_nodes = STATE.clusterToNodes[cluster_name].map(x => STATE.labels[x])
             .filter(x => x);
           }
         }
