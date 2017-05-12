@@ -206,11 +206,19 @@ def index(request):
                     process_graph.delay(graph.pk, ws_delay=2)
                     return redirect('/jobs/')
 
+    gmail_access_accepted = False
+    try:
+        request.user.social_auth.get(provider='google-gmail')
+        gmail_access_accepted = True
+    except:
+        pass
+
     return HttpResponse(templates.index(
         request,
         messages,
         request.GET.get('import_type'),
         user_jobs=user_jobs,
+        gmail_access_accepted=gmail_access_accepted,
     ))
 
 

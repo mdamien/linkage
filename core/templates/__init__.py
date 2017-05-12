@@ -206,7 +206,7 @@ def api_result(request, graph, result):
     return serialize_graph(graph, result)
 
 
-def index(request, messages, import_type_selected='coauth', quota_exceeded=False, user_jobs=None):
+def index(request, messages, import_type_selected='coauth', quota_exceeded=False, user_jobs=None, gmail_access_accepted=False):
     if not import_type_selected:
         import_type_selected = 'coauth'
     return base((
@@ -350,10 +350,11 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                         (
                             L.div('.row') / (
                                 L.div('.col-md-2') / (
-                                    L.a(href=reverse('social:begin', args=['google-gmail'])) / 'authorize Linkage to access your emails',
                                 ),
                                 L.div('.col-md-5') / (
-                                    L.input('.btn.btn-primary.btn-large', name='choice_gmail', type='submit', value='Import from GMail'),
+                                    L.input('.btn.btn-primary.btn-large', name='choice_gmail', type='submit', value='Import from GMail')
+                                        if gmail_access_accepted
+                                        else L.a('.btn.btn-primary.btn-large', href=reverse('social:begin', args=['google-gmail']) + '?next=/jobs/add/?import_type=gmail') / 'Authorize Linkage to access your emails',
                                 )
                             ),
                             L.br,
