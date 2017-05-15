@@ -71,6 +71,9 @@ function init(state_init = {}) {
     STATE.pi = parse_txt_mat(GRAPH.result.pi_mat);
 
     STATE.nodes_meta = GRAPH.result.nodes_meta ? JSON.parse(GRAPH.result.nodes_meta) : {};
+    if (!STATE.nodes_meta) {
+      STATE.nodes_meta = {}
+    }
 
     _add_clusters(graph, X, nodeToCluster);
   } else {
