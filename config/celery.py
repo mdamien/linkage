@@ -83,6 +83,8 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
 def retrieve_graph_data(graph_pk, method, **params):
     from core import third_party_import, models
 
+    ignore_self_loop = params.pop('ignore_self_loop', True)
+
     exception_triggered = None
     try:
         links = getattr(third_party_import, method)(**params)
@@ -111,7 +113,7 @@ def retrieve_graph_data(graph_pk, method, **params):
         if exception_triggered:
             raise exception_triggered
         return
-    import_graph_data(graph_pk, links, ignore_self_loop=params.get('ignore_self_loop', True))
+    import_graph_data(graph_pk, links, ignore_self_loop=ignore_self_loop)
 
 
 @task()

@@ -121,7 +121,8 @@ def index(request):
                         return papers_import(
                             name,
                             'loklak_to_csv',
-                            q=q, limit=limit
+                            q=q, limit=limit,
+                            ignore_self_loop=False,
                         )
                     else:
                         # TODO capture exception inside celery job
@@ -225,7 +226,7 @@ def index(request):
 def result(request, pk):
     graph = get_object_or_404(models.Graph, pk=pk)
     if not graph.public and (request.user.is_anonymous or request.user.pk != graph.user.pk):
-        raise permissiondenied
+        raise PermissionDenied
     result = None
     try:
         result = models.ProcessingResult.objects \

@@ -1,4 +1,4 @@
-import random, collections, csv, json, io, sys, os
+import random, collections, csv, json, io, sys, os, datetime
 
 from django.middleware.csrf import get_token
 from django.contrib.humanize.templatetags.humanize import naturaltime
@@ -8,6 +8,7 @@ from django.contrib.messages import get_messages
 from django.urls import reverse
 
 import mistune
+import natural.date
 from lys import L, raw
 
 from .base import base
@@ -18,6 +19,7 @@ COMMIT_HASH = settings.COMMIT_HASH
 
 SPACER = raw('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;') # dat spacer
 SHORT_SPACER = raw('&nbsp;&nbsp;')
+
 
 def icon(name):
     return L.span('.glyphicon.glyphicon-' + name)
@@ -142,7 +144,8 @@ def serialize_graph(graph, result, simple=False, scores=None):
         'created_at': naturaltime(graph.created_at),
         'url': graph.get_absolute_url(),
         'log': graph.job_log,
-        'time': graph.job_time,
+        'time_t': graph.job_time,
+        'time': natural.date.compress(graph.job_time * 100),
         'progress': graph.job_progress,
         'cluster_to_cluster_cutoff': graph.cluster_to_cluster_cutoff,
         'job_param_clusters': graph.job_param_clusters,
@@ -214,24 +217,24 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
             header(request, 'addjob'),
             L.div('.row') / (
                 L.div('.col-md-12') / (
-                    L.h4 / 'Import',
+                    L.h4 / 'Import from',
                 ),
             ),
             L.div('.row') / (
                 L.div('.col-md-3') / (
                     L.div('.list-group') / (
                         L.a('.list-group-item' + ('.active' if import_type_selected == 'coauth' else ''),
-                            href='?import_type=coauth') / 'Co-authorship network',
-                        L.a('.list-group-item' + ('.active' if import_type_selected == 'mbox' else ''),
-                            href='?import_type=mbox') / 'MBox',
-                        L.a('.list-group-item' + ('.active' if import_type_selected == 'twitter' else ''),
-                            href='?import_type=twitter') / 'Twitter',
-                        L.a('.list-group-item' + ('.active' if import_type_selected == 'csv' else ''),
-                            href='?import_type=csv') / 'CSV',
-                        L.a('.list-group-item' + ('.active' if import_type_selected == 'sample' else ''),
-                            href='?import_type=sample') / 'Sample',
+                            href='?import_type=coauth') / 'Papers co-authorship network',
                         (L.a('.list-group-item' + ('.active' if import_type_selected == 'gmail' else ''),
                             href='?import_type=gmail') / 'GMail') if request.user.is_staff else None,
+                        L.a('.list-group-item' + ('.active' if import_type_selected == 'mbox' else ''),
+                            href='?import_type=mbox') / 'MBox file',
+                        L.a('.list-group-item' + ('.active' if import_type_selected == 'twitter' else ''),
+                            href='?import_type=twitter') / 'Twitter search',
+                        L.a('.list-group-item' + ('.active' if import_type_selected == 'csv' else ''),
+                            href='?import_type=csv') / 'Your own network (CSV)',
+                        L.a('.list-group-item' + ('.active' if import_type_selected == 'sample' else ''),
+                            href='?import_type=sample') / 'Demonstration dataset',
                         (L.a('.list-group-item' + ('.active' if import_type_selected == 'prev_job' else ''),
                             href='?import_type=prev_job') / 'Existing job') if user_jobs else None,
                     ),
@@ -656,7 +659,7 @@ Linkage allows you to cluster the nodes of networks with textual edges while ide
                         'The statistical method behind the platform',
                     ),
                     L.p / (
-                        """Linkage is based on advanced statistical clustering methods for networks with textual edges. The methodology implemented is partly related to an article published in the journal « Statistics and Computing ». The reference to cite in case of academic use of the platform is """,
+                        """The methodology implemented is partly related to an article published in the journal « Statistics and Computing ». The reference to cite in case of academic use of the platform is """,
                         L.a(href='https://arxiv.org/abs/1610.02427v2') / """« C. Bouveyron, P. Latouche and R. Zreik, The Stochastic Topic Block Model for the Clustering of Networks with Textual Edges, Statistics and Computing, in press, 2017. DOI: 10.1007/s11222-016-9713-7 ».""",
                     )
                 ),

@@ -26,7 +26,6 @@ class Job extends React.Component {
       });
     }
     render() {
-
       if (this.state.deleted) {
         return <div></div>;
       }
@@ -47,8 +46,8 @@ class Job extends React.Component {
                 }
               </div>
               <div>Created: {job.created_at}</div>
-              {finished ?
-                <div>Took <strong>{(job.time*100).toFixed(2)}s</strong></div> :
+              {finished && job.time_t > 0 ?
+                <div>Took <strong>{job.time}</strong></div> :
                 null // <div>Est. time to process: <strong>3h30</strong> (~<strong>1h05</strong> left)</div>
               }
             </div>

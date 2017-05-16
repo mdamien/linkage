@@ -54,6 +54,7 @@ class Command(BaseCommand):
                 rho_mat=rho,
                 pi_mat=pi,
                 theta_qr_mat=theta_qr,
+                crit=1,
             )
 
             print('graph', graph)

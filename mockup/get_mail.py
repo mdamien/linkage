@@ -3,13 +3,16 @@ from email.utils import getaddresses
 
 # TODO: batch email requests
 
-access_token = 'ya29.GltIBLbYoOPgOKo-wVFUQZpwkge_2er2BDqt_5a9geenerZ4hrLjtlZ0BLjRVTtAOrAMsZzrqZr65lNWcbVyeQHY9TW2iNFuL-ASsi5PaY585kyMuUHFIGgG-uDr'
-params = {'access_token': access_token} #, 'maxResults': 2}
+access_token = 'ya29.GltIBL6bomcLGNI7ziB0gnvAPL27CQv5eVgvoNtQbHcVya9BRhCSTcpzoTCono053zlKlYqtpl0-aiwFuYB34FBSfpxcAHqYkUeqcgMoxzPBKUFuJvFJSY1v8yWg'
+params = {} #, 'maxResults': 2}
 
 while True:
     response = requests.get(
         'https://www.googleapis.com/gmail/v1/users/me/messages/',
-        params=params
+        params=params,
+        headers={
+            'Authorization': 'Bearer ' + access_token,
+        }
     )
     resp_json = response.json()
     if 'messages' not in resp_json:
