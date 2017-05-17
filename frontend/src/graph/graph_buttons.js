@@ -14,7 +14,7 @@ function render(params) {
     &nbsp;
     <button href="#" className="btn btn-primary btn-xs" onClick={() => params.collapse_clusters()}>collapse clusters</button>
     &nbsp;
-    <button href="#" className="btn btn-primary btn-xs" onClick={() => params.fit_graph()}>fit graph</button>
+    <button href="#" className="btn btn-primary btn-xs" onClick={() => params.fit_graph()}>fit graph to view</button>
   </div>;
 
   ReactDOM.render(buttons, document.getElementById('_graph-buttons'));

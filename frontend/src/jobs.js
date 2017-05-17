@@ -5,6 +5,22 @@ import ReactDOM from 'react-dom';
 
 const Icon = props => <span className={'glyphicon glyphicon-' + props.name}></span>;
 
+
+class DemoJob extends React.Component {
+    constructor(props) {
+      super(props);
+    }
+    render() {
+      var job = this.props.job;
+      return <div>
+        <div className='panel panel-default' ref='job'>
+          <div className='panel-heading'><a href={job.url} style={{color: 'inherit'}}>{job.name}</a></div>
+        </div>
+      </div>
+    }
+};
+
+
 class Job extends React.Component {
     constructor(props) {
       super(props);
@@ -31,16 +47,6 @@ class Job extends React.Component {
       }
       var job = this.props.job;
       var finished = job.progress == 1 || job.job_error_log !== '';
-
-      if (job.public) {
-        return <div>
-          {this.props.first_public ? <hr/> : null}
-          {this.props.first_public ? <h4>Public jobs you can explore</h4> : null}
-          <div className='panel panel-default' ref='job'>
-            <div className='panel-heading'><a href={job.url} style={{color: 'inherit'}}>{job.name}</a></div>
-          </div>
-        </div>
-      }
 
       return <div className='panel panel-default' ref='job'>
         <div className='panel-heading'>{job.name}</div>
@@ -108,15 +114,20 @@ class Job extends React.Component {
 
 
 function render() {
-  if (JOBS.length == 0) return;
-  var first_public_job_found = -1;
-  var jobs = JOBS.map((job, i) => {
-    if (job.public && first_public_job_found === -1) {
-      first_public_job_found = i;
-    }
-    return <Job job={job} key={i} first_public={i === first_public_job_found} />;
+  if (JOBS.user.length == 0) return;
+  var jobs = JOBS.user.map((job, i) => {
+    return <Job job={job} key={i} />;
   });
   ReactDOM.render(<div>{jobs}</div>, document.getElementById('_jobs'));
+};
+
+
+function render_demo() {
+  if (JOBS.demo.length == 0) return;
+  var jobs = JOBS.demo.map((job, i) => {
+    return <DemoJob job={job} key={i} />;
+  });
+  ReactDOM.render(<div>{jobs}</div>, document.getElementById('_jobs_demo'));
 };
 
 
@@ -137,3 +148,6 @@ socket.onmessage = function(e) {
 if (socket.readyState == WebSocket.OPEN) socket.onopen();
 
 render();
+render_demo();
+
+$('.hide_while_loading').show();

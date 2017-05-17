@@ -64,7 +64,7 @@ function render(params) {
       })}>&times;</button>
       {params.is_cluster ? <div>
         {ColorSquare(get_color(params.title, 'Paired'), params.cluster_label)}
-        <button
+        {USER_ID == GRAPH.user ? <button
           title='Edit cluster label'
           className='btn btn-xs btn-default btn-warning btn-toolbar'
           onClick={() => {
@@ -73,7 +73,7 @@ function render(params) {
             render(null);
           }}>
           <Icon name='pencil'/>
-        </button>
+        </button> : null}
       </div> : params.title}
       {params.cluster !== undefined ? <p> - {ColorSquare(get_color(params.cluster, 'Paired'))} {params.cluster}</p> : null}
       {params.words && params.words.length > 0 ? <div>

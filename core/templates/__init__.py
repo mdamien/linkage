@@ -135,6 +135,7 @@ def top_nodes_per_clusters(graph, result):
 def serialize_graph(graph, result, simple=False, scores=None):
     data = {
         'id': graph.pk,
+        'user': graph.user.pk,
         'name': graph.name,
         'labels': graph.labels,
         'edges': graph.edges,
@@ -198,6 +199,7 @@ def result(request, graph, result, scores):
             FOOTER,
         ),
         JS_LIBS,
+        L.script / raw("var USER_ID = %d;" % (request.user.pk,)),
         L.script(src='/static/js/vendor/vivagraph.js'),
         L.script(src='/static/js/vendor/papaparse.js'),
         L.script / raw("var GRAPH = {};".format(json.dumps(serialize_graph(graph, result, scores=scores)))),
@@ -742,7 +744,7 @@ def terms(request):
     ))
 
 
-def jobs(request, graphs):
+def jobs(request, graphs, demo_graphs):
     return base((
         L.div('.container') / (
             header(request, 'jobs'),
@@ -755,20 +757,29 @@ def jobs(request, graphs):
                     L.div('.alert.alert-warning') / 'No jobs yet'
                 ),
             ),
+            L.div('.row') / (
+                L.div('.col-md-12.hide_while_loading.hide') / (
+                    L.hr,
+                    L.h4 / 'Public jobs you can explore',
+                    L.div('#_jobs_demo'),
+                )
+            ) if len(demo_graphs) > 0 else None,
             FOOTER
         ),
         JS_LIBS,
         L.script / raw("var USER_ID = %d;" % (request.user.pk,)),
         L.script / raw("var JOBS = {};".format(json.dumps(
-            [serialize_graph(g, None, simple=True) for g in graphs]
+            api_jobs(graphs, demo_graphs),
         ))),
         L.script(src='/static/js/dist/vendor.js?v=' + COMMIT_HASH),
         L.script(src='/static/js/dist/jobs.js?v=' + COMMIT_HASH),
     ))
 
-def api_jobs(graphs):
-    return [serialize_graph(g, None, simple=True) for g in graphs]
-
+def api_jobs(graphs, demo_graphs):
+    return {
+        'user': [serialize_graph(g, None, simple=True) for g in graphs],
+        'demo': [serialize_graph(g, None, simple=True) for g in demo_graphs],
+    }
 
 
 def tpl_article(request, article):

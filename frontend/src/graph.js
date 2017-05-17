@@ -185,7 +185,7 @@ function fit_graph() {
   var g = $('#_graph svg')[0];
   var screenSize = Math.min(g.clientWidth, g.clientHeight);
   var desiredScale = screenSize / graphSize;
-  RENDERER._experimental_scale(desiredScale / 2);
+  RENDERER._experimental_scale(desiredScale / 5);
   RENDERER.moveTo((graphRect.x2 + graphRect.x1)/2, (graphRect.y2 + graphRect.y1)/2);
 }
 

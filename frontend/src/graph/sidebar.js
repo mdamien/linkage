@@ -107,7 +107,7 @@ class TopicWords extends React.Component {
             <p>
               {ColorSquare(get_color(i), label)}
               {' '}
-              <a
+              {USER_ID == GRAPH.user ? <a
                 title='Edit topic label'
                 className='btn btn-warning btn-xs'
                 onClick={() => {
@@ -115,7 +115,7 @@ class TopicWords extends React.Component {
                   update_topic_name(i, name);
                 }}>
                 <Icon name='pencil'/>
-              </a>
+              </a> : null}
             </p>
             ex: {best5.map((t, i) => {
                 return <span key={i}>
@@ -163,7 +163,7 @@ class ClusterNodes extends React.Component {
             <p>
               {ColorSquare(get_color(i, 'Paired'), label ? (label + ' (' + size + ')') : size)}
               {' '}
-              <a
+              {USER_ID == GRAPH.user ? <a
                 title='Edit cluster label'
                 className='btn btn-warning btn-xs'
                 onClick={() => {
@@ -171,7 +171,7 @@ class ClusterNodes extends React.Component {
                   update_label(i, name);
                 }}>
                 <Icon name='pencil'/>
-              </a>
+              </a> : null}
             </p>
             <p style={{marginTop: 10}}>
                 <a className='btn btn-warning btn-xs' onClick={this.toggleShow}>

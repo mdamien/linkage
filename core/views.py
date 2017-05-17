@@ -285,15 +285,19 @@ def jobs(request):
         graph = get_object_or_404(models.Graph, pk=request.POST['graph_id'])
         graph.delete()
 
-    jobs = models.Graph.objects.filter(Q(user=request.user) | Q(public=True)) \
-        .order_by('public', '-created_at')
+    jobs = models.Graph.objects.filter(user=request.user) \
+        .order_by('-created_at')
+
+    demo_jobs = models.Graph.objects.filter(public=True) \
+        .order_by('-created_at')
 
     if request.GET.get('as_json'):
-        return JsonResponse(templates.api_jobs(jobs), safe=False) # TODO: review safe=False
+        return JsonResponse(templates.api_jobs(jobs, demo_jobs), safe=False) # TODO: review safe=False
 
     return HttpResponse(templates.jobs(
         request,
         jobs,
+        demo_jobs,
     ))
 
 def addjob(request):
