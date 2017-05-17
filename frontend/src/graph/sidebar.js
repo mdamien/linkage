@@ -305,7 +305,7 @@ class Sidebar extends React.Component {
                   </a>
               </li>
             </ul> : null}
-            <br/>
+            {!GRAPH.magic_too_big_to_display_X ? <br/> : null}
             {this.state.tab == 'clustering' ?
               <div>
               {!state.meta_mode ? <SearchBar choices={state.labels}

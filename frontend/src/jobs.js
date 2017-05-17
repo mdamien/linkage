@@ -31,6 +31,17 @@ class Job extends React.Component {
       }
       var job = this.props.job;
       var finished = job.progress == 1 || job.job_error_log !== '';
+
+      if (job.public) {
+        return <div>
+          {this.props.first_public ? <hr/> : null}
+          {this.props.first_public ? <h4>Public jobs you can explore</h4> : null}
+          <div className='panel panel-default' ref='job'>
+            <div className='panel-heading'><a href={job.url} style={{color: 'inherit'}}>{job.name}</a></div>
+          </div>
+        </div>
+      }
+
       return <div className='panel panel-default' ref='job'>
         <div className='panel-heading'>{job.name}</div>
         <div className='panel-body'>
@@ -98,8 +109,12 @@ class Job extends React.Component {
 
 function render() {
   if (JOBS.length == 0) return;
+  var first_public_job_found = -1;
   var jobs = JOBS.map((job, i) => {
-    return <Job job={job} key={i} />;
+    if (job.public && first_public_job_found === -1) {
+      first_public_job_found = i;
+    }
+    return <Job job={job} key={i} first_public={i === first_public_job_found} />;
   });
   ReactDOM.render(<div>{jobs}</div>, document.getElementById('_jobs'));
 };

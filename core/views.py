@@ -14,6 +14,7 @@ from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.conf import settings
+from django.db.models import Q
 
 from raven.contrib.django.raven_compat.models import client
 import TwitterAPI
@@ -284,14 +285,15 @@ def jobs(request):
         graph = get_object_or_404(models.Graph, pk=request.POST['graph_id'])
         graph.delete()
 
-    jobs = models.Graph.objects.filter(user=request.user).order_by('-created_at')
+    jobs = models.Graph.objects.filter(Q(user=request.user) | Q(public=True)) \
+        .order_by('public', '-created_at')
 
     if request.GET.get('as_json'):
         return JsonResponse(templates.api_jobs(jobs), safe=False) # TODO: review safe=False
 
     return HttpResponse(templates.jobs(
         request,
-        models.Graph.objects.filter(user=request.user).order_by('-created_at'),
+        jobs,
     ))
 
 def addjob(request):

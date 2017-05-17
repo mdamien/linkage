@@ -139,6 +139,7 @@ def serialize_graph(graph, result, simple=False, scores=None):
         'labels': graph.labels,
         'edges': graph.edges,
         'tdm': graph.tdm,
+        'public': graph.public,
         'dictionnary': graph.dictionnary,
         'directed': graph.directed,
         'created_at': naturaltime(graph.created_at),
