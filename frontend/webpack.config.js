@@ -38,6 +38,7 @@ module.exports = function(env) {
     entry: {
       graph: './src/graph.js',
       jobs: './src/jobs.js',
+      import: './src/import.js',
       vendor: ['react', 'react-dom', 'rc-slider', 'react-autocomplete'],
     },
     output: {

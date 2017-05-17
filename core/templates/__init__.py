@@ -405,26 +405,10 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                             ),
                         ),
                         L.div('.form-group._clustering-options.hide') / (
-                            L.div('.col-md-3.control-label') / (L.strong / 'Clusters'),
-                            L.div('.col-md-1.control-label') / 'min',
-                            L.div('.col-md-2') / (
-                                L.input('.form-control', name='clusters_min', value='2', type='number'),
-                            ),
-                            L.div('.col-md-1.control-label') / 'max',
-                            L.div('.col-md-2') / (
-                                L.input('.form-control', name='clusters_max', value='10', type='number'),
-                            ),
+                            L.div('#_slider_clusters'),
                         ),
                         L.div('.form-group._clustering-options.hide') / (
-                            L.div('.col-md-3.control-label') / (L.strong / 'Topics'),
-                            L.div('.col-md-1.control-label') / 'min',
-                            L.div('.col-md-2') / (
-                                L.input('.form-control', name='topics_min', value='2', type='number'),
-                            ),
-                            L.div('.col-md-1.control-label') / 'max',
-                            L.div('.col-md-2') / (
-                                L.input('.form-control', name='topics_max', value='10', type='number'),
-                            ),
+                            L.div('#_slider_topics'),
                         ),
                     ) if not quota_exceeded else None,
                 ),
@@ -432,7 +416,8 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
             FOOTER
         ),
         JS_LIBS,
-        L.script(src='/static/js/import.js?v=' + COMMIT_HASH),
+        L.script(src='/static/js/dist/vendor.js?v=' + COMMIT_HASH),
+        L.script(src='/static/js/dist/import.js?v=' + COMMIT_HASH),
     ))
 
 def _very_basic_captcha():
