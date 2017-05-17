@@ -50,7 +50,7 @@ def header(request, page_name=''):
             ) if request.user.is_staff else None,
             L.a('.btn.btn-link', href='/accounts/logout/', style='margin-top: 20px;display:inline-block') / 'logout',
         ) if request.user.is_authenticated else None,
-    ), L.hr
+    ), L.hr(style='margin-top:5px;margin-bottom:15px')
 
 FOOTER = (
     L.div('.row') / (
