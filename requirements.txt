@@ -20,5 +20,4 @@ django-cors-headers
 https://github.com/skorokithakis/django-loginas/archive/master.zip
 psycopg2
 mistune
-timeago
-
+natural
