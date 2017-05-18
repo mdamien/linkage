@@ -241,10 +241,11 @@ def export_to_zip(graph, results):
             writer.writerow(row)
         z.writestr(prefix + 'clusters.csv', output.getvalue())
 
-        # nodes_clusters
+        # nodes_with_clusters
         output = io.StringIO()
         writer = csv.writer(output)
         nodes_done = set()
+        writer.writerow(['id', 'cluster'])
         for line in csv.reader(graph.edges.split('\n'), delimiter=' '):
             if len(line) == 3:
                 source, target, val = line
@@ -255,6 +256,31 @@ def export_to_zip(graph, results):
                         writer.writerow([labels[int(node)], clusters[int(node)]])
                         nodes_done.add(node)
         z.writestr(prefix + 'nodes_with_clusters.csv', output.getvalue())
+
+        # edges_with_topics
+        output = io.StringIO()
+        writer = csv.writer(output)
+
+        topics = result.topics_per_edges_mat.split('\n')
+        topics = [[v for v in topic.split(' ') if v] for topic in topics if topic]
+
+        edge_i = 0
+        writer.writerow(['source', 'target', 'topic', 'weigth'])
+        for line in csv.reader(graph.edges.split('\n'), delimiter=' '):
+            if len(line) == 3:
+                source, target, val = line
+                if val == '0':
+                    continue
+                best_topic = None
+                best_topic_value = None
+                for i, topic in enumerate(topics):
+                    if best_topic is None or topic[edge_i] > best_topic_value:
+                        best_topic = i
+                        best_topic_value = topic[edge_i]
+                weigth = 2 if clusters[int(source)] == clusters[int(target)] else 1
+                writer.writerow([labels[int(source)], labels[int(target)], best_topic])
+                edge_i += 1
+        z.writestr(prefix + 'edges_with_topics.csv', output.getvalue())
 
         # topics.csv
         output = io.StringIO()
