@@ -27,6 +27,8 @@ class Command(BaseCommand):
                     pi = open(os.path.join(folder, file)).read()
                 if 'X' in file:
                     X = open(os.path.join(folder, file)).read()
+                if 'phi_sum' in file:
+                    phi_sum = open(os.path.join(folder, file)).read()
 
             dictionnary = ' '.join([x[0] for x in csv.reader(open(os.path.join(folder, 'dic.csv'))) ])
             labels = ' '.join([x[0] for x in csv.reader(open(os.path.join(folder, 'labels.csv'))) ])
@@ -50,7 +52,7 @@ class Command(BaseCommand):
                 graph=graph,
                 clusters_mat=clusters,
                 topics_mat=beta,
-                topics_per_edges_mat='0 0 1',
+                topics_per_edges_mat=phi_sum,
                 rho_mat=rho,
                 pi_mat=pi,
                 theta_qr_mat=theta_qr,
