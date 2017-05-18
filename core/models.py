@@ -1,3 +1,5 @@
+import json
+
 from django.db import models
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.urls import reverse
@@ -222,6 +224,8 @@ def export_to_zip(graph, results):
     for i, result in enumerate(results):
         prefix = 'k%d_q%d/' % (result.param_topics, result.param_clusters)
         
+        meta = json.loads(result.nodes_meta) if result.nodes_meta else {}
+
         # clusters.csv
         output = io.StringIO()
         writer = csv.writer(output)
@@ -241,6 +245,9 @@ def export_to_zip(graph, results):
             writer.writerow(row)
         z.writestr(prefix + 'clusters.csv', output.getvalue())
 
+        def cluster_name(cluster):
+            return meta.get('c-'+str(cluster),{}).get('label', cluster)
+
         # nodes_with_clusters
         output = io.StringIO()
         writer = csv.writer(output)
@@ -253,9 +260,12 @@ def export_to_zip(graph, results):
                     continue
                 for node in (source, target):
                     if node not in nodes_done:
-                        writer.writerow([labels[int(node)], clusters[int(node)]])
+                        writer.writerow([labels[int(node)], cluster_name(clusters[int(node)])])
                         nodes_done.add(node)
         z.writestr(prefix + 'nodes_with_clusters.csv', output.getvalue())
+
+        def topic_name(topic):
+            return meta.get('t-'+str(topic),{}).get('label', topic)
 
         # edges_with_topics
         output = io.StringIO()
@@ -279,7 +289,7 @@ def export_to_zip(graph, results):
                             best_topic = i
                             best_topic_value = topic[edge_i]
                 weigth = 2 if clusters[int(source)] == clusters[int(target)] else 1
-                writer.writerow([labels[int(source)], labels[int(target)], best_topic, weigth])
+                writer.writerow([labels[int(source)], labels[int(target)], topic_name(best_topic), weigth])
                 edge_i += 1
         z.writestr(prefix + 'edges_with_topics.csv', output.getvalue())
 
