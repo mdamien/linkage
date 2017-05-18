@@ -241,6 +241,21 @@ def export_to_zip(graph, results):
             writer.writerow(row)
         z.writestr(prefix + 'clusters.csv', output.getvalue())
 
+        # nodes_clusters
+        output = io.StringIO()
+        writer = csv.writer(output)
+        nodes_done = set()
+        for line in csv.reader(graph.edges.split('\n'), delimiter=' '):
+            if len(line) == 3:
+                source, target, val = line
+                if val == '0':
+                    continue
+                for node in (source, target):
+                    if node not in nodes_done:
+                        writer.writerow([labels[int(node)], clusters[int(node)]])
+                        nodes_done.add(node)
+        z.writestr(prefix + 'nodes_with_clusters.csv', output.getvalue())
+
         # topics.csv
         output = io.StringIO()
         writer = csv.writer(output)
