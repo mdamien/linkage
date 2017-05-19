@@ -275,7 +275,7 @@ def export_to_zip(graph, results):
         topics = [[v for v in topic.split(' ') if v] for topic in topics if topic]
 
         edge_i = 0
-        writer.writerow(['source', 'target', 'topic', 'weigth'])
+        writer.writerow(['source', 'target', 'topic', 'weight'])
         for line in csv.reader(graph.edges.split('\n'), delimiter=' '):
             if len(line) == 3:
                 source, target, val = line
