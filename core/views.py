@@ -28,7 +28,7 @@ def index(request):
     from config.celery import import_graph_data, retrieve_graph_data
 
     user_jobs = models.Graph.objects.filter(user=request.user).order_by('-pk')
-    if not request.user.is_superuser and user_jobs.count() > MAX_JOBS_PER_USER:
+    if not request.user.is_staff and user_jobs.count() > MAX_JOBS_PER_USER:
         messages = [('danger', 'You are limited to %d jobs, please delete previous ones before importing a new one' % MAX_JOBS_PER_USER)]
         return HttpResponse(templates.index(
             request,

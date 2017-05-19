@@ -47,7 +47,7 @@ def header(request, page_name=''):
             L.span('.btn.btn-link.disabled', style='margin-top: 20px;display:inline-block') / request.user.username,
             (
                 L.a('.btn.btn-link', href='/admin/', style='margin-top: 20px;display:inline-block') / 'admin'
-            ) if request.user.is_staff else None,
+            ) if request.user.is_superuser else None,
             L.a('.btn.btn-link', href='/accounts/logout/', style='margin-top: 20px;display:inline-block') / 'logout',
         ) if request.user.is_authenticated else None,
     ), L.hr(style='margin-top:5px;margin-bottom:15px')
@@ -231,7 +231,7 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                         L.a('.list-group-item' + ('.active' if import_type_selected == 'coauth' else ''),
                             href='?import_type=coauth') / 'Papers co-authorship network',
                         (L.a('.list-group-item' + ('.active' if import_type_selected == 'gmail' else ''),
-                            href='?import_type=gmail') / 'GMail') if request.user.is_staff else None,
+                            href='?import_type=gmail') / 'GMail') if request.user.is_superuser else None,
                         L.a('.list-group-item' + ('.active' if import_type_selected == 'mbox' else ''),
                             href='?import_type=mbox') / 'MBox file',
                         L.a('.list-group-item' + ('.active' if import_type_selected == 'twitter' else ''),
