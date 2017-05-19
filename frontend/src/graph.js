@@ -403,6 +403,14 @@ function get_graph_graphics(graph, X, clusters) {
 
       // svgText.attr('visibility', 'hidden');
       $(ui).hover(function() {
+
+        // re-compute the cluster_label because it can change
+        if (STATE.nodes_meta && STATE.nodes_meta[node.id] && STATE.nodes_meta[node.id]['label']) {
+          cluster_label = STATE.nodes_meta[node.id]['label'];
+        } else {
+          cluster_label = '' + cluster_name;
+        }
+
         if (STATE.node_selected) {
           delete STATE.node_selected;
           RENDERER.rerender();
