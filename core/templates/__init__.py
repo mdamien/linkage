@@ -253,11 +253,11 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                             L.div('.row') / (
                                 L.div('.col-md-5') / L.input('.form-control', type='text', name='q', placeholder="'Deep Learning', 'Speech Synthesis', 'qubit', 'graphene',…"),
                                 L.div('.col-md-7') / (
-                                    L.input('.btn.btn-primary.btn-large', name='choice_arxiv', type='submit', value='search arXiv'),
+                                    L.input('.btn.btn-primary', name='choice_arxiv', type='submit', value='search arXiv'),
                                     SPACER,
-                                    L.input('.btn.btn-primary.btn-large', name='choice_hal', type='submit', value='search HAL'),
+                                    L.input('.btn.btn-primary', name='choice_hal', type='submit', value='search HAL'),
                                     SPACER,
-                                    L.input('.btn.btn-primary.btn-large', name='choice_pubmed', type='submit', value='search PubMed'),
+                                    L.input('.btn.btn-primary', name='choice_pubmed', type='submit', value='search PubMed'),
                                 )
                             ),
                             L.br,
@@ -276,7 +276,7 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                             L.div('.row') / (
                                 L.div('.col-md-5') / L.input('.form-control', type='text', name='q', placeholder="@spotify, #fakenews,..."),
                                 L.div('.col-md-7') / (
-                                    L.input('.btn.btn-primary.btn-large', name='choice_twitter', type='submit', value='search'),
+                                    L.input('.btn.btn-primary', name='choice_twitter', type='submit', value='search'),
                                 )
                             ),
                             L.br,
@@ -306,7 +306,7 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                             L.div('.row') / (
                                 L.div('.col-md-7') / L.input('form-control', type='file', name='csv_file'),
                                 L.div('.col-md-5') / (
-                                    L.input('.btn.btn-primary.btn-large',
+                                    L.input('.btn.btn-primary',
                                         data_balloon_pos="bottom",
                                         data_balloon="A list of edges formatted like this: 'node1,node2,text'",
                                         name='choice_csv', type='submit', value='Import .csv'),
@@ -321,7 +321,7 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                             L.div('.row') / (
                                 L.div('.col-md-7') / L.input('form-control', type='file', name='mbox_file'),
                                 L.div('.col-md-5') / (
-                                    L.input('.btn.btn-primary.btn-large', name='choice_mbox', type='submit', value='Import .mbox'),
+                                    L.input('.btn.btn-primary', name='choice_mbox', type='submit', value='Import .mbox'),
                                 )
                             ),
                             L.div('.form-group._mbox-options') / (
@@ -351,7 +351,7 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                                     )
                                 ),
                                 L.div('.col-md-5') / (
-                                    L.input('.btn.btn-primary.btn-large', name='choice_dropdown', type='submit', value='Import'),
+                                    L.input('.btn.btn-primary', name='choice_dropdown', type='submit', value='Import'),
                                 )
                             ),
                         ) if import_type_selected == 'sample' else None,
@@ -360,12 +360,14 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                                 L.div('.col-md-2') / (
                                 ),
                                 L.div('.col-md-5') / (
-                                    L.input('.btn.btn-primary.btn-large', name='choice_gmail', type='submit', value='Import from GMail')
-                                        if gmail_access_accepted
-                                        else (
-                                            L.a('.btn.btn-primary.btn-large', href=reverse('social:begin', args=['google-gmail']) + '?next=/jobs/add/?import_type=gmail') / 'Authorize Linkage to access your emails',
-                                            L.a('.btn.btn-primary.btn-small', href=reverse('social:disconnect', args=['google-gmail']) + '?next=/jobs/add/?import_type=gmail') / 'Disconnect your GMail account from Linkage',
-                                        )
+                                    (
+                                        L.input('.btn.btn-primary', name='choice_gmail', type='submit', value='Import from GMail'),
+                                        L.br,
+                                        L.br,
+                                        L.a('.btn.btn-primary.btn-sm', href=reverse('social:disconnect', args=['google-gmail']) + '?next=/jobs/add/?import_type=gmail') / 'Disconnect your GMail account from Linkage',
+                                    ) if gmail_access_accepted else (
+                                        L.a('.btn.btn-primary', href=reverse('social:begin', args=['google-gmail']) + '?next=/jobs/add/?import_type=gmail') / 'Authorize Linkage to access your emails',
+x                                   )
                                 )
                             ),
                             L.br,
@@ -390,7 +392,7 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                                     )
                                 ),
                                 L.div('.col-md-5') / (
-                                    L.input('.btn.btn-primary.btn-large', name='choice_prev_job', type='submit', value='Import'),
+                                    L.input('.btn.btn-primary', name='choice_prev_job', type='submit', value='Import'),
                                 ),
                             ),
                         ) if import_type_selected == 'prev_job' and user_jobs else None,
@@ -603,7 +605,7 @@ def landing(request):
 Linkage allows you to cluster the nodes of networks with textual edges while identifying topics which are used in communications. You can analyze with Linkage networks such as email networks or co-authorship networks. Linkage allows you to upload your own network data or to make requests on scientific databases (Arxiv, Pubmed, HAL).
 """
                     ),
-                    L.a('.btn.btn-primary.btn-large', href='/jobs/add/') / 'Try Linkage',
+                    L.a('.btn.btn-primary.btn-lg', href='/jobs/add/') / 'Try Linkage',
                     L.br, L.br, L.br
                 ),
             ),
