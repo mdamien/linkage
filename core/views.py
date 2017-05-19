@@ -16,6 +16,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.db.models import Q
 
+from social_django.utils import load_strategy
 from raven.contrib.django.raven_compat.models import client
 import TwitterAPI
 
@@ -185,8 +186,7 @@ def index(request):
                         dictionnary=prev_job.dictionnary)
             elif 'choice_gmail' in request.POST:
                 social = request.user.social_auth.get(provider='google-gmail')
-                access_token = social.extra_data['access_token']
-                #access_token = 'ya29.GltIBJMYv32MIzMvW0pTyQMmoHL1J-_iKSzSzKZHZ_lses1BpwzyoDPtvhVFCl87ButA0SnbRnk2ck3RtDIzTFAJfX4Wi-2tqW3o6Lr8Tl3MDHiGod6o5HD-mF1N'
+                access_token = social.get_access_token(load_strategy())
                 graph = make_graph('GMail import')
                 retrieve_graph_data.delay(graph.pk, 'gmail_to_csv',
                     access_token=access_token,

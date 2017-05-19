@@ -362,7 +362,10 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                                 L.div('.col-md-5') / (
                                     L.input('.btn.btn-primary.btn-large', name='choice_gmail', type='submit', value='Import from GMail')
                                         if gmail_access_accepted
-                                        else L.a('.btn.btn-primary.btn-large', href=reverse('social:begin', args=['google-gmail']) + '?next=/jobs/add/?import_type=gmail') / 'Authorize Linkage to access your emails',
+                                        else (
+                                            L.a('.btn.btn-primary.btn-large', href=reverse('social:begin', args=['google-gmail']) + '?next=/jobs/add/?import_type=gmail') / 'Authorize Linkage to access your emails',
+                                            L.a('.btn.btn-primary.btn-small', href=reverse('social:disconnect', args=['google-gmail']) + '?next=/jobs/add/?import_type=gmail') / 'Disconnect your GMail account from Linkage',
+                                        )
                                 )
                             ),
                             L.br,

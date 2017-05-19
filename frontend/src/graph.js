@@ -343,7 +343,7 @@ function get_graph_graphics(graph, X, clusters) {
       var is_cluster = node.data && node.data.isCluster;
       var cluster_name = is_cluster ? parseInt(node.id.split('-')[1]) : null;
       var cluster_label = null;
-      if (STATE.nodes_meta[node.id] && STATE.nodes_meta[node.id]['label']) {
+      if (STATE.nodes_meta && STATE.nodes_meta[node.id] && STATE.nodes_meta[node.id]['label']) {
         cluster_label = STATE.nodes_meta[node.id]['label'];
       } else {
         cluster_label = '' + cluster_name;
