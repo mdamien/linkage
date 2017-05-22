@@ -171,12 +171,13 @@ function init(state_init = {}) {
     fit_graph: fit_graph,
   });
 
-  var curr_tab = 'graph';
+  var curr_tab = 'matrix';
   var charts_rendered = false;
   var changeTab = (tab) => {
     curr_tab = tab;
     $('#_graph-panel').toggle(curr_tab === 'graph');
-    $('#_viz-panel').toggle(curr_tab !== 'graph');
+    $('#_viz-panel').toggle(curr_tab === 'viz');
+    $('#_matrix-viz-panel').toggle(curr_tab === 'matrix');
     if (curr_tab !== 'graph' && !charts_rendered) {
       renderChart(STATE);
       charts_rendered = true;
