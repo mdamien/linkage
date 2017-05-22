@@ -25,7 +25,7 @@ body { background: #eee }
 }
 
 .blog-article img {
-    box-shadow: 0 0 48px #8a8a8a;
+    box-shadow: 0 0 35px #cccccc;
     max-width: 50%;
     display: block;
     margin: auto;

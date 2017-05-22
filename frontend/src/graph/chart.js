@@ -78,7 +78,7 @@ function renderMatrix(STATE) {
   };
 
   Plotly.newPlot('_matrix-viz', data, layout);
-  $('#_matrix-viz').show();
+  $('#_matrix-viz-wrapper').show();
 };
 
 function render(state) {
