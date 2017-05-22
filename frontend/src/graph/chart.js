@@ -6,7 +6,7 @@ function renderBarPlot(state) {
   Object.keys(state.clusterToNodes).map(key => {
     var key = parseInt(key); // TODO: fix key being a string and remove those parseInt
     var meta = state.nodes_meta['c-' + key];
-    var label = meta && meta['label'] ? meta['label'] : ('cluster ' + key);
+    var label = meta && meta['label'] ? ('cluster ' + key + ' - ' + meta['label']) : ('cluster ' + key);
     bars.push({
       x: [label],
       y: [state.clusterToNodes[key].length],
@@ -78,11 +78,12 @@ function renderMatrix(STATE) {
   };
 
   Plotly.newPlot('_matrix-viz', data, layout);
+  $('#_matrix-viz').show();
 };
 
 function render(state) {
   renderBarPlot(state);
-  renderMatrix(state);
+  if (!GRAPH.magic_too_big_to_display_X) renderMatrix(state);
 };
 
 export default render;

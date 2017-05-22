@@ -6,11 +6,11 @@ function render(curr_tab, changeTab) {
     {
       title:'Graph',
       id: 'graph',
-    },
+    },/*
     {
       title: 'Adjacency Matrix',
       id: 'matrix',
-    },
+    },*/
     {
       title: 'Clustering infos',
       id: 'viz',

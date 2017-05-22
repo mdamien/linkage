@@ -171,7 +171,7 @@ function init(state_init = {}) {
     fit_graph: fit_graph,
   });
 
-  var curr_tab = 'matrix';
+  var curr_tab = 'graph';
   var charts_rendered = false;
   var changeTab = (tab) => {
     curr_tab = tab;
