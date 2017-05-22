@@ -158,6 +158,7 @@ class ClusterNodes extends React.Component {
     }
     render() {
         let {i, size, label, update_label} = this.props;
+        i = parseInt(i);
         let nodes = GRAPH.result.top_nodes[i];
         return <div className='list-group-item'>
             <p>

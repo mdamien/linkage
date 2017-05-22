@@ -188,13 +188,18 @@ def result(request, graph, result, scores):
                     L.div('#_sidebar'),
                 ),
                 L.div('.col-md-9') / (
-                    L.div('.panel.panel-default', style='position:relative') / (
+                    L.div('#_graph-tabs'),
+                    L.br,
+                    L.div('#_graph-panel.panel.panel-default', style='position:relative') / (
                         L.div('#_graph-sidebar'),
                         L.div('#_graph-buttons'),
                         L.div('.panel-body', style='padding:0') / (
                             L.h3('#_loading.text-center') / 'Loading…',
                             L.div('#_graph'),
                         ),
+                    ),
+                    L.div('#_viz-panel.panel.panel-default.hide', style='position:relative') / (
+                        L.div('#tester', style="width:600px;height:250px;"),
                     )
                 ),
             ),
@@ -204,6 +209,7 @@ def result(request, graph, result, scores):
         L.script / raw("var USER_ID = %d;" % (request.user.pk,)),
         L.script(src='/static/js/vendor/vivagraph.js'),
         L.script(src='/static/js/vendor/papaparse.js'),
+        L.script(src='/static/js/vendor/plotly-latest.min.js'),
         L.script / raw("var GRAPH = {};".format(json.dumps(serialize_graph(graph, result, scores=scores)))),
         L.script(src='/static/js/dist/vendor.js?v=' + COMMIT_HASH),
         L.script(src='/static/js/dist/graph.js?v=' + COMMIT_HASH),

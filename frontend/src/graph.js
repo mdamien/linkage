@@ -1,8 +1,10 @@
 import './graph/csrf.js';
 
 import renderSidebar from './graph/sidebar';
+import renderGraphTabs from './graph/tabs';
 import renderGraphSidebar from './graph/info';
 import renderGraphButtons from './graph/graph_buttons';
+import renderChart from './graph/chart';
 
 import { get_color, hashedColor, COLORS, edgesArr, n_best_elems } from './graph/utils';
 import tfidf from './graph/tf_idf';
@@ -168,6 +170,20 @@ function init(state_init = {}) {
     graph_layout_running: STATE.graph_layout_running,
     fit_graph: fit_graph,
   });
+
+  var curr_tab = 'graph';
+  var charts_rendered = false;
+  var changeTab = (tab) => {
+    curr_tab = tab;
+    $('#_graph-panel').toggle(curr_tab === 'graph');
+    $('#_viz-panel').toggle(curr_tab !== 'graph');
+    if (curr_tab !== 'graph' && !charts_rendered) {
+      renderChart(STATE);
+      charts_rendered = true;
+    }
+    renderGraphTabs(curr_tab, changeTab);
+  };
+  changeTab(curr_tab);
 
   update_graph_height();
 }
@@ -404,7 +420,7 @@ function get_graph_graphics(graph, X, clusters) {
       // svgText.attr('visibility', 'hidden');
       $(ui).hover(function() {
 
-        // re-compute the cluster_label because it can change
+        // re-compute the cluster_label because it can chang
         if (STATE.nodes_meta && STATE.nodes_meta[node.id] && STATE.nodes_meta[node.id]['label']) {
           cluster_label = STATE.nodes_meta[node.id]['label'];
         } else {
