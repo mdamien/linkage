@@ -26,6 +26,7 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
     param_max_clusters = graph.job_param_clusters_max
     param_max_topics = graph.job_param_topics_max
 
+    n_repeat = 3
 
     Group("jobs-%d" % graph.user.pk).send({
         'text': '%d - STARTED' % graph.pk
@@ -36,7 +37,7 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
         kq_todo = (
             (param_max_clusters - param_clusters + 1)
                 * (param_max_topics - param_topics + 1)
-        )
+        ) * n_repeat
         graph.job_progress = kq_done / kq_todo
         graph.save()
         Group("jobs-%d" % graph.user.pk).send({
@@ -48,7 +49,7 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
         param_clusters, param_topics,
         result_pk if result_pk else random.randint(0, 10000),
         param_max_clusters, param_max_topics,
-        update=update)
+        update=update, n_repeat=n_repeat)
 
     graph.job_log = log
     graph.job_time = (time.time() - t) / 100
