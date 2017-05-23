@@ -84,7 +84,7 @@ def retrieve_graph_data(graph_pk, method, **params):
     from core import third_party_import, models
 
     ignore_self_loop = params.pop('ignore_self_loop', True)
-    params.pop('directed')
+    params.pop('directed', None)
 
     exception_triggered = None
     try:
