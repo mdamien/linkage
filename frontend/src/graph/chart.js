@@ -53,15 +53,19 @@ function renderMatrix(STATE) {
             topic_max = topic;
           }
         });
-        return topic_max;
+        return topic_max + 1;
       }
-      return null;
+      return 0;
     });
   });
 
   const n_topics = STATE.topicToTerms.length;
   var colorscale = STATE.topicToTerms.map((_, i) => {
-    return [i/(n_topics-1), get_color(i)];
+    if (i == 0) {
+      return 'whitesmoke';
+    }
+    var j = i - 1;
+    return [j/(n_topics), get_color(j)];
   });
 
   var data = [
