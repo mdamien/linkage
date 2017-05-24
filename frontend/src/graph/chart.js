@@ -40,6 +40,9 @@ function renderMatrix(STATE) {
   var z = STATE.labels.map((_, source) => {
     return STATE.labels.map((_, target) => {
       var link_id = STATE.edges.indexOf(source + ',' + target);
+      if (link_id === -1 && !GRAPH.directed) {
+        link_id = STATE.edges.indexOf(target + ',' + source);
+      }
       if (STATE.topics_per_edges && link_id !== -1) {
         var topic_max = -1;
         var topic_max_value = null;
@@ -69,6 +72,8 @@ function renderMatrix(STATE) {
       type: 'heatmap',
       colorscale,
       showscale: false,
+      xgap: 5,
+      ygap: 5,
     }
   ];
 

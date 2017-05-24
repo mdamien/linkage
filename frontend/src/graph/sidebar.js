@@ -395,7 +395,7 @@ class Sidebar extends React.Component {
                   <div className='panel-body'>
                       <Slider step={0.00001} defaultValue={this.state.cutoff}
                         min={0}
-                        max={0.005}
+                        max={0.02}
                         handle={handle}
                         onAfterChange={this.updateCutoff}/>
                       <br/>
