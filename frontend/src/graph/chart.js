@@ -36,7 +36,6 @@ function renderMatrix(STATE) {
 
   */
 
-
   var z = STATE.labels.map((_, source) => {
     return STATE.labels.map((_, target) => {
       var link_id = STATE.edges.indexOf(source + ',' + target);
@@ -81,6 +80,12 @@ function renderMatrix(STATE) {
   var layout = {
     title: 'Topics per edges',
     showlegend: false,
+    xaxis: {
+      type: 'category',
+    },
+    yaxis: {
+      type: 'category',
+    }
   };
 
   Plotly.newPlot('_matrix-viz', data, layout);
