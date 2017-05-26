@@ -18,7 +18,7 @@ function renderBarPlot(state) {
   });
 
   var layout = {
-    title: 'Clusters node count',
+    title: 'Nodes per cluster',
     showlegend: false,
   };
 
@@ -60,12 +60,9 @@ function renderMatrix(STATE) {
   });
 
   const n_topics = STATE.topicToTerms.length;
-  var colorscale = STATE.topicToTerms.map((_, i) => {
-    if (i == 0) {
-      return 'whitesmoke';
-    }
-    var j = i - 1;
-    return [j/(n_topics), get_color(j)];
+  var colorscale = [[0, '#eee']];
+  STATE.topicToTerms.forEach((_, i) => {
+    colorscale.push([(i+1)/(n_topics), get_color(i)]);
   });
 
   var data = [

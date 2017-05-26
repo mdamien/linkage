@@ -29,3 +29,8 @@ body { background: #eee }
     margin-top: 50px;
     margin-bottom: 50px;
 }
+
+/* sorry plotly but your logo is too bright */
+.modebar-btn.plotlyjsicon.modebar-btn--logo {
+    display: none;
+}
