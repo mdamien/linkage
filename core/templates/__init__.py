@@ -202,16 +202,22 @@ def result(request, graph, result, scores):
                     ),
                     L.div('#_viz-panel.panel.panel-default.hide', style='position:relative') / (
                         L.div('row.text-center') / (
-                            L.div('col-md-6') / (
+                            (L.div('col-md-6') / (
                                 L.h4 / 'Nodes per cluster',
                                 L.br,
                                 L.div('#_bar-plot', style="width:100%;height:400px;display: inline-block;"),
-                            ),
-                            L.div('col-md-6') / (
-                                L.h4 / 'Topics',
-                                L.br,
-                                L.div('#_topics-bar-plot', style="width:100%;height:400px;display: inline-block;"),
-                            ),
+                            )) if graph.magic_too_big_to_display_X else (
+                                L.div('col-md-6') / (
+                                    L.h4 / 'Nodes per cluster',
+                                    L.br,
+                                    L.div('#_bar-plot', style="width:100%;height:400px;display: inline-block;"),
+                                ),
+                                L.div('col-md-6') / (
+                                    L.h4 / 'Topics',
+                                    L.br,
+                                    L.div('#_topics-bar-plot', style="width:100%;height:400px;display: inline-block;"),
+                                ),
+                            )
                         ),
                         L.hr,
                         L.div('#_words-plot'),

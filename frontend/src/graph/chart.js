@@ -58,6 +58,7 @@ function renderTopicBarPlot(state) {
   };
 
   Plotly.newPlot('_topics-bar-plot', bars, layout);
+  $('#_topics-bar-wrapper').show();
 };
 
 function renderMatrix(STATE) {
@@ -169,9 +170,9 @@ function renderWordPlot(state) {
 
 function render(state) {
   renderBarPlot(state);
-  renderTopicBarPlot(state);
   renderWordPlot(state);
   if (!GRAPH.magic_too_big_to_display_X) renderMatrix(state);
+  if (!GRAPH.magic_too_big_to_display_X) renderTopicBarPlot(state);
 };
 
 export default render;
