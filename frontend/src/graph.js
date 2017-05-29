@@ -50,6 +50,7 @@ function init(state_init = {}) {
       clusterToNodes[cluster].push(node);      
     });
     STATE.clusterToNodes = clusterToNodes;
+    STATE.nodeToCluster = nodeToCluster;
 
     var topics = parse_txt_mat(GRAPH.result.topics_mat);
 

@@ -200,9 +200,12 @@ def result(request, graph, result, scores):
                     ),
                     L.div('#_matrix-viz-panel.panel.panel-default.hide.text-center', style='position:relative') / (
                     ),
-                    L.div('#_viz-panel.panel.panel-default.hide.text-center', style='position:relative') / (
-                        L.div('#_bar-plot', style="width:600px;height:400px;display: inline-block;"),
-                        L.div('#_matrix-viz-wrapper.hide') / L.div('#_matrix-viz', style="width:600px;height:600px;display: inline-block;"),
+                    L.div('#_viz-panel.panel.panel-default.hide', style='position:relative') / (
+                        L.div('.text-center') / L.div('#_bar-plot', style="width:600px;height:400px;display: inline-block;"),
+                        L.hr,
+                        L.div('#_words-plot'),
+                        L.hr,
+                        L.div('#_matrix-viz-wrapper.hide.text-center') / L.div('#_matrix-viz', style="width:600px;height:600px;display: inline-block;"),
                     )
                 ),
             ),

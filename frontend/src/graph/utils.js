@@ -78,21 +78,21 @@ var edgesArr = X => {
 }
 
 
-const n_best_elems = (arr, n, key=v => v) => {
+const n_best_elems = (arr, n, key=(v, i) => v) => {
     var keyed_arr = arr.map((v, i) => [i, v]);
     var result = keyed_arr.sort((a, b) => {
 
       // make null the smallest elem instead of just "0"
-      if (key(a[1]) === null) {
+      if (key(a[1], a[0]) === null) {
         return 1;
       }
-      if (key(b[1]) === null) {
+      if (key(b[1], b[0]) === null) {
         return -1;
       }
-      if (key(a[1]) < key(b[1])) {
+      if (key(a[1], a[0]) < key(b[1], b[0])) {
         return 1;
       }
-      if (key(a[1]) > key(b[1])) {
+      if (key(a[1], a[0]) > key(b[1], b[0])) {
         return -1;
       }
       return 0;
