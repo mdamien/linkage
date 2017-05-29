@@ -29,6 +29,37 @@ function renderBarPlot(state) {
   Plotly.newPlot('_bar-plot', bars, layout);
 };
 
+function renderTopicBarPlot(state) {
+  var all_sum = 0;
+  state.topics_per_edges.forEach((row, topic) => {
+    all_sum += row.reduce(function(a, b) { return a + b; }, 0);
+  });
+
+  var bars = [];
+  state.topics_per_edges.forEach((row, topic) => {
+    var sum = row.reduce(function(a, b) { return a + b; }, 0);
+    var meta = state.nodes_meta['t-' + topic];
+    var label = meta && meta['label'] ? ('topic ' + topic + ' - ' + meta['label']) : ('topic ' + topic);
+    bars.push({
+      x: [label],
+      y: [(sum / all_sum) * 100],
+      type: 'bar',
+      marker: {
+        color: get_color(topic),
+      }
+    })
+  });
+
+  var layout = {
+    showlegend: false,
+    yaxis: {
+      title: '%',
+    }
+  };
+
+  Plotly.newPlot('_topics-bar-plot', bars, layout);
+};
+
 function renderMatrix(STATE) {
   /*
     ..... nodes.....
@@ -138,6 +169,7 @@ function renderWordPlot(state) {
 
 function render(state) {
   renderBarPlot(state);
+  renderTopicBarPlot(state);
   renderWordPlot(state);
   if (!GRAPH.magic_too_big_to_display_X) renderMatrix(state);
 };
