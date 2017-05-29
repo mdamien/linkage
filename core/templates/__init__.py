@@ -201,10 +201,17 @@ def result(request, graph, result, scores):
                     L.div('#_matrix-viz-panel.panel.panel-default.hide.text-center', style='position:relative') / (
                     ),
                     L.div('#_viz-panel.panel.panel-default.hide', style='position:relative') / (
-                        L.div('.text-center') / (
-                            L.h4 / 'Nodes per cluster',
-                            L.br,
-                            L.div('#_bar-plot', style="width:600px;height:400px;display: inline-block;"),
+                        L.div('row.text-center') / (
+                            L.div('col-md-6') / (
+                                L.h4 / 'Nodes per cluster',
+                                L.br,
+                                L.div('#_bar-plot', style="width:100%;height:400px;display: inline-block;"),
+                            ),
+                            L.div('col-md-6') / (
+                                L.h4 / 'Topics',
+                                L.br,
+                                L.div('#_topics-bar-plot', style="width:100%;height:400px;display: inline-block;"),
+                            ),
                         ),
                         L.hr,
                         L.div('#_words-plot'),
@@ -607,6 +614,11 @@ def landing(request):
                     ) for message in get_messages(request)
                 ),
             ),
+            L.div('.row') / (
+                L.div('.col-md-12') / (
+                    L.div('#_graph-landing'),
+                ),
+            ),
             L.div('.row', style="""background-image: url('/static/img/landing_meta.png');background-size: cover;background-color: white;background-repeat: no-repeat;
                         border-top: 1px solid #eee;border-bottom: 1px solid #eee;""") / (
                 L.div('.col-md-12', style="float:none;color: black;font-size: 18px;") / (
@@ -701,7 +713,10 @@ Linkage allows you to cluster the nodes of networks with textual edges while ide
             ),
             FOOTER,
         ),
-        SENTRY,
+        JS_LIBS,
+        L.script(src='/static/js/vendor/vivagraph.js'),
+        L.script(src='/static/js/dist/vendor.js?v=' + COMMIT_HASH),
+        L.script(src='/static/js/dist/landing.js?v=' + COMMIT_HASH),
     ))
 
 
