@@ -23,7 +23,6 @@ function renderBarPlot(state) {
   });
 
   var layout = {
-    title: 'Nodes per cluster',
     showlegend: false,
   };
 
@@ -97,16 +96,15 @@ function renderMatrix(STATE) {
   ];
 
   var layout = {
-    title: 'Topics per edges',
     showlegend: false,
     xaxis: {
       type: 'category',
-      tickangle: 45,
+      tickangle: 30,
     },
     yaxis: {
       type: 'category',
-      tickangle: 45,
-    }
+      tickangle: 60,
+    },
   };
 
   Plotly.newPlot('_matrix-viz', data, layout);
