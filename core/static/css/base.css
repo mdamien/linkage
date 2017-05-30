@@ -1,6 +1,12 @@
 /* hack for bootstrap + vivagraph */
 #_graph > svg, #_loading { width: 100%; height: 700px }
-#_graph-landing > svg { width: 100%; height: 300px }
+#_graph-landing {
+    max-width: 500px;
+    height: 300px;
+    margin: auto;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
 #_loading { padding: 200px; color: #888 }
 /* hack for bootstrap + firefox + input[file] */
 .form-control {

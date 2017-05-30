@@ -625,26 +625,17 @@ def landing(request):
                     L.div('#_graph-landing'),
                 ),
             ),
-            L.div('.row', style="""background-image: url('/static/img/landing_meta.png');background-size: cover;background-color: white;background-repeat: no-repeat;
-                        border-top: 1px solid #eee;border-bottom: 1px solid #eee;""") / (
-                L.div('.col-md-12', style="float:none;color: black;font-size: 18px;") / (
-                    L.h2(style="""
-                            width: 70%;
-                            background: rgba(255, 255, 255, 0.68);
-                            padding: 7px 25px;
-                            padding-left: 0;
-                        """) / "Innovative and efficient cluster analysis of networks with textual edges",
-                    L.p(style="""
-                            width: 80%;
-                            background: rgba(255, 255, 255, 0.68);
-                            padding: 7px 25px;
-                            padding-left: 0;
-                        """) / ("""
+            L.div('.row') / (
+                L.div(style="margin: auto;max-width: 700px;font-size: 18px;") / (
+                    L.h2 / "Innovative and efficient cluster analysis of networks with textual edges",
+                    L.p / ("""
 Linkage allows you to cluster the nodes of networks with textual edges while identifying topics which are used in communications. You can analyze with Linkage networks such as email networks or co-authorship networks. Linkage allows you to upload your own network data or to make requests on scientific databases (Arxiv, Pubmed, HAL).
 """
                     ),
-                    L.a('.btn.btn-primary.btn-lg', href='/jobs/add/') / 'Try Linkage',
-                    L.br, L.br, L.br
+                    L.div('text-center') / (
+                        L.a('.btn.btn-primary.btn-lg', href='/jobs/add/') / 'Try Linkage',
+                    ),
+                    L.br,
                 ),
             ),
             L.hr,
@@ -720,7 +711,8 @@ Linkage allows you to cluster the nodes of networks with textual edges while ide
             FOOTER,
         ),
         JS_LIBS,
-        L.script(src='/static/js/vendor/vivagraph.js'),
+        L.script(src='/static/js/vendor/sigma.min.js'),
+        L.script(src='/static/js/vendor/sigma.plugins.animate.min.js'),
         L.script(src='/static/js/dist/vendor.js?v=' + COMMIT_HASH),
         L.script(src='/static/js/dist/landing.js?v=' + COMMIT_HASH),
     ))
