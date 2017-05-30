@@ -1,3 +1,4 @@
+import './landing/animate';
 
   // Sigma showcase in title:
   $.ajax({
@@ -20,6 +21,15 @@
         node.x = node.file_x = node.x;
         node.y = node.file_y = node.y;
         node.color = node.file_color = node.color;
+      });
+
+      graph.edges.forEach(function(edge, i) {
+        var c = edge.color.match(
+            /^ *rgba? *\( *([0-9]*) *, *([0-9]*) *, *([0-9]*) *(,.*)?\) *$/
+        );
+        var new_color = 'rgba(' + c[1] + ',' + c[2] + ',' + c[3] + ',0.2)';
+        edge.grid_color = '#ccc';
+        edge.file_color = new_color;
       });
 
       // Initialize sigma:
@@ -47,7 +57,11 @@
               color: prefix + 'color',
               x: prefix + 'x',
               y: prefix + 'y'
-            }
+            },
+            {
+              color: prefix + 'color',
+            },
+            {}
           );
         }
       }

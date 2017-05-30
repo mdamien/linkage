@@ -712,7 +712,6 @@ Linkage allows you to cluster the nodes of networks with textual edges while ide
         ),
         JS_LIBS,
         L.script(src='/static/js/vendor/sigma.min.js'),
-        L.script(src='/static/js/vendor/sigma.plugins.animate.min.js'),
         L.script(src='/static/js/dist/vendor.js?v=' + COMMIT_HASH),
         L.script(src='/static/js/dist/landing.js?v=' + COMMIT_HASH),
     ))
