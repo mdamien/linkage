@@ -285,9 +285,10 @@ def export_to_zip(graph, results):
                 best_topic_value = None
                 for i, topic in enumerate(topics):
                     if len(topic) > edge_i:
-                        if best_topic is None or topic[edge_i] > best_topic_value:
+                        val = float(topic[edge_i])
+                        if best_topic is None or val > best_topic_value:
                             best_topic = i
-                            best_topic_value = topic[edge_i]
+                            best_topic_value = val
                 weigth = 2 if clusters[int(source)] == clusters[int(target)] else 1
                 writer.writerow([labels[int(source)], labels[int(target)], topic_name(best_topic), weigth])
                 edge_i += 1
