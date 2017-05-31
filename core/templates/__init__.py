@@ -71,8 +71,6 @@ FOOTER = (
             ),
             L.br,
             L.div / (
-                L.a(href='/about/terms/') / 'Privacy Policy',
-                SPACER,
                 L.a(href='/about/terms/') / 'Terms and conditions',
             ),
             L.br,
@@ -763,17 +761,16 @@ def terms(request):
             L.div('.row') / (
                 L.div('.col-md-12') / (
                     L.h3 / 'Terms and conditions',
-                    L.p / (
-                        'Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet.'
-                    ),
-                    L.p / (
-                        'Lorem. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet.'
-                    ),
-                    L.p / (
-                        'Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet.'
-                    ),
-                    L.p / (
-                        'Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet. Lorem ipsum dolor asimet it fet.'
+                    L.ul / (
+                        L.li / (
+                            L.a(href='/static/doc/linkage-academic-terms.pdf') / 'For Academics',
+                        ),
+                        L.li / (
+                            L.a(href='/static/doc/linkage-individual-terms.pdf') / 'For Individuals',
+                        ),
+                        L.li / (
+                            L.a(href='/static/doc/linkage-private-terms.pdf') / 'For Private Partners',
+                        ),
                     ),
                 ),
             ),
