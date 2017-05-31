@@ -200,8 +200,9 @@ function fit_graph() {
   // https://github.com/anvaka/VivaGraphJS/blob/a5c5c92cdecd6964b0bb0c1cb0aaa63c30ffc9e4/demos/other/precompute-advanced.html#L62-L77
   var graphRect = RENDERER.layout.getGraphRect();
   var graphSize = Math.min(graphRect.x2 - graphRect.x1, graphRect.y2 - graphRect.y1);
-  var g = $('#_graph svg')[0];
-  var screenSize = Math.min(g.clientWidth, g.clientHeight);
+  var $g = $('#_graph svg');
+  var g = $g[0];
+  var screenSize = Math.min($g.width(), $g.height());
   var desiredScale = screenSize / graphSize;
   RENDERER._experimental_scale(desiredScale / 5);
   RENDERER.moveTo((graphRect.x2 + graphRect.x1)/2, (graphRect.y2 + graphRect.y1)/2);
