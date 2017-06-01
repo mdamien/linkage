@@ -41,3 +41,17 @@ body { background: #eee }
 .modebar-btn.plotlyjsicon.modebar-btn--logo {
     display: none;
 }
+
+.google-signin {
+    content: url("/static/img/btn_google_signin_dark_normal_web@2x.png");
+}
+
+.google-signin:hover {
+    content: url("/static/img/btn_google_signin_dark_pressed_web@2x.png");
+}
+
+/* preload google button pressed state */
+body::after{
+    position:absolute; width:0; height:0; overflow:hidden; z-index:-1;
+    content: url("/static/img/btn_google_signin_dark_pressed_web@2x.png");
+}
