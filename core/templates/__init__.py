@@ -54,7 +54,7 @@ def header(request, page_name=''):
 
 FOOTER = (
     L.div('.row') / (
-        L.div('.col-md-12 text-center') / (
+        L.div('.col-sm-12 text-center') / (
             L.div / (
                 L.hr,
                 L.a(href='http://www.parisdescartes.fr/') / L.img(src='/static/img/descartes.png', height='60'),
@@ -182,10 +182,10 @@ def result(request, graph, result, scores):
         L.div('.container-fluid') / (
             header(request),
             L.div('.row') / (
-                L.div('.col-md-3') / (
+                L.div('.col-sm-3') / (
                     L.div('#_sidebar'),
                 ),
-                L.div('.col-md-9') / (
+                L.div('.col-sm-9') / (
                     L.div('#_graph-tabs'),
                     L.br,
                     L.div('#_graph-panel.panel.panel-default', style='position:relative') / (
@@ -201,17 +201,17 @@ def result(request, graph, result, scores):
                     ),
                     L.div('#_viz-panel.panel.panel-default.hide', style='position:relative') / (
                         L.div('row.text-center') / (
-                            (L.div('col-md-6') / (
+                            (L.div('col-sm-6') / (
                                 L.h4 / 'Nodes per cluster',
                                 L.br,
                                 L.div('#_bar-plot', style="width:100%;height:400px;display: inline-block;"),
                             )) if graph.magic_too_big_to_display_X else (
-                                L.div('col-md-6') / (
+                                L.div('col-sm-6') / (
                                     L.h4 / 'Nodes per cluster',
                                     L.br,
                                     L.div('#_bar-plot', style="width:100%;height:400px;display: inline-block;"),
                                 ),
-                                L.div('col-md-6') / (
+                                L.div('col-sm-6') / (
                                     L.h4 / 'Topics',
                                     L.br,
                                     L.div('#_topics-bar-plot', style="width:100%;height:400px;display: inline-block;"),
@@ -247,12 +247,12 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
         L.div('.container') / (
             header(request, 'addjob'),
             L.div('.row') / (
-                L.div('.col-md-12') / (
+                L.div('.col-sm-12') / (
                     L.h4 / 'Import from',
                 ),
             ),
             L.div('.row') / (
-                L.div('.col-md-3') / (
+                L.div('.col-sm-3') / (
                     L.div('.list-group') / (
                         L.a('.list-group-item' + ('.active' if import_type_selected == 'coauth' else ''),
                             href='?import_type=coauth') / 'Papers co-authorship network',
@@ -270,15 +270,15 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                             href='?import_type=prev_job') / 'Existing job') if user_jobs else None,
                     ),
                 ),
-                L.div('.col-md-9') / (
+                L.div('.col-sm-9') / (
                     (L.div('.alert.alert-' + msgtype) / msg for msgtype, msg in messages),
                     L.form('.row.form-horizontal', method="post", enctype="multipart/form-data") / (
                         L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
                         L.input(type='hidden', name='action', value='import'),
                         (
                             L.div('.row') / (
-                                L.div('.col-md-5') / L.input('.form-control', type='text', name='q', placeholder="'Deep Learning', 'Speech Synthesis', 'qubit', 'graphene',…"),
-                                L.div('.col-md-7') / (
+                                L.div('.col-sm-5') / L.input('.form-control', type='text', name='q', placeholder="'Deep Learning', 'Speech Synthesis', 'qubit', 'graphene',…"),
+                                L.div('.col-sm-7') / (
                                     L.input('.btn.btn-primary', name='choice_arxiv', type='submit', value='search arXiv'),
                                     SPACER,
                                     L.input('.btn.btn-primary', name='choice_hal', type='submit', value='search HAL'),
@@ -288,27 +288,27 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                             ),
                             L.br,
                             L.div('.form-group') / (
-                                L.div('.col-md-3.control-label') / (
+                                L.div('.col-sm-3.control-label') / (
                                     L.strong / (
                                         L.abbr(title='The maximum number of papers to be retrieved') / 'Limit',
                                     ),
                                 ),
-                                L.div('.col-md-2') / (
+                                L.div('.col-sm-2') / (
                                     L.input('.form-control', name='limit', value='500', type='number'),
                                 ),
                             ),
                         ) if import_type_selected == 'coauth' else None,
                         (
                             L.div('.row') / (
-                                L.div('.col-md-5') / L.input('.form-control', type='text', name='q', placeholder="@spotify, #fakenews,..."),
-                                L.div('.col-md-7') / (
+                                L.div('.col-sm-5') / L.input('.form-control', type='text', name='q', placeholder="@spotify, #fakenews,..."),
+                                L.div('.col-sm-7') / (
                                     L.input('.btn.btn-primary', name='choice_twitter', type='submit', value='search'),
                                 )
                             ),
                             L.br,
                             L.div('.form-group._mbox-options') / (
-                                L.div('.col-md-3.control-label') / (' '),
-                                L.div('.col-md-9') / (
+                                L.div('.col-sm-3.control-label') / (' '),
+                                L.div('.col-sm-9') / (
                                     L.div('.checkbox') / (
                                         L.label / (
                                             L.input(name='use_loklak', type='checkbox'),
@@ -318,20 +318,20 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                                 ),
                             ),
                             L.div('.form-group') / (
-                                L.div('.col-md-3.control-label') / (
+                                L.div('.col-sm-3.control-label') / (
                                     L.strong / (
                                         L.abbr(title='The maximum number of tweet to be retrieved') / 'Limit',
                                     ),
                                 ),
-                                L.div('.col-md-2') / (
+                                L.div('.col-sm-2') / (
                                     L.input('.form-control', name='limit', value='500', type='number'),
                                 ),
                             ),
                         ) if import_type_selected == 'twitter' else None,
                         (
                             L.div('.row') / (
-                                L.div('.col-md-7') / L.input('form-control', type='file', name='csv_file'),
-                                L.div('.col-md-5') / (
+                                L.div('.col-sm-7') / L.input('form-control', type='file', name='csv_file'),
+                                L.div('.col-sm-5') / (
                                     L.input('.btn.btn-primary',
                                         data_balloon_pos="bottom",
                                         data_balloon="A list of edges formatted like this: 'node1,node2,text'",
@@ -345,14 +345,14 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                         ) if import_type_selected == 'csv' else None,
                         (
                             L.div('.row') / (
-                                L.div('.col-md-7') / L.input('form-control', type='file', name='mbox_file'),
-                                L.div('.col-md-5') / (
+                                L.div('.col-sm-7') / L.input('form-control', type='file', name='mbox_file'),
+                                L.div('.col-sm-5') / (
                                     L.input('.btn.btn-primary', name='choice_mbox', type='submit', value='Import .mbox'),
                                 )
                             ),
                             L.div('.form-group._mbox-options') / (
-                                L.div('.col-md-3.control-label') / (' '),
-                                L.div('.col-md-9') / (
+                                L.div('.col-sm-3.control-label') / (' '),
+                                L.div('.col-sm-9') / (
                                     L.div('.checkbox') / (
                                         L.label / (
                                             L.input(name='mbox_subject_only', checked='', type='checkbox'),
@@ -364,7 +364,7 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                         ) if import_type_selected == 'mbox' else None,
                         (
                             L.div('.row') / (
-                                L.div('.col-md-7') / (
+                                L.div('.col-sm-7') / (
                                     L.select('.form-control', name='sample_dropdown') / (
                                         (
                                             L.option(value=filename) / (
@@ -376,16 +376,16 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                                         ) for filename in sorted(os.listdir('csv_samples/'))
                                     )
                                 ),
-                                L.div('.col-md-5') / (
+                                L.div('.col-sm-5') / (
                                     L.input('.btn.btn-primary', name='choice_dropdown', type='submit', value='Import'),
                                 )
                             ),
                         ) if import_type_selected == 'sample' else None,
                         (
                             L.div('.row') / (
-                                L.div('.col-md-2') / (
+                                L.div('.col-sm-2') / (
                                 ),
-                                L.div('.col-md-5.text-center') / (
+                                L.div('.col-sm-5.text-center') / (
                                     (
                                         L.input('.btn.btn-primary', name='choice_gmail', type='submit', value='Import from GMail'),
                                         # L.br,
@@ -398,34 +398,34 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                             ),
                             L.br,
                             L.div('.form-group') / (
-                                L.div('.col-md-3.control-label') / (
+                                L.div('.col-sm-3.control-label') / (
                                     L.strong / (
                                         L.abbr(title='The maximum number of papers to be retrieved') / 'Limit',
                                     ),
                                 ),
-                                L.div('.col-md-2') / (
+                                L.div('.col-sm-2') / (
                                     L.input('.form-control', name='limit', value='500', type='number'),
                                 ),
                             ),
                         ) if import_type_selected == 'gmail' else None,
                         (
                             L.div('.row') / (
-                                L.div('.col-md-7') / (
+                                L.div('.col-sm-7') / (
                                     L.select('.form-control', name='job_dropdown') / (
                                         (
                                             L.option(value=str(job.pk)) / str(job)
                                         ) for job in user_jobs
                                     )
                                 ),
-                                L.div('.col-md-5') / (
+                                L.div('.col-sm-5') / (
                                     L.input('.btn.btn-primary', name='choice_prev_job', type='submit', value='Import'),
                                 ),
                             ),
                         ) if import_type_selected == 'prev_job' and user_jobs else None,
                         L.hr,
                         L.div('.form-group') / (
-                            L.div('.col-md-3.control-label') / (L.strong / 'Clustering'),
-                            L.div('.col-md-9') / (
+                            L.div('.col-sm-3.control-label') / (L.strong / 'Clustering'),
+                            L.div('.col-sm-9') / (
                                 L.div('.radio') / (
                                     L.label / (
                                         L.input(name='clustering', value='auto', checked='', type='radio'),
@@ -477,10 +477,10 @@ def login(request, message, signup_form):
         L.div('.container') / (
             header(request),
             L.div('.row') / (
-                L.div('.col-md-6.center-block', style='float:none') / (
+                L.div('.col-sm-6.center-block', style='float:none') / (
                     L.div('.alert.alert-info') / 'You need to login or sign up to access this application',
                     L.div('.row') / (
-                        L.div('.col-md-5') / (
+                        L.div('.col-sm-5') / (
                             L.h3 / 'Login',
                             (L.div('.alert.alert-danger') / message) if message else None,
                             L.form(method='post') / (
@@ -503,11 +503,11 @@ def login(request, message, signup_form):
                             ),
                         ),
 
-                        L.div('.col-md-2') / (
+                        L.div('.col-sm-2') / (
                             L.h3 / 'or',
                         ),
 
-                        L.div('.col-md-5') / (
+                        L.div('.col-sm-5') / (
                             L.h3 / 'Sign up',
                             L.form(method='post', action='/accounts/signup/') / (
                                 L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
@@ -557,7 +557,7 @@ def signup(request, form, message):
         L.div('.container') / (
             header(request),
             L.div('.row') / (
-                L.div('.col-md-3.center-block', style='float:none') / (
+                L.div('.col-sm-3.center-block', style='float:none') / (
                     L.h3 / 'Sign up',
                     (L.div('.alert.alert-danger') / message) if message else None,
                     L.form(method='post') / (
@@ -607,14 +607,14 @@ def landing(request):
         L.div('.container') / (
             header(request),
             L.div('.row') / (
-                L.div('.col-md-12') / (
+                L.div('.col-sm-12') / (
                     (
                         L.div('.alert.alert-success') / str(message),
                     ) for message in get_messages(request)
                 ),
             ),
             L.div('.row') / (
-                L.div('.col-md-12') / (
+                L.div('.col-sm-12') / (
                     L.div('#_graph-landing'),
                 ),
             ),
@@ -633,7 +633,7 @@ Linkage allows you to cluster the nodes of networks with textual edges while ide
             ),
             L.hr,
             L.div('.row') / (
-                L.div('.col-md-6') / (
+                L.div('.col-sm-6') / (
                     L.h4(style='color:#e95420') / (
                         icon('certificate'),
                         SHORT_SPACER,
@@ -641,7 +641,7 @@ Linkage allows you to cluster the nodes of networks with textual edges while ide
                     ),
                     L.p / """Linkage is built upon a sound statistical model for networks with textual edges and implement an innovative  and efficient inference algorithm to fit the model on your data. Model selection allows to find in a fully automatic way the best number of groups and topics."""
                 ),
-                L.div('.col-md-6') / (
+                L.div('.col-sm-6') / (
                     L.h4(style='color:#e95420') / (
                         icon('upload'),
                         SHORT_SPACER,
@@ -651,7 +651,7 @@ Linkage allows you to cluster the nodes of networks with textual edges while ide
                 ),
             ),
             L.div('.row') / (
-                L.div('.col-md-6') / (
+                L.div('.col-sm-6') / (
                     L.h4(style='color:#e95420') / (
                         icon('thumbs-up'),
                         SHORT_SPACER,
@@ -659,7 +659,7 @@ Linkage allows you to cluster the nodes of networks with textual edges while ide
                     ),
                     L.p / """Minimum configuration is required to use Linkage since it selects the most sensible parameters for the data you provide. No scientific background is required to start working and get results. Advanced configuration options are available also if you need specific setups."""
                 ),
-                L.div('.col-md-6') / (
+                L.div('.col-sm-6') / (
                     L.h4(style='color:#e95420') / (
                         icon('download'),
                         SHORT_SPACER,
@@ -669,7 +669,7 @@ Linkage allows you to cluster the nodes of networks with textual edges while ide
                 ),
             ),
             L.div('.row') / (
-                L.div('.col-md-6') / (
+                L.div('.col-sm-6') / (
                     L.h4(style='color:#e95420') / (
                         icon('education'),
                         SHORT_SPACER,
@@ -680,7 +680,7 @@ Linkage allows you to cluster the nodes of networks with textual edges while ide
                         L.a(href='https://arxiv.org/abs/1610.02427v2') / """« C. Bouveyron, P. Latouche and R. Zreik, The Stochastic Topic Block Model for the Clustering of Networks with Textual Edges, Statistics and Computing, in press, 2017. DOI: 10.1007/s11222-016-9713-7 ».""",
                     )
                 ),
-                L.div('.col-md-6') / (
+                L.div('.col-sm-6') / (
                     L.h4(style='color:#e95420') / (
                         icon('user'),
                         SHORT_SPACER,
@@ -754,7 +754,7 @@ def terms(request):
         L.div('.container') / (
             header(request),
             L.div('.row') / (
-                L.div('.col-md-12') / (
+                L.div('.col-sm-12') / (
                     L.h3 / 'Terms and conditions',
                     L.ul / (
                         L.li / (
@@ -781,7 +781,7 @@ def jobs(request, graphs, demo_graphs):
             header(request, 'jobs'),
             L.div('.row') / (
                 (
-                    L.div('#_jobs.col-md-12') / (
+                    L.div('#_jobs.col-sm-12') / (
                         L.h3('#_loading.text-center') / 'Loading…',
                     ),
                 ) if len(graphs) > 0 else (
@@ -789,7 +789,7 @@ def jobs(request, graphs, demo_graphs):
                 ),
             ),
             L.div('.row') / (
-                L.div('.col-md-12.hide_while_loading.hide') / (
+                L.div('.col-sm-12.hide_while_loading.hide') / (
                     L.hr,
                     L.h4 / 'Public jobs you can explore',
                     L.div('#_jobs_demo'),
@@ -818,7 +818,7 @@ def tpl_article(request, article):
         L.div('.container') / (
             header(request, 'blog'),
             L.div('.row') / (
-                L.article('blog-article.col-md-12', style='font-size: 1.3em;') / (
+                L.article('blog-article.col-sm-12', style='font-size: 1.3em;') / (
                     L.h2(style="""
     max-width: 50%;
     margin-bottom: 50px;
@@ -849,7 +849,7 @@ def tpl_article_list(request, articles):
         L.div('.container') / (
             header(request, 'blog'),
             L.div('.row') / (
-                L.div('.col-md-12', style='font-size: 1.3em;') / (
+                L.div('.col-sm-12', style='font-size: 1.3em;') / (
                     L.h4 / 'Published articles',
                     L.div('.list-group') / (
                         (
