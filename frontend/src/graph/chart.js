@@ -144,14 +144,18 @@ export function renderMatrix(STATE) {
   };
 
   Plotly.newPlot('_matrix-viz', data, layout);
-
-  panel.resize(() => {
-    Plotly.relayout('_matrix-viz', {
-      width: panel.width(),
-      height: panel.width(),
-    });
-  })
 };
+
+
+// auto-resize the matrix
+$(window).resize(() => {
+  var panel = $('#_matrix-viz-panel');
+
+  Plotly.relayout('_matrix-viz', {
+    width: panel.width(),
+    height: panel.width(),
+  });
+});
 
 function renderWordPlot(state) {
   var COL_WIDTH = (1 / state.topicToTerms.length * 100).toFixed(2) + '%';
