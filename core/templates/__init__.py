@@ -197,6 +197,7 @@ def result(request, graph, result, scores):
                         ),
                     ),
                     L.div('#_matrix-viz-panel.panel.panel-default.hide.text-center', style='position:relative') / (
+                        L.div('#_matrix-viz'),
                     ),
                     L.div('#_viz-panel.panel.panel-default.hide', style='position:relative') / (
                         L.div('row.text-center') / (
@@ -219,12 +220,6 @@ def result(request, graph, result, scores):
                         ),
                         L.hr,
                         L.div('#_words-plot'),
-                        L.hr,
-                        L.div('#_matrix-viz-wrapper.hide.text-center') / (
-                            L.h4 / 'Topics per edges',
-                            L.br,
-                            L.div('#_matrix-viz', style="width:600px;height:600px;display: inline-block;"),
-                        )
                     )
                 ),
             ),

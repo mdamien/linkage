@@ -4,7 +4,7 @@ import renderSidebar from './graph/sidebar';
 import renderGraphTabs from './graph/tabs';
 import renderGraphSidebar from './graph/info';
 import renderGraphButtons from './graph/graph_buttons';
-import renderChart from './graph/chart';
+import renderChart, {renderMatrix} from './graph/chart';
 
 import { get_color, hashedColor, COLORS, edgesArr, n_best_elems } from './graph/utils';
 import tfidf from './graph/tf_idf';
@@ -174,14 +174,19 @@ function init(state_init = {}) {
 
   var curr_tab = 'graph';
   var charts_rendered = false;
+  var matrix_rendered = false;
   var changeTab = (tab) => {
     curr_tab = tab;
     $('#_graph-panel').toggle(curr_tab === 'graph');
     $('#_viz-panel').toggle(curr_tab === 'viz');
     $('#_matrix-viz-panel').toggle(curr_tab === 'matrix');
-    if (curr_tab !== 'graph' && !charts_rendered) {
+    if (curr_tab === 'viz' && !charts_rendered) {
       renderChart(STATE);
       charts_rendered = true;
+    }
+    if (curr_tab === 'matrix' && !matrix_rendered) {
+      renderMatrix(STATE);
+      matrix_rendered = true;
     }
     renderGraphTabs(curr_tab, changeTab);
   };
@@ -349,7 +354,8 @@ function save_clusters_pos(graph) {
       };
     }
   });
-  console.log('sending', JSON.stringify(positions, null, 2));
+  // TODO: add label + send it
+  // console.log('sending', JSON.stringify(positions, null, 2));
 }
 
 function get_graph_graphics(graph, X, clusters) {

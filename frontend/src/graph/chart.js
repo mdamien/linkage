@@ -61,7 +61,7 @@ function renderTopicBarPlot(state) {
   $('#_topics-bar-wrapper').show();
 };
 
-function renderMatrix(STATE) {
+export function renderMatrix(STATE) {
   /*
     ..... nodes.....
     .
@@ -127,7 +127,11 @@ function renderMatrix(STATE) {
     }
   ];
 
+  var panel = $('#_matrix-viz-panel');
+
   var layout = {
+    width: panel.width(),
+    height: panel.width(),
     showlegend: false,
     xaxis: {
       type: 'category',
@@ -140,7 +144,13 @@ function renderMatrix(STATE) {
   };
 
   Plotly.newPlot('_matrix-viz', data, layout);
-  $('#_matrix-viz-wrapper').show();
+
+  panel.resize(() => {
+    Plotly.relayout('_matrix-viz', {
+      width: panel.width(),
+      height: panel.width(),
+    });
+  })
 };
 
 function renderWordPlot(state) {
@@ -171,7 +181,6 @@ function renderWordPlot(state) {
 function render(state) {
   renderBarPlot(state);
   renderWordPlot(state);
-  if (!GRAPH.magic_too_big_to_display_X) renderMatrix(state);
   if (!GRAPH.magic_too_big_to_display_X) renderTopicBarPlot(state);
 };
 
