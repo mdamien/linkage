@@ -12,4 +12,4 @@ def article(request, slug):
     return HttpResponse(tpl_article(request, article))
 
 def article_list(request):
-    return HttpResponse(tpl_article_list(request, Article.objects.all().order_by('-pk')))
+    return HttpResponse(tpl_article_list(request, Article.objects.all().order_by('-pk').filter(published=True)))

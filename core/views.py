@@ -21,6 +21,7 @@ from raven.contrib.django.raven_compat.models import client
 import TwitterAPI
 
 from core import templates, models, third_party_import
+from blog.models import Article
 
 MAX_JOBS_PER_USER = 10
 
@@ -272,7 +273,8 @@ def landing(request):
             auth_login(request, user, 'django.contrib.auth.backends.ModelBackend')
             messages.success(request, 'Account %s confirmed' % user.email)
         return redirect('/')
-    return HttpResponse(templates.landing(request))
+    articles = Article.objects.all().order_by('-pk').filter(published=True)
+    return HttpResponse(templates.landing(request, articles))
 
 
 def terms(request):

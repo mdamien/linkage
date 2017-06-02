@@ -1,7 +1,7 @@
 import random, collections, csv, json, io, sys, os, datetime
 
 from django.middleware.csrf import get_token
-from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.contrib.humanize.templatetags.humanize import naturaltime, naturalday
 from django.template.defaultfilters import filesizeformat
 from django.conf import settings
 from django.contrib.messages import get_messages
@@ -171,7 +171,7 @@ def serialize_graph(graph, result, simple=False, scores=None):
             if len(result) > 1:
                 data['results'] = [r.serialize() for r in result]
         except TypeError:
-            data['result'] = result.serialize()
+            data['result'] = mresult.serialize()
             data['result']['top_nodes'] = top_nodes_per_clusters(graph, result)
             if graph.magic_too_big_to_display_X:
                 data['topics_per_edges_mat'] = '0 0 1'
@@ -607,7 +607,7 @@ def signup(request, form, message):
 )
 
 
-def landing(request):
+def landing(request, articles):
     return base((
         L.div('.container') / (
             header(request),
@@ -704,6 +704,26 @@ Linkage allows you to cluster the nodes of networks with textual edges while ide
                             L.a(href='http://dam.io') / 'D. Marié',
                         )
                     )
+                ),
+            ),
+            L.div('.row') / (
+                L.hr,
+                L.div(style='font-size: 1.3em;margin:auto;max-width:50%') / (
+                    L.h4(style='color:#e95420') / (
+                        icon('folder-open'),
+                        SHORT_SPACER,
+                        'Blog posts',
+                    ),
+                    L.div('.list-group') / (
+                        (
+                            L.div('.list-group-item') / (
+                                L.div('.list-group-item-heading') / (
+                                    L.small(style='color:#ccc;float:right') / naturalday(article.published_on),
+                                    L.a(href='/blog/' + article.slug + '/') / article.title,
+                                ),
+                            ),
+                        ) for article in articles
+                    ),
                 ),
             ),
             FOOTER,
@@ -823,9 +843,15 @@ def tpl_article(request, article):
         L.div('.container') / (
             header(request, 'blog'),
             L.div('.row') / (
-                L.article('blog-article.col-sm-12', style='font-size: 1.3em;') / (
+                L.article('blog-article', style="""
+    font-size: 1.3em;
+    max-width: 800px;
+    margin: auto;
+    padding: 0 20px;
+    border-right: 1px solid #d2d2d2;
+    border-left: 1px solid #d2d2d2;
+""") / (
                     L.h2(style="""
-    max-width: 50%;
     margin-bottom: 50px;
     border-bottom: 9px solid #e95420;
     padding-bottom: 20px;
@@ -840,6 +866,9 @@ def tpl_article(request, article):
                         article.title
                     ),
                     L.p / raw(mistune.markdown(article.content, escape=False)),
+                    L.small('text-muted') / (
+                        'Published ', naturalday(article.published_on),
+                    ),
                 ),
             ),
             FOOTER
@@ -860,6 +889,7 @@ def tpl_article_list(request, articles):
                         (
                             L.div('.list-group-item') / (
                                 L.div('.list-group-item-heading') / (
+                                    L.small(style='color:#ccc;float:right') / naturalday(article.published_on),
                                     L.a(href='/blog/' + article.slug + '/') / article.title,
                                 ),
                             ),
