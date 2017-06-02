@@ -181,6 +181,11 @@ def result(request, graph, result, scores):
     return base((
         L.div('.container-fluid') / (
             header(request),
+            (L.div('.row') / (
+                L.div('col-sm-12') / (
+                    L.div('.alert.alert-warning') / "This is a preview of a result too large to be fully displayed",
+                ),
+            ) if graph.magic_too_big_to_display_X else None),
             L.div('.row') / (
                 L.div('.col-sm-3') / (
                     L.div('#_sidebar'),
@@ -279,11 +284,11 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                             L.div('.row') / (
                                 L.div('.col-sm-5') / L.input('.form-control', type='text', name='q', placeholder="'Deep Learning', 'Speech Synthesis', 'qubit', 'graphene',…"),
                                 L.div('.col-sm-7') / (
-                                    L.input('.btn.btn-primary', name='choice_arxiv', type='submit', value='search arXiv'),
+                                    L.input('.btn.btn-success', name='choice_arxiv', type='submit', value='search arXiv'),
                                     SPACER,
-                                    L.input('.btn.btn-primary', name='choice_hal', type='submit', value='search HAL'),
+                                    L.input('.btn.btn-success', name='choice_hal', type='submit', value='search HAL'),
                                     SPACER,
-                                    L.input('.btn.btn-primary', name='choice_pubmed', type='submit', value='search PubMed'),
+                                    L.input('.btn.btn-success', name='choice_pubmed', type='submit', value='search PubMed'),
                                 )
                             ),
                             L.br,
@@ -302,7 +307,7 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                             L.div('.row') / (
                                 L.div('.col-sm-5') / L.input('.form-control', type='text', name='q', placeholder="@spotify, #fakenews,..."),
                                 L.div('.col-sm-7') / (
-                                    L.input('.btn.btn-primary', name='choice_twitter', type='submit', value='search'),
+                                    L.input('.btn.btn-success', name='choice_twitter', type='submit', value='search'),
                                 )
                             ),
                             L.br,
@@ -332,7 +337,7 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                             L.div('.row') / (
                                 L.div('.col-sm-7') / L.input('form-control', type='file', name='csv_file'),
                                 L.div('.col-sm-5') / (
-                                    L.input('.btn.btn-primary',
+                                    L.input('.btn.btn-success',
                                         data_balloon_pos="bottom",
                                         data_balloon="A list of edges formatted like this: 'node1,node2,text'",
                                         name='choice_csv', type='submit', value='Import .csv'),
@@ -347,7 +352,7 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                             L.div('.row') / (
                                 L.div('.col-sm-7') / L.input('form-control', type='file', name='mbox_file'),
                                 L.div('.col-sm-5') / (
-                                    L.input('.btn.btn-primary', name='choice_mbox', type='submit', value='Import .mbox'),
+                                    L.input('.btn.btn-success', name='choice_mbox', type='submit', value='Import .mbox'),
                                 )
                             ),
                             L.div('.form-group._mbox-options') / (
@@ -377,7 +382,7 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                                     )
                                 ),
                                 L.div('.col-sm-5') / (
-                                    L.input('.btn.btn-primary', name='choice_dropdown', type='submit', value='Import'),
+                                    L.input('.btn.btn-success', name='choice_dropdown', type='submit', value='Import'),
                                 )
                             ),
                         ) if import_type_selected == 'sample' else None,
@@ -387,12 +392,12 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                                 ),
                                 L.div('.col-sm-5.text-center') / (
                                     (
-                                        L.input('.btn.btn-primary', name='choice_gmail', type='submit', value='Import from GMail'),
+                                        L.input('.btn.btn-success', name='choice_gmail', type='submit', value='Import from GMail'),
                                         # L.br,
                                         # L.br,
                                         # L.a('.btn.btn-warning.btn-sm', href=reverse('social:disconnect', args=['google-gmail']) + '?next=/jobs/add/?import_type=gmail') / 'Disconnect your GMail account from Linkage',
                                     ) if gmail_access_accepted else (
-                                        L.a('.btn.btn-primary', href=reverse('social:begin', args=['google-gmail']) + '?next=/jobs/add/?import_type=gmail') / 'Authorize Linkage to access your emails',
+                                        L.a('.btn.btn-default', href=reverse('social:begin', args=['google-gmail']) + '?next=/jobs/add/?import_type=gmail') / 'Authorize Linkage to access your emails',
                                     )
                                 )
                             ),
@@ -418,7 +423,7 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                                     )
                                 ),
                                 L.div('.col-sm-5') / (
-                                    L.input('.btn.btn-primary', name='choice_prev_job', type='submit', value='Import'),
+                                    L.input('.btn.btn-success', name='choice_prev_job', type='submit', value='Import'),
                                 ),
                             ),
                         ) if import_type_selected == 'prev_job' and user_jobs else None,
@@ -569,7 +574,7 @@ def signup(request, form, message):
                         L.div('.form-group') / (
                             L.label('.control-label') / 'Password',
                             L.input('.form-control', type='password', name='password', value=form.data.get('password', '')),
-                        ),
+                        )-
                         L.div('.form-group') / (
                             L.label('.control-label') / 'Organization',
                             L.select('.form-control', name='org') / (
@@ -637,7 +642,7 @@ Linkage allows you to cluster the nodes of networks with textual edges while ide
                     L.h4(style='color:#e95420') / (
                         icon('certificate'),
                         SHORT_SPACER,
-                        'How Linkage works?'
+                        'How does Linkage work ?'
                     ),
                     L.p / """Linkage is built upon a sound statistical model for networks with textual edges and implement an innovative  and efficient inference algorithm to fit the model on your data. Model selection allows to find in a fully automatic way the best number of groups and topics."""
                 ),
@@ -657,7 +662,7 @@ Linkage allows you to cluster the nodes of networks with textual edges while ide
                         SHORT_SPACER,
                         'Focus on data and interpretation',
                     ),
-                    L.p / """Minimum configuration is required to use Linkage since it selects the most sensible parameters for the data you provide. No scientific background is required to start working and get results. Advanced configuration options are available also if you need specific setups."""
+                    L.p / """Minimum configuration is required to use Linkage since it selects the most sensible parameters for the data you provide. No scientific background is required to start working and get results. Advanced configuration options are also available if you need specific setups."""
                 ),
                 L.div('.col-sm-6') / (
                     L.h4(style='color:#e95420') / (
