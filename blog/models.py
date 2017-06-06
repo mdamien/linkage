@@ -7,7 +7,6 @@ class Article(models.Model):
 
     published = models.BooleanField(default=True)
     published_on = models.DateField(auto_now_add=True)
-    published_on.editable = True
 
     def __str__(self):
         return self.title
