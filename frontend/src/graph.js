@@ -226,11 +226,12 @@ function zoom_on(node_id) {
 
 function update_cluster_label(cluster, label) {
   if (label === '') {
-    label = cluster;
+    delete STATE.nodes_meta['c-' + cluster]['label'];
+  } else {
+    STATE.nodes_meta['c-' + cluster] = {
+      label
+    };
   }
-  STATE.nodes_meta['c-' + cluster] = {
-    label
-  };
   GRAPH.result.nodes_meta = JSON.stringify(STATE.nodes_meta);
   renderSidebar(STATE);
   RENDERER.rerender();
