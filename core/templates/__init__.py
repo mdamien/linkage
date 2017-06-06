@@ -171,7 +171,7 @@ def serialize_graph(graph, result, simple=False, scores=None):
             if len(result) > 1:
                 data['results'] = [r.serialize() for r in result]
         except TypeError:
-            data['result'] = mresult.serialize()
+            data['result'] = result.serialize()
             data['result']['top_nodes'] = top_nodes_per_clusters(graph, result)
             if graph.magic_too_big_to_display_X:
                 data['topics_per_edges_mat'] = '0 0 1'
@@ -574,7 +574,7 @@ def signup(request, form, message):
                         L.div('.form-group') / (
                             L.label('.control-label') / 'Password',
                             L.input('.form-control', type='password', name='password', value=form.data.get('password', '')),
-                        )-
+                        ),
                         L.div('.form-group') / (
                             L.label('.control-label') / 'Organization',
                             L.select('.form-control', name='org') / (
