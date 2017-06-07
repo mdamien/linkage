@@ -149,12 +149,13 @@ export function renderMatrix(STATE) {
 
 // auto-resize the matrix
 $(window).resize(() => {
-  var panel = $('#_matrix-viz-panel');
-
-  Plotly.relayout('_matrix-viz', {
-    width: panel.width(),
-    height: panel.width(),
-  });
+  if ($('#_matrix-viz svg').length > 0) {
+    var panel = $('#_matrix-viz-panel');
+    Plotly.relayout('_matrix-viz', {
+      width: panel.width(),
+      height: panel.width(),
+    });
+  }
 });
 
 function renderWordPlot(state) {
