@@ -348,6 +348,10 @@ def gmail_to_csv(access_token, limit):
             print(mail_pack['id'])
             # print(subject)
             # print(text)
+            
+            text = text if text else ''
+            subject = subject if subject else ''
+
             sender = getaddresses([header.get('from', '')])[0][1]
             for _, dest in getaddresses([header.get('to', '')] + [header.get('cc', '')]):
                 if dest:
