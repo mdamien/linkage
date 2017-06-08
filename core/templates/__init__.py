@@ -225,7 +225,15 @@ def result(request, graph, result, scores):
                         ),
                         L.hr,
                         L.div('#_words-plot'),
-                    )
+                    ),
+                    L.div('#_graph2-panel.panel.panel-default.hide', style='position:relative') / (
+                        L.div('#_graph2-sidebar'),
+                        L.div('#_graph2-buttons'),
+                        L.div('.panel-body', style='padding:0') / (
+                            L.h3('#_loading2.text-center') / 'Loading…',
+                            L.div('#_graph2'),
+                        ),
+                    ),
                 ),
             ),
             FOOTER,
@@ -901,3 +909,20 @@ def tpl_article_list(request, articles):
         ),
         SENTRY,
     ), title='Blog')
+
+
+def error(request, code, msg):
+    return base((
+        L.div('.container') / (
+            L.style / 'body{background: none}',
+            L.div('.row') / (
+                L.div('.col-sm-12.text-center', style='padding:100px') / (
+                    L.hr,
+                    L.h1 / str(code),
+                    L.h3 / msg,
+                    L.a(href='/') / 'back to linkage.fr',
+                    L.hr,
+                ),
+            ),
+        ),
+    ), title=msg)

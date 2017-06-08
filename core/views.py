@@ -477,3 +477,13 @@ from django.contrib.auth import logout as auth_logout
 def logout(request):
     auth_logout(request)
     return redirect('/')
+
+
+def handler_generic_error(code, message):
+    def handle(request):
+        return HttpResponse(templates.error(request, code, message), status=code)
+    return handle
+
+handler404 = handler_generic_error(404, 'Page not found')
+handler500 = handler_generic_error(500, 'A server error occured and has been reported')
+handler403 = handler_generic_error(403, 'Permission Denied')

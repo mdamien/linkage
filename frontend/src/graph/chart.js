@@ -151,9 +151,10 @@ export function renderMatrix(STATE) {
 $(window).resize(() => {
   if ($('#_matrix-viz svg').length > 0) {
     var panel = $('#_matrix-viz-panel');
+    var size = panel.width();
     Plotly.relayout('_matrix-viz', {
-      width: panel.width(),
-      height: panel.width(),
+      width: size,
+      height: size,
     });
   }
 });
