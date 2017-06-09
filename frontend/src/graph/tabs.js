@@ -18,14 +18,7 @@ function render(curr_tab, changeTab) {
     title: 'Statistics',
     id: 'viz',
   });
-
-  /*
-  tabs.push({
-    title: 'Graph',
-    id: 'graph2',
-  });
-  */
-
+  
   var buttons = <ul className="nav nav-tabs">
       {tabs.map((tab, i) => <li key={i} className={tab.id == curr_tab ? 'active' : ''}>
         <a href='#'

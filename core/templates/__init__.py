@@ -226,14 +226,6 @@ def result(request, graph, result, scores):
                         L.hr,
                         L.div('#_words-plot'),
                     ),
-                    L.div('#_graph2-panel.panel.panel-default.hide', style='position:relative') / (
-                        L.div('#_graph2-sidebar'),
-                        L.div('#_graph2-buttons'),
-                        L.div('.panel-body', style='padding:0') / (
-                            L.h3('#_loading2.text-center') / 'Loading…',
-                            L.div('#_graph2'),
-                        ),
-                    ),
                 ),
             ),
             FOOTER,
@@ -883,32 +875,6 @@ def tpl_article(request, article):
         ),
         SENTRY,
     ), title=article.title)
-
-
-
-def tpl_article_list(request, articles):
-    return base((
-        L.div('.container') / (
-            header(request, 'blog'),
-            L.div('.row') / (
-                L.div('.col-sm-12', style='font-size: 1.3em;') / (
-                    L.h4 / 'Published articles',
-                    L.div('.list-group') / (
-                        (
-                            L.div('.list-group-item') / (
-                                L.div('.list-group-item-heading') / (
-                                    L.small(style='color:#ccc;float:right') / naturalday(article.published_on),
-                                    L.a(href='/blog/' + article.slug + '/') / article.title,
-                                ),
-                            ),
-                        ) for article in articles
-                    ),
-                ),
-            ),
-            FOOTER
-        ),
-        SENTRY,
-    ), title='Blog')
 
 
 def error(request, code, msg):

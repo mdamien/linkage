@@ -96,6 +96,7 @@ function init(state_init = {}) {
     layout: layout,
     container: document.getElementById('_graph'),
     graphics: get_graph_graphics(graph, X, nodeToCluster),
+    // graphics: graphics,
   });
 
   $('#_loading').hide();
@@ -116,6 +117,7 @@ function init(state_init = {}) {
       collapse_clusters: collapse_clusters.bind(this, graph, X, nodeToCluster),   
       graph_layout_running: STATE.graph_layout_running,
       fit_graph: fit_graph,
+      meta_mode: STATE.meta_mode,
     });
     timeout = setTimeout(function() {
       RENDERER.pause();
@@ -127,6 +129,7 @@ function init(state_init = {}) {
         collapse_clusters: collapse_clusters.bind(this, graph, X, nodeToCluster),   
         graph_layout_running: STATE.graph_layout_running,
         fit_graph: fit_graph,
+        meta_mode: STATE.meta_mode,
       });
     }, time);
   };
@@ -145,6 +148,7 @@ function init(state_init = {}) {
       collapse_clusters: collapse_clusters.bind(this, graph, X, nodeToCluster),   
       graph_layout_running: STATE.graph_layout_running,
       fit_graph: fit_graph,
+      meta_mode: STATE.meta_mode,
     });
   }
 
@@ -170,6 +174,7 @@ function init(state_init = {}) {
     collapse_clusters: collapse_clusters.bind(this, graph, X, nodeToCluster),   
     graph_layout_running: STATE.graph_layout_running,
     fit_graph: fit_graph,
+    meta_mode: STATE.meta_mode,
   });
 
   var curr_tab = 'graph';
@@ -299,8 +304,8 @@ function expand_clusters(graph, X, clusters) {
     graph.addLink(line[0], line[1], {link_id: i});
   });
 
-  RENDERER.pause_in(2000);
   STATE.meta_mode = false;
+  RENDERER.pause_in(2000);
   renderSidebar(STATE);
 }
 
@@ -429,8 +434,7 @@ function get_graph_graphics(graph, X, clusters) {
 
       // svgText.attr('visibility', 'hidden');
       $(ui).hover(function() {
-
-        // re-compute the cluster_label because it can chang
+        // re-compute the cluster_label because it can change
         if (STATE.nodes_meta && STATE.nodes_meta[node.id] && STATE.nodes_meta[node.id]['label']) {
           cluster_label = STATE.nodes_meta[node.id]['label'];
         } else {
@@ -473,6 +477,7 @@ function get_graph_graphics(graph, X, clusters) {
           collapse_clusters: collapse_clusters.bind(this, graph, X, clusters),
           graph_layout_running: STATE.graph_layout_running, 
           fit_graph: fit_graph,
+          meta_mode: STATE.meta_mode,
         });
       }, function() {
         circle.attr('stroke-width', '0');
@@ -670,6 +675,7 @@ function get_graph_graphics(graph, X, clusters) {
             collapse_clusters: collapse_clusters.bind(this, graph, X, clusters),
             graph_layout_running: STATE.graph_layout_running,
             fit_graph: fit_graph,
+            meta_mode: STATE.meta_mode,
           });
         }, function() {
           ui.attr('stroke-width', strokeWidth);
@@ -747,6 +753,126 @@ function get_graph_graphics(graph, X, clusters) {
         linkUI.attr("d", data);
     });
   return graphics;
+}
+
+function get_webgl_graphics() {
+
+  var graphics = Viva.Graph.View.webglGraphics();
+
+   graphics
+       .node(function(node){
+            var is_cluster = node.data && node.data.isCluster;
+            var cluster_name = is_cluster ? parseInt(node.id.split('-')[1]) : null;
+            var cluster_label = null;
+            if (STATE.nodes_meta && STATE.nodes_meta[node.id] && STATE.nodes_meta[node.id]['label']) {
+              cluster_label = STATE.nodes_meta[node.id]['label'];
+            } else {
+              cluster_label = '' + cluster_name;
+            }
+
+            var clusters = STATE.nodeToCluster;
+
+            var color = '#aaa';
+
+            if (is_cluster) {
+              color = get_color(cluster_name, 'Paired');
+            }
+
+            if (!is_cluster && clusters && clusters[node.id] !== undefined) {
+              color = get_color(clusters[node.id], 'Paired');
+            }
+            if (is_cluster) {
+              var sorted = n_best_elems(STATE.rho, false, v => v[0]);
+              var max = sorted[0][1][0];
+              var min = sorted.slice(-1)[0][1][0];
+              var normalized = (STATE.rho[cluster_name][0] - min) / (max - min);
+              if (!normalized) {
+                normalized = 0;
+              }
+              var size = 20 + Math.exp(normalized * 3);
+              /*
+              square.attr('x', -size/2);
+              square.attr('y', -size/2);
+              square.attr('width', size);
+              square.attr('height', size);
+              node._node_size = size;
+              ui.append(square);*/
+            } else {
+              /*
+              node._node_size = 7*2;
+              ui._circle = circle;
+              ui.append(circle);
+              */
+            }
+
+           return Viva.Graph.View.webglSquare(size, 0xffbb78ff);
+       })
+       .link(function(link) {
+           return Viva.Graph.View.webglLine(0x1f77b4ff);
+       });
+
+
+  var events = Viva.Graph.webglInputEvents(graphics, graph);
+  events.mouseEnter(function(node) {
+      var is_cluster = node.data && node.data.isCluster;
+      var cluster_name = is_cluster ? parseInt(node.id.split('-')[1]) : null;
+      var cluster_label = null;
+      if (STATE.nodes_meta && STATE.nodes_meta[node.id] && STATE.nodes_meta[node.id]['label']) {
+        cluster_label = STATE.nodes_meta[node.id]['label'];
+      } else {
+        cluster_label = '' + cluster_name;
+      }
+
+    // re-compute the cluster_label because it can change
+    if (STATE.nodes_meta && STATE.nodes_meta[node.id] && STATE.nodes_meta[node.id]['label']) {
+      cluster_label = STATE.nodes_meta[node.id]['label'];
+    } else {
+      cluster_label = '' + cluster_name;
+    }
+
+    if (STATE.node_selected) {
+      delete STATE.node_selected;
+      RENDERER.rerender();
+    }
+
+    var top_nodes = [];
+    if (is_cluster) {
+      if (GRAPH.result && GRAPH.result.top_nodes) {
+        top_nodes = GRAPH.result.top_nodes[cluster_name];
+      } else {
+        top_nodes = STATE.clusterToNodes[cluster_name].map(x => STATE.labels[x])
+        .filter(x => x);
+      }
+    }
+
+    renderGraphSidebar({
+      title: node.data && node.data.isCluster ? cluster_name : STATE.labels[node.id],
+      cluster_label: cluster_label,
+      update_cluster_label: update_cluster_label,
+      is_node: true,
+      is_cluster: is_cluster,
+      cluster: is_cluster || !STATE.nodeToCluster ? undefined : STATE.nodeToCluster[node.id],
+      renderer: RENDERER,
+      top_nodes,
+      expand_clusters: expand_clusters.bind(this, graph, X, STATE.nodeToCluster),
+      collapse_clusters: collapse_clusters.bind(this, graph, X, STATE.nodeToCluster),
+    });
+    renderGraphButtons({
+      renderer: RENDERER,
+      expand_clusters: expand_clusters.bind(this, graph, X, STATE.nodeToCluster),
+      collapse_clusters: collapse_clusters.bind(this, graph, X, STATE.nodeToCluster),
+      graph_layout_running: STATE.graph_layout_running, 
+      fit_graph: fit_graph,
+      meta_mode: STATE.meta_mode,
+    });
+  }).mouseLeave(function (node) {
+    console.log('Mouse left node: ' + node.id);
+  }).dblClick(function (node) {
+    console.log('Double click on node: ' + node.id);
+  }).click(function (node) {
+    console.log('Single click on node: ' + node.id);
+  });
+
 }
 
 init();
