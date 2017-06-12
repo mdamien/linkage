@@ -335,7 +335,7 @@ def gmail_to_csv(access_token, limit):
                         parts[part['mimeType'].lower()] = text
             else:
                 pass
-                # TODO
+                # TODO ATTENTION - PLAIN TEXT CAN BE EMPTY
 
             if 'text/plain' in parts:
                 text = parts['text/plain']
@@ -343,7 +343,8 @@ def gmail_to_csv(access_token, limit):
                 # TODO
                 text = ''
 
-            text = '\n'.join([line for line in text.split('\n') if not line.startswith('>')])
+            # QUOTE REMOVING DISABLED
+            # text = '\n'.join([line for line in text.split('\n') if not line.startswith('>')])
 
             print(mail_pack['id'])
             # print(subject)
