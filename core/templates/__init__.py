@@ -72,6 +72,8 @@ FOOTER = (
             L.br,
             L.div / (
                 L.a(href='/about/terms/') / 'Terms and conditions',
+                SPACER,
+                L.a(href='/about/credits/') / 'Credits',
             ),
             L.br,
             L.br,
@@ -317,7 +319,8 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                                     L.div('.checkbox') / (
                                         L.label / (
                                             L.input(name='use_loklak', type='checkbox'),
-                                            ' Use loklak API (older tweets, less rate-limited)',
+                                            ' Use loklak API - ',
+                                            L.i / 'the twitter API is limited to the tweets for the last 7 days, by using the loklak API you can get older tweets but not all of them are indexed there',
                                         )                                    
                                     ),                                 
                                 ),
@@ -790,6 +793,39 @@ def terms(request):
                         ),
                         L.li / (
                             L.a(href='/static/doc/linkage-private-terms.pdf') / 'For Private Partners',
+                        ),
+                    ),
+                ),
+            ),
+            FOOTER,
+            SENTRY,
+        ),
+    ))
+
+
+def credits(request):
+    return base((
+        L.div('.container') / (
+            header(request),
+            L.div('.row') / (
+                L.div('.col-sm-12') / (
+                    L.h3 / 'Credits',
+                    L.p / 'Linkage.fr is made of many open-source librairies that makes it possible, here\'s a few of them that we particularly thankful:',
+                    L.ul / (
+                        L.li / (
+                            'sigma.js for the homepage animation',
+                        ),
+                        L.li / (
+                            'Vivagraph for the interactive graphs',
+                        ),
+                        L.li / (
+                            'Django for the web framework',
+                        ),
+                        L.li / (
+                            'Celery & redis for the job runner',
+                        ),
+                        L.li / (
+                            '(coming soon: the source code so you can see all the tools we used)',
                         ),
                     ),
                 ),

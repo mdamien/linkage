@@ -281,6 +281,10 @@ def terms(request):
     return HttpResponse(templates.terms(request))
 
 
+def credits(request):
+    return HttpResponse(templates.credits(request))
+
+
 @login_required
 def jobs(request):
     if request.POST and request.POST['action'] == 'delete':

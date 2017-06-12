@@ -16,4 +16,5 @@ urlpatterns = [
     url(r'^accounts/logout/$', views.logout, name='logout'),
     url(r'^accounts/signup/$', views.signup),
     url(r'^about/terms/$', views.terms),
+    url(r'^about/credits/$', views.credits),
 ]
