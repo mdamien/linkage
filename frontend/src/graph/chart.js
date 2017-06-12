@@ -122,8 +122,8 @@ export function renderMatrix(STATE) {
       type: 'heatmap',
       colorscale,
       showscale: false,
-      xgap: 5,
-      ygap: 5,
+      xgap: 1,
+      ygap: 1,
     }
   ];
 
