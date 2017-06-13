@@ -233,7 +233,7 @@ def result(request, graph, result, scores):
             FOOTER,
         ),
         JS_LIBS,
-        L.script / raw("var USER_ID = %d;" % (request.user.pk,)),
+        L.script / raw("var USER_ID = %d;" % (request.user.pk if request.user.pk else -1,)),
         L.script(src='/static/js/vendor/vivagraph.js'),
         L.script(src='/static/js/vendor/papaparse.js'),
         L.script(src='/static/js/vendor/plotly-latest.min.js'),
@@ -859,7 +859,7 @@ def jobs(request, graphs, demo_graphs):
             FOOTER
         ),
         JS_LIBS,
-        L.script / raw("var USER_ID = %d;" % (request.user.pk,)),
+        L.script / raw("var USER_ID = %d;" % request.user.pk),
         L.script / raw("var JOBS = {};".format(json.dumps(
             api_jobs(graphs, demo_graphs),
         ))),
