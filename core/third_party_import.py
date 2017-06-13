@@ -264,7 +264,7 @@ def mbox_to_csv(mbox, subject_only):
                         lines = [line for line in content.split('\n') if not line.startswith('>')]
                         text_body += '\n' + '\n'.join(lines)
                     if 'html' in content_type:
-                        content = BeautifulSoup(decode()).text
+                        content = BeautifulSoup(decode(), 'html.parser').text
                         html_body += '\n' + content
 
                 if text_body:
@@ -333,20 +333,33 @@ def gmail_to_csv(access_token, limit):
                         decoded = base64.b64decode(data.replace('-','+').replace('_','/'))
                         text = decoded.decode('utf-8')
                         parts[part['mimeType'].lower()] = text
+            elif mail.get('payload', {}).get('body'):
+                part = mail['payload']
+                data = part['body']['data']
+                decoded = base64.b64decode(data.replace('-','+').replace('_','/'))
+                text = decoded.decode('utf-8')
+                parts[part['mimeType'].lower()] = text
             else:
                 pass
                 # TODO ATTENTION - PLAIN TEXT CAN BE EMPTY
+                # TODO: MULTIPLE PARTS ???
 
             if 'text/plain' in parts:
                 text = parts['text/plain']
+            elif 'text/html' in parts:
+                text = parts['text/html']
+                text = BeautifulSoup(text, 'html.parser').text
             else:
+                print('NO CONTENT FOR MAIL:')
+                print(parts)
+                open('debug-mail.json','w').write(json.dumps(mail, indent=2))
                 # TODO
                 text = ''
 
             # QUOTE REMOVING DISABLED
             # text = '\n'.join([line for line in text.split('\n') if not line.startswith('>')])
 
-            print(mail_pack['id'])
+            # print(mail_pack['id'])
             # print(subject)
             # print(text)
             
@@ -359,7 +372,7 @@ def gmail_to_csv(access_token, limit):
                     # print(sender, '->', dest)
                     writer.writerow([sender, dest, subject + '\n' + text])
             c += 1
-            print('mail-',c)
+            # print('mail-',c)
             if c > limit:
                 break
             # print()
