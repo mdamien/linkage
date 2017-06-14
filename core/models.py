@@ -92,7 +92,7 @@ class UserProfile(models.Model):
         return '{}: {}'.format(self.user, self.org_type)
 
 
-def graph_data_from_links(links, ignore_self_loop=True):
+def graph_data_from_links(links, filter_largest_subgraph=False, ignore_self_loop=True):
     import csv, random, io, sys, os
     import collections
     import time
@@ -114,6 +114,38 @@ def graph_data_from_links(links, ignore_self_loop=True):
     DTM_writer = csv.writer(DTM, delimiter=' ')
 
     links = list(csv.reader(io.StringIO(links)))
+
+    if filter_largest_subgraph:
+        # amazingly complex algorithm to find the subgraph and filter the links :)
+        groups = {}
+        groups_sizes = []
+        g = 0
+        for link in links:
+            if len(link) > 1:
+                source, target = link[0], link[1]
+                if source not in groups and target in groups:
+                    groups[source] = groups[target]
+                    groups_sizes[groups[target]] += 1
+                elif source in groups and target not in groups:
+                    groups[target] = groups[source]
+                    groups_sizes[groups[source]] += 1
+                elif source not in groups and target not in groups:
+                    groups[target], groups[source] = g, g
+                    groups_sizes.append(0)
+                    groups_sizes[g] += 2
+                    g += 1
+                elif groups[target] != groups[source]:
+                    if groups_sizes[groups[target]] > groups_sizes[groups[source]]:
+                        for node, group in groups.items():
+                            if group == groups[source]:
+                                groups[node] = groups[target]
+                    else:
+                        for node, group in groups.items():
+                            if group == groups[target]:
+                                groups[node] = groups[source]
+        best_group = groups_sizes.index(max(groups_sizes))
+
+        links = [link for link in links if len(link) > 1 and groups[link[0]] == best_group]
 
     nodes = [] # labels
     terms = [] # dictionnary

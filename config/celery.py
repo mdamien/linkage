@@ -85,6 +85,7 @@ def retrieve_graph_data(graph_pk, method, **params):
     from core import third_party_import, models
 
     ignore_self_loop = params.pop('ignore_self_loop', True)
+    filter_largest_subgraph = params.pop('filter_largest_subgraph', False)
     params.pop('directed', None)
 
     exception_triggered = None
@@ -115,11 +116,11 @@ def retrieve_graph_data(graph_pk, method, **params):
         if exception_triggered:
             raise exception_triggered
         return
-    import_graph_data(graph_pk, links, ignore_self_loop=ignore_self_loop)
+    import_graph_data(graph_pk, links, filter_largest_subgraph=filter_largest_subgraph, ignore_self_loop=ignore_self_loop)
 
 
 @task()
-def import_graph_data(graph_pk, csv_content, ignore_self_loop=True):
+def import_graph_data(graph_pk, csv_content, filter_largest_subgraph=False, ignore_self_loop=True):
     open('last_graph.csv','w').write(csv_content)
     # print('received csv_content:', csv_content[:100])
     from core import models
@@ -127,7 +128,9 @@ def import_graph_data(graph_pk, csv_content, ignore_self_loop=True):
 
     error = None
     try:
-        data = models.graph_data_from_links(csv_content, ignore_self_loop=ignore_self_loop)
+        data = models.graph_data_from_links(csv_content,
+            filter_largest_subgraph=filter_largest_subgraph,
+            ignore_self_loop=False) # TODO: remove self loop concept from linkage
         for key in data:
             setattr(graph, key, data[key])
         graph.save()

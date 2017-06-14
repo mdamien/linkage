@@ -448,6 +448,18 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                                 )
                             ),
                         ),
+                        L.div('.form-group._mbox-options') / (
+                            L.div('.col-sm-3.control-label') / (' '),
+                            L.div('.col-sm-9') / (
+                                L.div('.checkbox') / (
+                                    L.label / (
+                                        L.input(name='filter_largest_subgraph', type='checkbox', checked='true') if import_type_selected in ('twitter', 'coauth')
+                                            else L.input(name='filter_largest_subgraph', type='checkbox'),
+                                        ' Only keep the largest subgraph from the graph',
+                                    )                                    
+                                ),                                 
+                            ),
+                        ),
                         L.div('.form-group._clustering-options.hide') / (
                             L.div('#_slider_clusters'),
                         ),

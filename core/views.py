@@ -44,6 +44,7 @@ def index(request):
     if request.POST and request.POST['action'] == 'import':
         clusters_min, clusters_max,topics_min, topics_max, \
             limit, valid_parameters = None, None, None, None, 200, True
+        filter_largest_subgraph = 'filter_largest_subgraph' in request.POST
         if request.POST['clustering'] == 'manual':
             try:
                 clusters_min = int(request.POST['clusters_min'])
@@ -81,6 +82,7 @@ def index(request):
 
             def papers_import(name, method, **kwargs):
                 graph = make_graph(name, directed=kwargs.get('directed', False))
+                kwargs['filter_largest_subgraph'] = filter_largest_subgraph
                 retrieve_graph_data.delay(graph.pk, method, **kwargs)
                 return redirect('/jobs/')
 
@@ -92,7 +94,7 @@ def index(request):
                     messages.append(['danger', 'You must include a file to import'])
                 links = TextIOWrapper(request.FILES['csv_file'].file, encoding='utf-8').read()
                 graph = make_graph('CSV import of %s' % (request.FILES['csv_file'].name))
-                import_graph_data.delay(graph.pk, links)
+                import_graph_data.delay(graph.pk, links, filter_largest_subgraph)
                 return redirect('/jobs/')
 
             elif 'choice_mbox' in request.POST:
@@ -103,7 +105,7 @@ def index(request):
                 mbox = TextIOWrapper(request.FILES['mbox_file'].file, encoding='utf-8')
                 # TODO async conversion to csv
                 links = third_party_import.mbox_to_csv(mbox, request.POST.get('mbox_subject_only'))
-                import_graph_data.delay(graph.pk, links)
+                import_graph_data.delay(graph.pk, links, filter_largest_subgraph)
                 return redirect('/jobs/')
 
             elif 'choice_arxiv' in request.POST:
@@ -173,7 +175,7 @@ def index(request):
                 elif '.csv' in filename:
                     content = open('csv_samples/' + filename).read()
                     graph = make_graph('CSV import of %s' % (filename))
-                    import_graph_data.delay(graph.pk, content)
+                    import_graph_data.delay(graph.pk, content, filter_largest_subgraph)
                     return redirect('/jobs/')
             elif 'choice_prev_job' in request.POST:
                 prev_job_pk = int(request.POST['job_dropdown'])
