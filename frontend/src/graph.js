@@ -767,7 +767,7 @@ function get_webgl_graphics() {
             if (STATE.nodes_meta && STATE.nodes_meta[node.id] && STATE.nodes_meta[node.id]['label']) {
               cluster_label = STATE.nodes_meta[node.id]['label'];
             } else {
-              cluster_label = '' + cluster_name;
+              cluster_label = '' + (cluster_name + 1);
             }
 
             var clusters = STATE.nodeToCluster;

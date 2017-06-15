@@ -75,7 +75,7 @@ function render(params) {
           <Icon name='pencil'/>
         </button> : null}
       </div> : params.title}
-      {params.cluster !== undefined ? <p> - {ColorSquare(get_color(params.cluster, 'Paired'))} {params.cluster}</p> : null}
+      {params.cluster !== undefined ? <p> - {ColorSquare(get_color(params.cluster, 'Paired'))}</p> : null}
       {params.words && params.words.length > 0 ? <div>
         {params.words.slice(0, 10).map((v, i) => <span key={i}>
               <span className="label label-default">{v}</span>{' '}
