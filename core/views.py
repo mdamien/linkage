@@ -29,7 +29,7 @@ MAX_JOBS_PER_USER = 10
 def index(request):
     from config.celery import import_graph_data, retrieve_graph_data
 
-    user_jobs = models.Graph.objects.filter(user=request.user).order_by('-pk')
+    user_jobs = models.Graph.objects.filter(user=request.user, job_error_log='').order_by('-pk')
     if not request.user.is_staff and user_jobs.count() > MAX_JOBS_PER_USER:
         messages = [('danger', 'You are limited to %d jobs, please delete previous ones before importing a new one' % MAX_JOBS_PER_USER)]
         return HttpResponse(templates.index(
