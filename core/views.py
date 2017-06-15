@@ -194,6 +194,7 @@ def index(request):
                 retrieve_graph_data.delay(graph.pk, 'gmail_to_csv',
                     access_token=access_token,
                     limit=limit,
+                    filter_largest_subgraph=filter_largest_subgraph,
                 )
                 return redirect('/jobs/')
             if graph:
