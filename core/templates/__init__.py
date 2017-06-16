@@ -157,6 +157,7 @@ def serialize_graph(graph, result, simple=False, scores=None):
         'job_error_log': graph.job_error_log,
         'magic_too_big_to_display_X': graph.magic_too_big_to_display_X,
         'scores': scores,
+        'has_original_csv': len(graph.original_csv) > 0,
     }
     if graph.magic_too_big_to_display_X:
         data['edges'] = '0 0 1'

@@ -79,10 +79,16 @@ class Job extends React.Component {
                 &nbsp;&nbsp;&nbsp;&nbsp;
                 */}
                 <a className='btn btn-warning' href={job.url + 'data/?all&zip'} download={'job_' + job.id + '_export.zip'}>
-                  <Icon name='download'/>&nbsp;&nbsp;Download
+                  <Icon name='download'/>&nbsp;&nbsp;Download Results (.zip)
                 </a>
                 &nbsp;&nbsp;&nbsp;&nbsp;
               </span> : null}
+              {job.has_original_csv ? <span>
+                <a className='btn btn-warning' href={job.url + 'data/?csv'} download={'job_' + job.id + '.csv'}>
+                  <Icon name='download'/>&nbsp;&nbsp;Download Input (.csv)
+                </a>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                </span> : null}
               <button className='btn btn-danger' onClick={() => this.doDelete()}>
                 <Icon name='trash'/>
               </button>

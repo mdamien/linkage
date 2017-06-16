@@ -345,6 +345,9 @@ def api_result(request, pk):
         return HttpResponse(models.export_to_zip(graph, result),
                 content_type='application/zip')
 
+    if 'csv' in request.GET:
+        return HttpResponse(graph.original_csv, content_type='text/csv')
+
     return JsonResponse(templates.api_result(request, graph, result))
 
 

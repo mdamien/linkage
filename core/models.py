@@ -27,6 +27,8 @@ class Graph(models.Model): # = Job
     # term count per edge as raw_ascii ( = tdm )
     tdm = models.TextField(blank=True, default='')
 
+    original_csv = models.TextField(blank=True, default='')
+
     cluster_to_cluster_cutoff = models.FloatField(default=0.002)
 
     magic_too_big_to_display_X = models.BooleanField(default=False)
