@@ -124,8 +124,8 @@ def import_graph_data(graph_pk, csv_content, filter_largest_subgraph=False, igno
     # print('received csv_content:', csv_content[:100])
     from core import models
     graph = models.Graph.objects.get(pk=graph_pk)
-    graph.original_csv = csv_content
-    graph.save()
+    # graph.original_csv = csv_content
+    # graph.save()
 
     error = None
     try:
