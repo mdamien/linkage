@@ -290,6 +290,11 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                                     L.input('.btn.btn-success', name='choice_arxiv', type='submit', value='search arXiv'),
                                     SPACER,
                                     L.input('.btn.btn-success', name='choice_hal', type='submit', value='search HAL'),
+                                    ' ',
+                                    L.a('.label.label-default',
+                                        href='https://api.archives-ouvertes.fr/docs/search/#q',
+                                        data_balloon_pos="bottom",
+                                        data_balloon="See documentation to learn more about the parameters you can use for HAL") / '?',
                                     SPACER,
                                     L.input('.btn.btn-success', name='choice_pubmed', type='submit', value='search PubMed'),
                                 )
@@ -652,6 +657,26 @@ Linkage allows you to cluster the nodes of networks with textual edges while ide
                     L.br,
                 ),
             ),
+            L.div('.row') / (
+                L.hr,
+                L.div(style='font-size: 1.3em;margin:auto;max-width:50%') / (
+                    L.h4(style='color:#e95420') / (
+                        icon('folder-open'),
+                        SHORT_SPACER,
+                        'Blog posts',
+                    ),
+                    L.div('.list-group') / (
+                        (
+                            L.div('.list-group-item') / (
+                                L.div('.list-group-item-heading') / (
+                                    L.small(style='color:#ccc;float:right') / naturalday(article.published_on),
+                                    L.a(href='/blog/' + article.slug + '/') / article.title,
+                                ),
+                            ),
+                        ) for article in articles
+                    ),
+                ),
+            ),
             L.hr,
             L.div('.row') / (
                 L.div('.col-sm-6') / (
@@ -720,26 +745,6 @@ Linkage allows you to cluster the nodes of networks with textual edges while ide
                             L.a(href='http://dam.io') / 'D. Marié',
                         )
                     )
-                ),
-            ),
-            L.div('.row') / (
-                L.hr,
-                L.div(style='font-size: 1.3em;margin:auto;max-width:50%') / (
-                    L.h4(style='color:#e95420') / (
-                        icon('folder-open'),
-                        SHORT_SPACER,
-                        'Blog posts',
-                    ),
-                    L.div('.list-group') / (
-                        (
-                            L.div('.list-group-item') / (
-                                L.div('.list-group-item-heading') / (
-                                    L.small(style='color:#ccc;float:right') / naturalday(article.published_on),
-                                    L.a(href='/blog/' + article.slug + '/') / article.title,
-                                ),
-                            ),
-                        ) for article in articles
-                    ),
                 ),
             ),
             FOOTER,
