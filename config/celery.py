@@ -1,4 +1,4 @@
-import os, time
+import os, time, csv, io, random
 from celery import Celery, task
 from channels import Group
 
@@ -14,7 +14,6 @@ app.config_from_object('django.conf:settings')
 def process_graph(graph_pk, result_pk=None, ws_delay=0):
     print('Processing graph {}'.format(graph_pk))
 
-    import csv, io, random
     from core.models import Graph, ProcessingResult
 
     t = time.time()
@@ -124,6 +123,8 @@ def import_graph_data(graph_pk, csv_content, filter_largest_subgraph=False, igno
     # print('received csv_content:', csv_content[:100])
     from core import models
     graph = models.Graph.objects.get(pk=graph_pk)
+
+    # TODO: re-enable CSV saving with better solution ?
     # graph.original_csv = csv_content
     # graph.save()
 
@@ -154,6 +155,8 @@ def import_graph_data(graph_pk, csv_content, filter_largest_subgraph=False, igno
             'text': '%d - ERROR' % graph.pk
         })
         return
+
+    # TODO: re-enable spacialization
     # spacialize_graph.delay(graph.pk)
     process_graph(graph.pk, ws_delay=2)
 
@@ -162,7 +165,7 @@ def import_graph_data(graph_pk, csv_content, filter_largest_subgraph=False, igno
 def spacialize_graph(graph_pk):
     from core import models
     graph = models.Graph.objects.get(pk=graph_pk)
-
+    
     print('spacialize', graph.pk)
     spacialize(graph.edges, graph.labels, graph.pk)
     print('spacialize DONE', graph.pk)
