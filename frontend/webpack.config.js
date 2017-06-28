@@ -54,9 +54,11 @@ module.exports = function(env) {
     plugins: plugins,
   };
 
+  /*
   if (prod) {
     delete config['devtool'];
   }
+  */
 
   return config;
 };

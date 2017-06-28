@@ -356,7 +356,7 @@ def gmail_to_csv(access_token, limit):
                 # TODO
                 text = ''
 
-            # QUOTE REMOVING DISABLED
+            # QUOTE REMOVING DISABLED (keep old messages)
             # text = '\n'.join([line for line in text.split('\n') if not line.startswith('>')])
 
             # print(mail_pack['id'])

@@ -3,7 +3,9 @@ from django.apps import apps
 
 from core.models import *
 
+
 admin.site.site_header = 'Linkage'
+
 
 @admin.register(Graph)
 class GraphAdmin(admin.ModelAdmin):
@@ -15,10 +17,12 @@ class GraphAdmin(admin.ModelAdmin):
     def view_on_site(self, obj):
         return 'https://linkage.fr/' + obj.get_absolute_url()
 
+
 @admin.register(ProcessingResult)
 class ProcessingResultAdmin(admin.ModelAdmin):
     list_display = ('graph', 'param_clusters', 'param_topics', 'crit')
     exclude = ('topics_per_edges_mat', 'topics_mat')
+
         
 # auto-register all models
 app = apps.get_app_config('core')

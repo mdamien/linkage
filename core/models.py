@@ -5,6 +5,7 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.urls import reverse
 from django.contrib.auth.models import User
 
+
 class Graph(models.Model): # = Job
     name = models.CharField(max_length=100)
 
