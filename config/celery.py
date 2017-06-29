@@ -117,16 +117,20 @@ def retrieve_graph_data(graph_pk, method, **params):
         return
     import_graph_data(graph_pk, links, filter_largest_subgraph=filter_largest_subgraph, ignore_self_loop=ignore_self_loop)
 
+@task()
+def save_csv(graph_pk, csv_content):
+    from core import models
+    graph = models.Graph.objects.get(pk=graph_pk)
+    graph.original_csv = csv_content
+    graph.save(update_fields=['original_csv'])
+    print('CSV SAVED')
+
 
 @task()
 def import_graph_data(graph_pk, csv_content, filter_largest_subgraph=False, ignore_self_loop=True):
     # print('received csv_content:', csv_content[:100])
     from core import models
     graph = models.Graph.objects.get(pk=graph_pk)
-
-    # TODO: re-enable CSV saving with better solution ?
-    # graph.original_csv = csv_content
-    # graph.save()
 
     error = None
     try:
@@ -159,6 +163,7 @@ def import_graph_data(graph_pk, csv_content, filter_largest_subgraph=False, igno
 
     # TODO: re-enable spacialization
     # spacialize_graph.delay(graph.pk)
+    save_csv.delay(graph.pk, csv_content)
     process_graph(graph.pk, ws_delay=2)
 
 
