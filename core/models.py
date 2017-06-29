@@ -95,7 +95,7 @@ class UserProfile(models.Model):
         return '{}: {}'.format(self.user, self.org_type)
 
 
-def graph_data_from_links(links, filter_largest_subgraph=False, ignore_self_loop=True):
+def graph_data_from_links(links, filter_largest_subgraph=False, ignore_self_loop=True, directed=False):
     import csv, random, io, sys, os
     import collections
     import time
@@ -149,6 +149,14 @@ def graph_data_from_links(links, filter_largest_subgraph=False, ignore_self_loop
         best_group = groups_sizes.index(max(groups_sizes))
 
         links = [link for link in links if len(link) > 1 and groups[link[0]] == best_group]
+
+    if not directed:
+        # another amazing algo to symmetrize the links in case of undirected graphs
+        new_links = []
+        for link in links:
+            new_links.append(link)
+            new_links.append([link[1], link[0]] + link[2:])
+        links = new_links
 
     nodes = [] # labels
     terms = [] # dictionnary
