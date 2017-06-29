@@ -12,7 +12,7 @@ class GraphAdmin(admin.ModelAdmin):
     date_hierarchy = 'created_at'
     list_display = ('name', 'user', 'created_at')
     list_filter = ('user', 'public')
-    exclude = ('edges', 'tdm')
+    exclude = ('edges', 'tdm', 'original_csv')
 
     def view_on_site(self, obj):
         return 'https://linkage.fr/' + obj.get_absolute_url()
