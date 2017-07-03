@@ -659,23 +659,30 @@ Linkage allows you to cluster the nodes of networks with textual edges while ide
             ),
             L.div('.row') / (
                 L.hr,
-                L.div(style='font-size: 1.3em;margin:auto;max-width:50%') / (
-                    L.h4(style='color:#e95420') / (
-                        icon('folder-open'),
-                        SHORT_SPACER,
-                        'Blog posts',
-                    ),
-                    L.div('.list-group') / (
-                        (
-                            L.div('.list-group-item') / (
-                                L.div('.list-group-item-heading') / (
-                                    L.small(style='color:#ccc;float:right') / naturalday(article.published_on),
-                                    L.a(href='/blog/' + article.slug + '/') / article.title,
+                L.div('col-sm-6') / (
+                    L.div(style='font-size: 1.3em;margin:auto;max-width:90%') / (
+                        L.h4(style='color:#e95420') / (
+                            icon('folder-open'),
+                            SHORT_SPACER,
+                            'Blog posts',
+                        ),
+                        L.div('.list-group') / (
+                            (
+                                L.div('.list-group-item') / (
+                                    L.div('.list-group-item-heading') / (
+                                        L.small(style='color:#ccc;float:right') / naturalday(article.published_on),
+                                        L.a(href='/blog/' + article.slug + '/') / article.title,
+                                    ),
                                 ),
-                            ),
-                        ) for article in articles
+                            ) for article in articles
+                        ),
                     ),
-                ),
+                    ),
+                L.div('.col-sm-6') / (
+                    raw("""            <a class="twitter-timeline"  href="https://twitter.com/search?q=%22linkage.fr%22" data-widget-id="881809913659478017">Tweets about "linkage.fr"</a>
+            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+          """)
+                )
             ),
             L.hr,
             L.div('.row') / (

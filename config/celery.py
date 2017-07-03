@@ -163,8 +163,8 @@ def import_graph_data(graph_pk, csv_content, filter_largest_subgraph=False, igno
 
     # TODO: re-enable spacialization
     # spacialize_graph.delay(graph.pk)
-    save_csv.delay(graph.pk, csv_content)
-    process_graph(graph.pk, ws_delay=2)
+    # save_csv.delay(graph.pk, csv_content)
+    process_graph.delay(graph.pk, ws_delay=2)
 
 
 @task()
