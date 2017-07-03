@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'social_django',
     'channels',
     'loginas',
+    'simple_admin_upload',
 
     'core',
     'blog',
@@ -97,6 +98,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'collected_static')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'user_uploads')
 
 # CELERY
 BROKER_URL = 'redis://localhost:6379'

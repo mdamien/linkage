@@ -3,6 +3,7 @@
 *.sqlite
 venv/
 collected_static/
+user_uploads/
 *.lock
 pm_runs/
 last_graph.csv

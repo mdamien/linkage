@@ -1,5 +1,11 @@
 from django.conf.urls import url, include
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
+
+urlpatterns = [
+    # ... the rest of your URLconf goes here ...
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 from django.contrib.auth import views as auth_views
 
 from core import views as core_views
@@ -18,3 +24,6 @@ urlpatterns = [
 handler404 = 'core.views.handler404'
 handler500 = 'core.views.handler500'
 handler403 = 'core.views.handler403'
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
