@@ -21,3 +21,4 @@ https://github.com/skorokithakis/django-loginas/archive/master.zip
 psycopg2
 mistune
 natural
+https://github.com/mdamien/django-simple-admin-upload/archive/master.zip
