@@ -18,6 +18,7 @@ class Graph(models.Model): # = Job
     job_param_clusters_max = models.IntegerField(default=5)
     job_param_topics_max = models.IntegerField(default=5)
     job_error_log = models.TextField(blank=True, default='')
+    job_current_step = models.TextField(blank=True, default='Initialize')
 
     # array of labels for each node
     labels = models.TextField(blank=True, default='')

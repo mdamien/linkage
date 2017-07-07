@@ -63,6 +63,7 @@ class Job extends React.Component {
                 }
               </div>
               <div>Created: {job.created_at}</div>
+              <div>Current step: {job.step}</div>
               {finished && job.time_t > 0 ?
                 <div>Took <strong>{job.time}</strong></div> :
                 null // <div>Est. time to process: <strong>3h30</strong> (~<strong>1h05</strong> left)</div>

@@ -146,6 +146,7 @@ def serialize_graph(graph, result, simple=False, scores=None):
         'created_at': naturaltime(graph.created_at),
         'url': graph.get_absolute_url(),
         'log': graph.job_log,
+        'step': graph.job_current_step,
         'time_t': graph.job_time,
         'time': natural.date.compress(graph.job_time * 100),
         'progress': graph.job_progress,

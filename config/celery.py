@@ -20,6 +20,12 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
 
     graph = Graph.objects.get(pk=graph_pk)
 
+    graph.job_current_step = 'Clustering'
+    graph.save()
+    Group("jobs-%d" % graph.user.pk).send({
+        'text': '%d - STEP UPDATE' % graph.pk
+    })
+
     param_clusters = graph.job_param_clusters
     param_topics = graph.job_param_topics
     param_max_clusters = graph.job_param_clusters_max
@@ -27,16 +33,13 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
 
     n_repeat = 4
 
-    Group("jobs-%d" % graph.user.pk).send({
-        'text': '%d - STARTED' % graph.pk
-    })
-
     def update(log, kq_done, msg):
         graph.job_log = log
         kq_todo = (
             (param_max_clusters - param_clusters + 1)
                 * (param_max_topics - param_topics + 1)
         ) * n_repeat
+        graph.job_current_step = 'Clustering %d/%d' % (kq_done, kq_todo)
         graph.job_progress = kq_done / kq_todo
         graph.save()
         Group("jobs-%d" % graph.user.pk).send({
@@ -83,6 +86,13 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
 def retrieve_graph_data(graph_pk, method, **params):
     from core import third_party_import, models
 
+    graph = models.Graph.objects.get(pk=graph_pk)
+    graph.job_current_step = 'Making the graph'
+    graph.save()
+    Group("jobs-%d" % graph.user.pk).send({
+        'text': '%d - STEP UPDATE' % graph.pk
+    })
+
     ignore_self_loop = params.pop('ignore_self_loop', True)
     filter_largest_subgraph = params.pop('filter_largest_subgraph', False)
     params.pop('directed', None)
@@ -93,7 +103,6 @@ def retrieve_graph_data(graph_pk, method, **params):
     except Exception as e:
         exception_triggered = e
     if exception_triggered or len(links) < 2:
-        graph = models.Graph.objects.get(pk=graph_pk)
         error = 'No results for this request'
         if 'hal_' in method:
             error = 'No HAL results for this request'
@@ -132,6 +141,12 @@ def import_graph_data(graph_pk, csv_content, filter_largest_subgraph=False, igno
     # print('received csv_content:', csv_content[:100])
     from core import models
     graph = models.Graph.objects.get(pk=graph_pk)
+
+    graph.job_current_step = 'Making the graph'
+    graph.save()
+    Group("jobs-%d" % graph.user.pk).send({
+        'text': '%d - STEP UPDATE' % graph.pk
+    })
 
     error = None
     try:
