@@ -1,6 +1,7 @@
 from io import TextIOWrapper
 import hashlib, itertools
 from smtplib import SMTPRecipientsRefused
+from functools import wraps
 
 from django import forms
 from django.db import IntegrityError
@@ -25,7 +26,47 @@ from blog.models import Article
 
 MAX_JOBS_PER_USER = 10
 
+
+class OrgForm(forms.Form):
+    org = forms.CharField(required=True)
+
+
+def org_required():
+    """
+    Decorator for views that checks that the user has selected an org type
+    Also useful to show the user a short tutorial
+    """
+
+    def decorator(view_func):
+        @wraps(view_func)
+        def _wrapped_view(request, *args, **kwargs):
+            user = request.user
+            profile = None
+            try:
+                profile = models.UserProfile.objects.get(user=user)
+                if profile.org_type:
+                    return view_func(request, *args, **kwargs)
+            except models.UserProfile.DoesNotExist:
+                pass
+            form = OrgForm()
+            if request.method == 'POST':
+                form = OrgForm(data=request.POST)
+                if form.is_valid():
+                    if profile:
+                        profile.org_type = form.cleaned_data['org']
+                        profile.save()
+                    else:
+                        models.UserProfile(user=user, org_type=form.cleaned_data['org']).save()
+                    request.method = 'GET'
+                    request.POST = {} # hack - should do a redirect
+                    return view_func(request, *args, **kwargs)
+            return HttpResponse(templates.signup(request, form, ''))
+        return _wrapped_view
+    return decorator
+
+
 @login_required
+@org_required()
 def index(request):
     from config.celery import import_graph_data, retrieve_graph_data
 
@@ -289,6 +330,7 @@ def credits(request):
 
 
 @login_required
+@org_required()
 def jobs(request):
     if request.POST and request.POST['action'] == 'delete':
         graph = get_object_or_404(models.Graph, pk=request.POST['graph_id'])
@@ -425,7 +467,6 @@ def login(request):
 class SignupForm(forms.Form):
     email = forms.EmailField(required=True)
     password = forms.CharField(required=True)
-    org = forms.CharField(required=True)
 
 # TODO: get rid of homemade protocol and get a real random token
 def get_user_token(user):
@@ -457,7 +498,6 @@ def signup(request):
                 client.captureException()
                 message = 'An user with the same email already exists. If you already tried to sign up, you should check your emails for a confirmation link'
             if user:
-                models.UserProfile(user=user, org_type=form.cleaned_data['org']).save()
                 user.is_active = False
                 user.save()
 

@@ -578,7 +578,6 @@ def login(request, message, signup_form):
         ),
     ))
 
-
 def signup(request, form, message):
     return base((
         L.div('.container') / (
@@ -618,6 +617,37 @@ def signup(request, form, message):
                         ),
                         L.div('.form-group.text-center') / (
                             L.button('.btn.btn-primary', type='submit') / 'Sign up'
+                        )
+                    ),
+                ),
+            ),
+            FOOTER,
+            SENTRY,
+        ),
+    )
+)
+
+
+def signup(request, form, message):
+    return base((
+        L.div('.container') / (
+            header(request),
+            L.div('.row') / (
+                L.div('.col-sm-3.center-block', style='float:none') / (
+                    L.h3 / 'A small introduction',
+                    (L.div('.alert.alert-danger') / message) if message else None,
+                    L.form(method='post') / (
+                        L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
+                        L.div('.form-group') / (
+                            L.label('.control-label') / 'Organization',
+                            L.select('.form-control', name='org') / (
+                                L.option(value='individual', selected='') / 'Individual',
+                                L.option(value='univ') / 'University',
+                                L.option(value='pro') / 'Company',
+                            )
+                        ),
+                        L.div('.form-group.text-center') / (
+                            L.button('.btn.btn-primary', type='submit') / 'Continue'
                         )
                     ),
                 ),
