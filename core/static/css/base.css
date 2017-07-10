@@ -1,5 +1,6 @@
 /* hack for bootstrap + vivagraph */
 #_graph > svg, #_loading { width: 100%; height: 700px }
+/* #_graph, #_loading { width: 100%; height: 700px } */
 #_graph-landing {
     max-width: 500px;
     height: 300px;

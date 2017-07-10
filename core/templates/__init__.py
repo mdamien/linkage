@@ -623,20 +623,23 @@ def intro(request, form, message):
 
 Let's explain a few things about Linkage.
 
-It starts with a **graph**:
-A network of **nodes** connected by **edges**
-
+<br/>
 <div class='text-center'><img src='/static/img/graph.png'/></div>
+<br/>
+
+It starts with a **graph**: A network of **nodes** connected by **edges**
 
 For example, if we want to represent an email network, we could have **email addresses** as nodes and **emails** as edges.
 
-Linkage specificy is to process graphs with **text on the edges**, here the text could be the email contents.
+Linkage specificity is to process graphs with **text on the edges**, here the text could be the emails contents.
+
+#### Clustering
 
 When you give this graph to Linkage, it's gonna **cluster** it: It's gonna find **topics of discussion** and **groups of nodes** (clusters).
 
-Each edge is then assigned a percentage of each topic, for example, an email can be about the "surfing" topic but also about "friends" topic.
+Each edge is then assigned a percentage of each topic, for example, an email can be 80% about the "surfing" topic but also 20% about "friends" topic.
 
-To make it easier to vizualize the results, Linkage shows you a **meta-network** where the nodes are grouped by clusters so you can easily interpret the interactions between clsuters.
+To make it easier to vizualize the results, Linkage shows you a **meta-network** where the nodes are grouped by clusters so you can easily interpret the interactions between clusters.
 
 #### And that's Linkage for you
 

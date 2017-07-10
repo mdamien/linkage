@@ -92,12 +92,15 @@ function init(state_init = {}) {
     springCoeff: 0.0002,
   });
 
+  var graphics = get_graph_graphics(graph, X, nodeToCluster);
+  // var graphics = get_webgl_graphics(graph, X);
+
   RENDERER = Viva.Graph.View.renderer(graph, {
     layout: layout,
     container: document.getElementById('_graph'),
-    graphics: get_graph_graphics(graph, X, nodeToCluster),
-    // graphics: graphics,
+    graphics: graphics,
   });
+  RENDERER.graphics = graphics;
 
   $('#_loading').hide();
 
@@ -755,7 +758,7 @@ function get_graph_graphics(graph, X, clusters) {
   return graphics;
 }
 
-function get_webgl_graphics() {
+function get_webgl_graphics(graph, X) {
 
   var graphics = Viva.Graph.View.webglGraphics();
 
@@ -873,13 +876,23 @@ function get_webgl_graphics() {
     console.log('Single click on node: ' + node.id);
   });
 
+  return graphics;
 }
 
 init();
 
 function update_graph_height() {
   var g = $('#_graph svg');
-  g.height(window.innerHeight - g.offset().top - 20);
+  if (g.length > 0) {
+    g.height(window.innerHeight - g.offset().top - 20);    
+  }
+
+  var g = $('#_graph canvas');
+  if (g.length > 0) {
+    g.attr('height', window.innerHeight - g.offset().top - 20);
+    $('#_graph').height(window.innerHeight - g.offset().top - 20);
+    RENDERER.graphics.fire('rescaled');
+  }
 };
 $(window).resize(update_graph_height);
 
