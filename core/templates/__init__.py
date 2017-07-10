@@ -314,7 +314,7 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                         ) if import_type_selected == 'coauth' else None,
                         (
                             L.div('.row') / (
-                                L.div('.col-sm-5') / L.input('.form-control', type='text', name='q', placeholder="@spotify, #fakenews,..."),
+                                L.div('.col-sm-5') / L.input('.form-control', type='text', name='q', placeholder="@spotify, #fakenews,…"),
                                 L.div('.col-sm-7') / (
                                     L.input('.btn.btn-success', name='choice_twitter', type='submit', value='search'),
                                 )
@@ -617,13 +617,35 @@ def intro(request, form, message):
         L.div('.container') / (
             header(request),
             L.div('.row') / (
-                L.div('.col-sm-3.center-block', style='float:none') / (
-                    L.h3 / 'A small introduction',
-                    (L.div('.alert.alert-danger') / message) if message else None,
+                L.div('.col-sm-6.center-block', style='float:none') / (
+                    L.p / raw(mistune.markdown("""
+## Before you begin
+
+Let's explain a few things about Linkage.
+
+It starts with a **graph**:
+A network of **nodes** connected by **edges**
+
+<div class='text-center'><img src='/static/img/graph.png'/></div>
+
+For example, if we want to represent an email network, we could have **email addresses** as nodes and **emails** as edges.
+
+Linkage specificy is to process graphs with **text on the edges**, here the text could be the email contents.
+
+When you give this graph to Linkage, it's gonna **cluster** it: It's gonna find **topics of discussion** and **groups of nodes** (clusters).
+
+Each edge is then assigned a percentage of each topic, for example, an email can be about the "surfing" topic but also about "friends" topic.
+
+To make it easier to vizualize the results, Linkage shows you a **meta-network** where the nodes are grouped by clusters so you can easily interpret the interactions between clsuters.
+
+#### And that's Linkage for you
+
+So, go ahead, choose the type of user you are and then you can start clustering graphs via the "New Job" page.
+                    """, escape=False)),
                     L.form(method='post') / (
                         L.input(type='hidden', name='csrfmiddlewaretoken', value=get_token(request)),
                         L.div('.form-group') / (
-                            L.label('.control-label') / 'Organization',
+                            L.label('.control-label') / 'Select you type of usage',
                             L.select('.form-control', name='org') / (
                                 L.option(value='individual', selected='') / 'Individual',
                                 L.option(value='univ') / 'University',
