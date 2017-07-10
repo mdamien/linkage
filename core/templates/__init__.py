@@ -546,14 +546,6 @@ def login(request, message, signup_form):
                                     L.label('.control-label') / 'Password',
                                     L.input('.form-control', type='password', name='password', value=signup_form.data.get('password', '')),
                                 ),
-                                L.div('.form-group') / (
-                                    L.label('.control-label') / 'Organization',
-                                    L.select('.form-control', name='org') / (
-                                        L.option(value='individual', selected='') / 'Individual',
-                                        L.option(value='univ') / 'University',
-                                        L.option(value='pro') / 'Company',
-                                    )
-                                ),
                                 _very_basic_captcha(),
                                 L.div('.form-group') / (
                                     L.div('.checkbox') / (
@@ -596,14 +588,6 @@ def signup(request, form, message):
                             L.label('.control-label') / 'Password',
                             L.input('.form-control', type='password', name='password', value=form.data.get('password', '')),
                         ),
-                        L.div('.form-group') / (
-                            L.label('.control-label') / 'Organization',
-                            L.select('.form-control', name='org') / (
-                                L.option(value='individual', selected='') / 'Individual',
-                                L.option(value='univ') / 'University',
-                                L.option(value='pro') / 'Company',
-                            )
-                        ),
                         _very_basic_captcha(),
                         L.div('.form-group') / (
                             L.div('.checkbox') / (
@@ -628,7 +612,7 @@ def signup(request, form, message):
 )
 
 
-def signup(request, form, message):
+def intro(request, form, message):
     return base((
         L.div('.container') / (
             header(request),

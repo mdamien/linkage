@@ -60,7 +60,7 @@ def org_required():
                     request.method = 'GET'
                     request.POST = {} # hack - should do a redirect
                     return view_func(request, *args, **kwargs)
-            return HttpResponse(templates.signup(request, form, ''))
+            return HttpResponse(templates.intro(request, form, ''))
         return _wrapped_view
     return decorator
 
@@ -514,6 +514,7 @@ You are just one click away from getting an account, click on the following link
 https://linkage.fr/?confirm_email_token=%s
 """ % token, 'no-reply@linkage.fr', [email], fail_silently=False)
                     messages.success(request, 'An email has been sent to %s to confirm the account creation' % email)
+                    return redirect('/')
                 except SMTPRecipientsRefused:
                     message = "Failed to send the confirmation link to your email, please verify it's correct"
                     user.delete()
