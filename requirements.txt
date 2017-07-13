@@ -22,3 +22,4 @@ psycopg2
 mistune
 natural
 https://github.com/mdamien/django-simple-admin-upload/archive/master.zip
+https://github.com/karanlyons/django-save-the-change/archive/master.zip

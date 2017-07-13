@@ -20,12 +20,6 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
 
     graph = Graph.objects.get(pk=graph_pk)
 
-    graph.job_current_step = 'Clustering'
-    graph.save()
-    Group("jobs-%d" % graph.user.pk).send({
-        'text': '%d - STEP UPDATE' % graph.pk
-    })
-
     param_clusters = graph.job_param_clusters
     param_topics = graph.job_param_topics
     param_max_clusters = graph.job_param_clusters_max
@@ -39,7 +33,7 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
             (param_max_clusters - param_clusters + 1)
                 * (param_max_topics - param_topics + 1)
         ) * n_repeat
-        graph.job_current_step = 'Clustering %d/%d' % (kq_done, kq_todo)
+        graph.job_current_step = 'Clustering (%d/%d models)' % (kq_done, kq_todo)
         graph.job_progress = kq_done / kq_todo
         graph.save()
         Group("jobs-%d" % graph.user.pk).send({
@@ -53,10 +47,16 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
         param_max_clusters, param_max_topics,
         update=update, n_repeat=n_repeat)
 
+
+    graph.job_current_step = 'Clustering'
     graph.job_log = log
     graph.job_time = (time.time() - t) / 100
     graph.job_progress = 1;
     graph.save()
+
+    Group("jobs-%d" % graph.user.pk).send({
+        'text': '%d - STEP UPDATE' % graph.pk
+    })
     
     for group, result in results.items():
         db_result = ProcessingResult(
@@ -87,7 +87,7 @@ def retrieve_graph_data(graph_pk, method, **params):
     from core import third_party_import, models
 
     graph = models.Graph.objects.get(pk=graph_pk)
-    graph.job_current_step = 'Making the graph'
+    graph.job_current_step = 'Retrieving data'
     graph.save()
     Group("jobs-%d" % graph.user.pk).send({
         'text': '%d - STEP UPDATE' % graph.pk
@@ -131,7 +131,7 @@ def save_csv(graph_pk, csv_content):
     from core import models
     graph = models.Graph.objects.get(pk=graph_pk)
     graph.original_csv = csv_content
-    graph.save(update_fields=['original_csv'])
+    graph.save()
     print('CSV SAVED')
 
 

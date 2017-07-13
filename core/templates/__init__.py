@@ -637,7 +637,7 @@ Linkage specificity is to process graphs with **text on the edges**, here the te
 
 When you give this graph to Linkage, it's gonna **cluster** it: It's gonna find **topics of discussion** and **groups of nodes** (clusters).
 
-Each edge is then assigned a percentage of each topic, for example, an email can be 80% about the "surfing" topic but also 20% about "friends" topic.
+Each edge is then assigned a percentage of each topic, for example, an email can be 80% about the "surfing" topic but also 20% about the "friends" topic.
 
 To make it easier to vizualize the results, Linkage shows you a **meta-network** where the nodes are grouped by clusters so you can easily interpret the interactions between clusters.
 

@@ -5,7 +5,10 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.urls import reverse
 from django.contrib.auth.models import User
 
+from save_the_change.decorators import SaveTheChange
 
+
+@SaveTheChange
 class Graph(models.Model): # = Job
     name = models.CharField(max_length=100)
 
@@ -31,7 +34,7 @@ class Graph(models.Model): # = Job
 
     original_csv = models.TextField(blank=True, default='')
 
-    cluster_to_cluster_cutoff = models.FloatField(default=0.002)
+    cluster_to_cluster_cutoff = models.FloatField(default=0)
 
     magic_too_big_to_display_X = models.BooleanField(default=False)
     directed = models.BooleanField(default=True)
@@ -46,6 +49,7 @@ class Graph(models.Model): # = Job
         return '"{}" {}'.format(self.name, naturaltime(self.created_at))
 
 
+@SaveTheChange
 class ProcessingResult(models.Model):
     graph = models.ForeignKey(Graph)
 
@@ -97,6 +101,7 @@ class UserProfile(models.Model):
 
 
 def graph_data_from_links(links, filter_largest_subgraph=False, ignore_self_loop=True, directed=False):
+    print('start graph data')
     import csv, random, io, sys, os
     import collections
     import time
@@ -118,6 +123,8 @@ def graph_data_from_links(links, filter_largest_subgraph=False, ignore_self_loop
     DTM_writer = csv.writer(DTM, delimiter=' ')
 
     links = list(csv.reader(io.StringIO(links)))
+
+    print('links loaded')
 
     if filter_largest_subgraph:
         # amazingly complex algorithm to find the subgraph and filter the links :)
@@ -151,6 +158,8 @@ def graph_data_from_links(links, filter_largest_subgraph=False, ignore_self_loop
 
         links = [link for link in links if len(link) > 1 and groups[link[0]] == best_group]
 
+        print('filtered largest subgraph')
+
     if not directed:
         # another amazing algo to symmetrize the links in case of undirected graphs
         new_links = []
@@ -158,6 +167,9 @@ def graph_data_from_links(links, filter_largest_subgraph=False, ignore_self_loop
             new_links.append(link)
             new_links.append([link[1], link[0]] + link[2:])
         links = new_links
+
+        print('symmetry forced')
+
 
     nodes = [] # labels
     terms = [] # dictionnary
@@ -176,6 +188,8 @@ def graph_data_from_links(links, filter_largest_subgraph=False, ignore_self_loop
         except ValueError:
             terms.append(term)
             return len(terms) - 1
+
+    print('start making edges', len(links))
 
     edges = collections.OrderedDict()
     for link in links:
@@ -208,6 +222,8 @@ def graph_data_from_links(links, filter_largest_subgraph=False, ignore_self_loop
                             lemm = token
                         doc_terms[lemm] += 1
 
+    print('edges made')
+
     def key_to_order_for_tdm(edge_name):
         start, end = [int(x) for x in edge_name.split(',')]
         return start + end*len(nodes)
@@ -231,6 +247,8 @@ def graph_data_from_links(links, filter_largest_subgraph=False, ignore_self_loop
     dictionnary = io.StringIO()
     dictionnary_writer = csv.writer(dictionnary, delimiter=' ')
     dictionnary_writer.writerow(terms)
+
+    print('data done')
 
     return {
         'edges': X.getvalue(),
