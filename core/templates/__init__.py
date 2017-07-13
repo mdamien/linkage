@@ -700,7 +700,7 @@ Linkage allows you to cluster the nodes of networks with textual edges while ide
             L.div('.row') / (
                 L.hr,
                 L.div('col-sm-12') / (
-                    L.div(style='font-size: 1.3em;margin:auto;max-width:90%') / (
+                    L.div(style='font-size: 1.3em;margin:auto;max-width:50%') / (
                         L.h4(style='color:#e95420') / (
                             icon('folder-open'),
                             SHORT_SPACER,
