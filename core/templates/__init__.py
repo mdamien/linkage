@@ -960,7 +960,7 @@ def tpl_article(request, article):
     padding: 20px 10px;
     margin-top: 0;
                         """) / (
-                        L.a('text-muted', href='/blog/', style="""
+                        L.a('text-muted', href='/', style="""
                             display: block;
     margin-bottom: 10px;
     font-size: 18px;""") / 'Blog',
