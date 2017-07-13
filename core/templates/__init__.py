@@ -139,6 +139,8 @@ def serialize_graph(graph, result, simple=False, scores=None):
         'name': graph.name,
         'labels': graph.labels,
         'edges': graph.edges,
+        'n_edges': len(graph.edges.split('\n')),
+        'n_labels': len(list(csv.reader([graph.labels], delimiter=' '))[0]),
         'tdm': graph.tdm,
         'public': graph.public,
         'dictionnary': graph.dictionnary,

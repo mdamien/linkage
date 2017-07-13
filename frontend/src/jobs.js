@@ -49,7 +49,11 @@ class Job extends React.Component {
       var finished = job.progress == 1 || job.job_error_log !== '';
 
       return <div className='panel panel-default' ref='job'>
-        <div className='panel-heading'>{job.name}</div>
+        <div className='panel-heading'>
+              {job.name}
+              {job.n_edges > 1 ? 
+                <span className="label label-default pull-right">{job.n_edges} edges, {job.n_labels} nodes</span> : null}
+        </div>
         <div className='panel-body'>
           <div className='row'>
             <div className='col-md-5'>
@@ -63,7 +67,7 @@ class Job extends React.Component {
                 }
               </div>
               <div>Created: {job.created_at}</div>
-              <div>Current step: {job.step}</div>
+              {finished ? null : <div>Current step: {job.step}</div>}
               {finished && job.time_t > 0 ?
                 <div>Took <strong>{job.time}</strong></div> :
                 null // <div>Est. time to process: <strong>3h30</strong> (~<strong>1h05</strong> left)</div>
