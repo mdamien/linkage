@@ -607,6 +607,7 @@ function get_graph_graphics(graph, X, clusters) {
 
         var strokeWidth = 1;
         var cluster_topic_perc = false;
+        var opacity = 1;
         if (cluster_to_cluster) {
           // BEST TOPIC
           cluster_topic_perc = STATE.theta_qr[
@@ -617,12 +618,14 @@ function get_graph_graphics(graph, X, clusters) {
           // WIDTH IN PI()
           var width = STATE.pi[prev_cluster_name][to_cluster_name];
 
-          strokeWidth = 1 + 10*width;
+          strokeWidth = 1 + 20*width;
+          opacity = width*5;
         }
 
         var ui = Viva.Graph.svg('path')
                    .attr('stroke-width', strokeWidth)
                    .attr('fill', 'none')
+                   .attr('opacity', opacity)
                    .attr('stroke', color);
         
         if ((cluster_to_cluster || GRAPH.directed) && prev.id != to.id) {
