@@ -619,7 +619,7 @@ function get_graph_graphics(graph, X, clusters) {
           var width = STATE.pi[prev_cluster_name][to_cluster_name];
 
           strokeWidth = 1 + 20*width;
-          opacity = width*5;
+          opacity = 0.15 + width*5;
         }
 
         var ui = Viva.Graph.svg('path')
