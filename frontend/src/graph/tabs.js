@@ -7,7 +7,7 @@ function render(curr_tab, changeTab) {
     id: 'graph',
   }];
   
-  if (!GRAPH.magic_too_big_to_display_X && GRAPH.n_nodes < 200) {
+  if (!GRAPH.magic_too_big_to_display_X && GRAPH.n_labels < 200) {
     tabs.push({
       title: 'Adjacency Matrix',
       id: 'matrix',
