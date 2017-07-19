@@ -116,6 +116,10 @@ def pubmed_to_csv(q, limit=500):
             title = []
             if 'ArticleTitle' in article:
                 title = [article['ArticleTitle']]
+
+            title = [x for x in title if x]
+            abstract = [x for x in abstract if x]
+            
             text = '\n'.join(title + abstract)
             for i, author in enumerate(authors):
                 for author2 in authors[i+1:]:
