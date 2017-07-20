@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'channels',
     'loginas',
     'simple_admin_upload',
+    'dynamic_preferences',
 
     'core',
     'blog',

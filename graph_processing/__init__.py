@@ -3,7 +3,7 @@ import os, subprocess, time
 def process(X, tdm, n_clusters, n_topics, id=0,
         n_clusters_max=None, n_topics_max=None,
         update=lambda log, kq_done, msg: print('kq_done', kq_done) and print(msg),
-        n_repeat=3):
+        n_repeat=3, max_inner_lda=10, max_outer_lda=10):
     linkage_dir = '../repos/linkage-cpp/'
     run_dir = '%sruns/%d/' % (linkage_dir, id)
     run_dir_for_linkage = 'runs/%d/' % id
@@ -24,12 +24,14 @@ def process(X, tdm, n_clusters, n_topics, id=0,
     
     cmd_cd = 'cd {link_dir};'.format(link_dir=linkage_dir) + 'export LD_LIBRARY_PATH="build/arma/";'
     cmd_base = ('./build/linkage ' \
-            + '{Kmin} {Kmax} {Qmin} {Qmax} {n_repeat} 0 1 100 0.0001 10 10 {dir}').format(
+            + '{Kmin} {Kmax} {Qmin} {Qmax} {n_repeat} 0 1 100 0.0001 {max_inner_lda} {max_outer_lda} {dir}').format(
                 Kmin=n_topics,
                 Kmax=n_topics_max,
                 Qmin=n_clusters,
                 Qmax=n_clusters_max,
                 n_repeat=n_repeat,
+                max_inner_lda=max_inner_lda,
+                max_outer_lda=max_outer_lda,
                 dir=run_dir_for_linkage)
 
     log += cmd_base + '\n'

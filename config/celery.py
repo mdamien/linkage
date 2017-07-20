@@ -25,7 +25,11 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
     param_max_clusters = graph.job_param_clusters_max
     param_max_topics = graph.job_param_topics_max
 
-    n_repeat = 4
+    from dynamic_preferences.registries import global_preferences_registry
+    global_preferences = global_preferences_registry.manager()
+    n_repeat = global_preferences['linkage_cpp__n_repeat']
+    max_inner_lda = global_preferences['linkage_cpp__max_inner_lda']
+    max_outer_lda = global_preferences['linkage_cpp__max_outer_lda']
 
     def update(log, kq_done, msg):
         graph.job_log = log
@@ -45,7 +49,8 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
         param_clusters, param_topics,
         result_pk if result_pk else random.randint(0, 10000),
         param_max_clusters, param_max_topics,
-        update=update, n_repeat=n_repeat)
+        update=update, n_repeat=n_repeat,
+        max_inner_lda=max_inner_lda, max_outer_lda=max_outer_lda)
 
 
     graph.job_current_step = 'Clustering'

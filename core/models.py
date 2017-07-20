@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 
 from save_the_change.decorators import SaveTheChange
+import core.dynamic_preferences_registry # import here since auto-import doesn't work
 
 
 @SaveTheChange
