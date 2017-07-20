@@ -13,7 +13,7 @@ function render(params) {
     {GRAPH.magic_too_big_to_display_X || !params.meta_mode ? null : <span>&nbsp;<button href="#" className="btn btn-primary btn-xs" onClick={() => params.expand_clusters()}>expand clusters</button></span>}
     {GRAPH.magic_too_big_to_display_X || params.meta_mode ? null : <span>&nbsp;<button href="#" className="btn btn-primary btn-xs" onClick={() => params.collapse_clusters()}>collapse clusters</button></span>}
     &nbsp;
-    <button href="#" className="btn btn-primary btn-xs" onClick={() => params.fit_graph()}>fit graph to view</button>
+    {GRAPH.USE_EXPERIMENTAL_WEBGL_MODE ? null : <button href="#" className="btn btn-primary btn-xs" onClick={() => params.fit_graph()}>fit graph to view</button>}
   </div>;
 
   ReactDOM.render(buttons, document.getElementById('_graph-buttons'));

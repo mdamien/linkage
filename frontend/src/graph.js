@@ -6,7 +6,7 @@ import renderGraphSidebar from './graph/info';
 import renderGraphButtons from './graph/graph_buttons';
 import renderChart, {renderMatrix} from './graph/chart';
 
-import { get_color, hashedColor, COLORS, edgesArr, n_best_elems } from './graph/utils';
+import { get_color, hashedColor, COLORS, edgesArr, n_best_elems, cssToWebgl } from './graph/utils';
 import tfidf from './graph/tf_idf';
 
 // TODO: STATE is here to keep computed things in memory, could be cleaned up
@@ -93,7 +93,10 @@ function init(state_init = {}) {
   });
 
   var graphics = get_graph_graphics(graph, X, nodeToCluster);
-  // var graphics = get_webgl_graphics(graph, X);
+  if (GRAPH.USE_EXPERIMENTAL_WEBGL_MODE) {
+    $('#_graph').height(700);
+    graphics = get_webgl_graphics(graph, X);
+  }
 
   RENDERER = Viva.Graph.View.renderer(graph, {
     layout: layout,
@@ -157,7 +160,7 @@ function init(state_init = {}) {
 
   STATE.graph_layout_running = true;
   RENDERER.run();
-  RENDERER.pause_in(5000);
+  RENDERER.pause_in(4000);
 
   RENDERER.layout = layout;
   RENDERER.graph = graph;
@@ -308,7 +311,7 @@ function expand_clusters(graph, X, clusters) {
   });
 
   STATE.meta_mode = false;
-  RENDERER.pause_in(2000);
+  RENDERER.pause_in(6000);
   renderSidebar(STATE);
 }
 
@@ -478,7 +481,7 @@ function get_graph_graphics(graph, X, clusters) {
           renderer: RENDERER,
           expand_clusters: expand_clusters.bind(this, graph, X, clusters),
           collapse_clusters: collapse_clusters.bind(this, graph, X, clusters),
-          graph_layout_running: STATE.graph_layout_running, 
+          graph_layout_running: STATE.graph_layout_running,
           fit_graph: fit_graph,
           meta_mode: STATE.meta_mode,
         });
@@ -767,54 +770,129 @@ function get_webgl_graphics(graph, X) {
 
    graphics
        .node(function(node){
-            var is_cluster = node.data && node.data.isCluster;
-            var cluster_name = is_cluster ? parseInt(node.id.split('-')[1]) : null;
-            var cluster_label = null;
-            if (STATE.nodes_meta && STATE.nodes_meta[node.id] && STATE.nodes_meta[node.id]['label']) {
-              cluster_label = STATE.nodes_meta[node.id]['label'];
-            } else {
-              cluster_label = '' + (cluster_name + 1);
+          var is_cluster = node.data && node.data.isCluster;
+          var cluster_name = is_cluster ? parseInt(node.id.split('-')[1]) : null;
+          var cluster_label = null;
+          if (STATE.nodes_meta && STATE.nodes_meta[node.id] && STATE.nodes_meta[node.id]['label']) {
+            cluster_label = STATE.nodes_meta[node.id]['label'];
+          } else {
+            cluster_label = '' + (cluster_name + 1);
+          }
+
+          var clusters = STATE.nodeToCluster;
+
+          var color = '#aaa';
+
+          if (is_cluster) {
+            color = get_color(cluster_name, 'Paired');
+          }
+
+          if (!is_cluster && clusters && clusters[node.id] !== undefined) {
+            color = get_color(clusters[node.id], 'Paired');
+          }
+          if (is_cluster) {
+            var sorted = n_best_elems(STATE.rho, false, v => v[0]);
+            var max = sorted[0][1][0];
+            var min = sorted.slice(-1)[0][1][0];
+            var normalized = (STATE.rho[cluster_name][0] - min) / (max - min);
+            if (!normalized) {
+              normalized = 0;
             }
+            var size = 20 + Math.exp(normalized * 3);
+            /*
+            square.attr('x', -size/2);
+            square.attr('y', -size/2);
+            square.attr('width', size);
+            square.attr('height', size);
+            node._node_size = size;
+            ui.append(square);*/
+          } else {
+            /*
+            node._node_size = 7*2;
+            ui._circle = circle;
+            ui.append(circle);
+            */
+          }
 
-            var clusters = STATE.nodeToCluster;
-
-            var color = '#aaa';
-
-            if (is_cluster) {
-              color = get_color(cluster_name, 'Paired');
-            }
-
-            if (!is_cluster && clusters && clusters[node.id] !== undefined) {
-              color = get_color(clusters[node.id], 'Paired');
-            }
-            if (is_cluster) {
-              var sorted = n_best_elems(STATE.rho, false, v => v[0]);
-              var max = sorted[0][1][0];
-              var min = sorted.slice(-1)[0][1][0];
-              var normalized = (STATE.rho[cluster_name][0] - min) / (max - min);
-              if (!normalized) {
-                normalized = 0;
-              }
-              var size = 20 + Math.exp(normalized * 3);
-              /*
-              square.attr('x', -size/2);
-              square.attr('y', -size/2);
-              square.attr('width', size);
-              square.attr('height', size);
-              node._node_size = size;
-              ui.append(square);*/
-            } else {
-              /*
-              node._node_size = 7*2;
-              ui._circle = circle;
-              ui.append(circle);
-              */
-            }
-
-           return Viva.Graph.View.webglSquare(size, 0xffbb78ff);
+          return Viva.Graph.View.webglSquare(size, cssToWebgl(color));
        })
        .link(function(link) {
-           return Viva.Graph.View.webglLine(0x1f77b4ff);
+          var prev = graph.getNode(link.fromId);
+          var prev_is_cluster = prev.data && prev.data.isCluster;
+          var prev_cluster_name = prev_is_cluster ? parseInt(prev.id.split('-')[1]) : null;
+
+          var to = graph.getNode(link.toId);
+          var to_is_cluster = to.data && to.data.isCluster;
+          var to_cluster_name = to_is_cluster ? parseInt(to.id.split('-')[1]) : null;
+
+          var linked_to_cluster = prev_is_cluster || to_is_cluster;
+          var cluster_to_cluster = prev_is_cluster && to_is_cluster;
+
+          var color = '#aaa';
+
+          var link_id = STATE.edges.indexOf(link.fromId + ',' + link.toId);
+          if (linked_to_cluster) {
+            link_id = -1;
+          }
+
+          var topics_perc = false;
+          if (STATE.topics_per_edges && link_id !== -1) {
+            var topic_max = -1;
+            var topic_max_value = null;
+            topics_perc = [];
+            STATE.topics_per_edges.forEach((row, topic) => {
+              var v = row[link_id];
+              if (topic_max_value === null || v > topic_max_value) {
+                topic_max_value = v;
+                topic_max = topic;
+              }
+              topics_perc.push(v);
+            });
+            color = get_color(topic_max);
+
+            // normalize topics_perc
+            var sum = topics_perc.reduce(function(a, b) { return a + b; }, 0);
+            topics_perc = topics_perc.map(x => x/sum);
+          }
+
+          var strokeWidth = 1;
+          var cluster_topic_perc = false;
+          var opacity = 1;
+          if (cluster_to_cluster) {
+            // BEST TOPIC
+            cluster_topic_perc = STATE.theta_qr[
+              to_cluster_name * Object.keys(STATE.clusterToNodes).length + prev_cluster_name];
+            var topic_max = n_best_elems(cluster_topic_perc, 1)[0][0];
+            color = get_color(topic_max);
+
+            // WIDTH IN PI()
+            var width = STATE.pi[prev_cluster_name][to_cluster_name];
+
+            strokeWidth = 1 + 20*width;
+            opacity = 0.15 + width*5;
+          }
+
+          /*
+          var ui = Viva.Graph.svg('path')
+                     .attr('stroke-width', strokeWidth)
+                     .attr('fill', 'none')
+                     .attr('opacity', opacity)
+                     .attr('stroke', color);
+          
+          if ((cluster_to_cluster || GRAPH.directed) && prev.id != to.id) {
+            if (cluster_to_cluster) {
+              ui.attr('marker-end', 'url(#TriangleBig)');
+            } else {
+              ui.attr('marker-end', 'url(#Triangle)');
+            }
+          }
+
+          if (linked_to_cluster && !cluster_to_cluster) {
+            ui.attr('stroke-dasharray', '5, 5');
+          }
+          */
+
+           return Viva.Graph.View.webglLine(cssToWebgl(color));
        });
 
 
@@ -867,7 +945,7 @@ function get_webgl_graphics(graph, X) {
       renderer: RENDERER,
       expand_clusters: expand_clusters.bind(this, graph, X, STATE.nodeToCluster),
       collapse_clusters: collapse_clusters.bind(this, graph, X, STATE.nodeToCluster),
-      graph_layout_running: STATE.graph_layout_running, 
+      graph_layout_running: STATE.graph_layout_running,
       fit_graph: fit_graph,
       meta_mode: STATE.meta_mode,
     });
@@ -889,14 +967,8 @@ function update_graph_height() {
   if (g.length > 0) {
     g.height(window.innerHeight - g.offset().top - 20);    
   }
-
-  var g = $('#_graph canvas');
-  if (g.length > 0) {
-    g.attr('height', window.innerHeight - g.offset().top - 20);
-    $('#_graph').height(window.innerHeight - g.offset().top - 20);
-    RENDERER.graphics.fire('rescaled');
-  }
 };
+
 $(window).resize(update_graph_height);
 
 var display_loading = () => {

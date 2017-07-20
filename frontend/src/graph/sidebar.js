@@ -387,6 +387,17 @@ class Sidebar extends React.Component {
                         : null}
                   </div> : null}
               </div>
+              {GRAPH.USE_EXPERIMENTAL_WEBGL_MODE  ? <p>
+                <button href="#" className="btn btn-primary btn-xs" onClick={() => {
+                  GRAPH.USE_EXPERIMENTAL_WEBGL_MODE = false;
+                  init();
+                }}>go back to SVG mode</button>
+              </p> : <p>
+                <button href="#" className="btn btn-primary btn-xs" onClick={() => {
+                  GRAPH.USE_EXPERIMENTAL_WEBGL_MODE = true;
+                  init();
+                }}>use WebGL (experimental)</button>
+              </p>}
               <div className='panel panel-default'>
                   <div className='panel-heading'>
                       <h3 className='panel-title'>
