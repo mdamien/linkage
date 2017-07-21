@@ -8,3 +8,4 @@ user_uploads/
 pm_runs/
 last_graph.csv
 mockup/reddit.csv
+config/secrets_prod.py
