@@ -161,7 +161,9 @@ def import_graph_data(graph_pk, csv_content, filter_largest_subgraph=False, igno
             directed=graph.directed)
         for key in data:
             setattr(graph, key, data[key])
-        graph.save(force_insert=True) # https://sentry.io/linkage/linkage/issues/314092204/ "Save with update_fields did not affect any rows."
+        # duplicate keys triggered "duplicate key value violates unique constraint "core_graph_pkey" because of this fix
+        # graph.save(force_insert=True) # https://sentry.io/linkage/linkage/issues/314092204/ "Save with update_fields did not affect any rows."
+        graph.save()
     except Exception as e:
         graph.job_error_log = 'Error while importing'
         graph.job_progress = 1.0
