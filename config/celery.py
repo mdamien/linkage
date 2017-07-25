@@ -157,7 +157,7 @@ def import_graph_data(graph_pk, csv_content, filter_largest_subgraph=False, igno
     try:
         data = models.graph_data_from_links(csv_content,
             filter_largest_subgraph=filter_largest_subgraph,
-            ignore_self_loop=False, # TODO: remove self loop concept from linkage
+            ignore_self_loop=True, # TODO: remove self loop concept from linkage
             directed=graph.directed)
         for key in data:
             setattr(graph, key, data[key])
