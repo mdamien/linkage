@@ -37,8 +37,14 @@ def hal_to_csv(q, limit=500):
         'q': q,
         'rows': limit,
     }
-    resp = requests.get('https://api.archives-ouvertes.fr/search/', params=params)
-    results = resp.json()['response']['docs']
+
+    results = []
+    while True:
+        resp = requests.get('https://api.archives-ouvertes.fr/search/', params=params)
+        results += resp.json()['response']['docs']
+        if len(results) >= resp.json()['response']['numFound'] or len(results) > limit:
+            break
+        params['start'] = len(results)
 
     output = io.StringIO()
     writer = csv.writer(output)
