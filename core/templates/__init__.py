@@ -524,8 +524,14 @@ def login(request, message, signup_form):
                                 ),
                                 L.div('.form-group.text-center') / (
                                     L.button('.btn.btn-primary', type='submit') / 'Login'
+                                ),
+                            ),
+                            L.p('.text-center') / (
+                                L.small / (
+                                    L.a(href='mailto:contact@linkage.fr?subject=Password%20reset&body=Hi%2C%20could%20you%20please%20reset%20my%20password%20%3F%0A%0AThanks') / 'forgot your password ?'
                                 )
                             ),
+                            L.br,
                             L.p('.text-center') / (
                                 L.a(href=reverse('social:begin', args=['google-oauth2'])) / 
                                     L.img('google-signin', style='width:100%; height:auto'),
