@@ -1,7 +1,7 @@
 from config.settings import *
 
 try:
-    from secrets_prod import SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET, EMAIL_HOST_PASSWORD
+    from .secrets_prod import SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET, EMAIL_HOST_PASSWORD
 except ImportError:
     raise Exception('You need to update secrets_prod.py with your own values')
 
