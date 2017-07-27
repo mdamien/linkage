@@ -298,12 +298,12 @@ class Sidebar extends React.Component {
                       Advanced
                   </a>
               </li>
-              <li className={this.state.tab == 'log' ? 'active' : ''}>
+              {/*<li className={this.state.tab == 'log' ? 'active' : ''}>
                   <a href='#'
                     onClick={() => this.setState({tab: 'log'})}>
                       Log
                   </a>
-              </li>
+              </li>*/}
             </ul> : null}
             {!GRAPH.magic_too_big_to_display_X ? <br/> : null}
             {this.state.tab == 'clustering' ?
