@@ -401,7 +401,7 @@ class Sidebar extends React.Component {
               <div className='panel panel-default'>
                   <div className='panel-heading'>
                       <h3 className='panel-title'>
-                        <abbr title='minimum value of connectivity (PI) between clusters to show a link between them'>cluster-to-cluster cutoff</abbr> - {this.state.cutoff}</h3>
+                        <abbr title='minimum value of connectivity (PI) between clusters to show a link between them (helpful when you have many clusters)'>cluster-to-cluster cutoff</abbr> - {this.state.cutoff}</h3>
                   </div>
                   <div className='panel-body'>
                       <Slider step={0.00001} defaultValue={this.state.cutoff}
