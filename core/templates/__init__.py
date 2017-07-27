@@ -268,7 +268,7 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                         L.a('.list-group-item' + ('.active' if import_type_selected == 'coauth' else ''),
                             href='?import_type=coauth') / 'Papers co-authorship network',
                         (L.a('.list-group-item' + ('.active' if import_type_selected == 'gmail' else ''),
-                            href='?import_type=gmail') / 'GMail') if request.user.is_superuser else None,
+                            href='?import_type=gmail') / 'GMail'),
                         L.a('.list-group-item' + ('.active' if import_type_selected == 'mbox' else ''),
                             href='?import_type=mbox') / 'MBox file',
                         L.a('.list-group-item' + ('.active' if import_type_selected == 'twitter' else ''),
