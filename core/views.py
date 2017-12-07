@@ -104,7 +104,7 @@ def index(request):
                 valid_parameters = False
         try:
             limit = int(request.POST.get('limit', limit))
-            limit = min(limit, 1000)
+            limit = min(limit, 10000)
         except ValueError:
             messages.append(['danger', 'Invalid limit']) # todo: proper form validation
             valid_parameters = False

@@ -310,7 +310,7 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                                     ),
                                 ),
                                 L.div('.col-sm-2') / (
-                                    L.input('.form-control', name='limit', value='500', type='number'),
+                                    L.input('.form-control', name='limit', value='500', type='number', max='10000'),
                                 ),
                             ),
                         ) if import_type_selected == 'coauth' else None,
@@ -341,7 +341,7 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                                     ),
                                 ),
                                 L.div('.col-sm-2') / (
-                                    L.input('.form-control', name='limit', value='500', type='number'),
+                                    L.input('.form-control', name='limit', value='500', type='number', max='10000'),
                                 ),
                             ),
                         ) if import_type_selected == 'twitter' else None,
@@ -421,7 +421,7 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                                     ),
                                 ),
                                 L.div('.col-sm-2') / (
-                                    L.input('.form-control', name='limit', value='500', type='number'),
+                                    L.input('.form-control', name='limit', value='500', type='number', max='10000'),
                                 ),
                             ),
                         ) if import_type_selected == 'gmail' else None,
