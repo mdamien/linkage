@@ -48,6 +48,11 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
         ) * n_repeat
         graph.job_current_step = 'Clustering (%d/%d models)' % (kq_done, kq_todo)
         graph.job_progress = kq_done / kq_todo
+
+        # do not send yet as a finished job, wait for processing results to be saved
+        if kq_done == kq_todo:
+            return
+
         try:
             graph.save()
             Group("jobs-%d" % graph.user.pk).send({
