@@ -49,7 +49,7 @@ the config used on linkage.fr is available in doc/nginx_config
 To make the app ready (static files compiled mostly), just run `fish ./scripts/update_prod`
 
 Then you need to run 3 scripts to make the app ready:
-   - fish ./scripts/prod_server # handle HTTP requests
+   - fish ./scripts/prod_serv # handle HTTP requests
    - fish ./scripts/prod_app # run the python server
    - fish ./scripts/prod_celery # run the job worker
 

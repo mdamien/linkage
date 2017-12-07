@@ -24,7 +24,7 @@ def process(X, tdm, n_clusters, n_topics, id=0,
     
     cmd_cd = 'cd {link_dir};'.format(link_dir=linkage_dir) + 'export LD_LIBRARY_PATH="build/arma/";'
     cmd_base = ('./build/linkage ' \
-            + '{Kmin} {Kmax} {Qmin} {Qmax} {n_repeat} 0 1 100 0.0001 {max_inner_lda} {max_outer_lda} {dir}').format(
+            + '{Kmin} {Kmax} {Qmin} {Qmax} {n_repeat} 0 1 100 0.0001 {max_inner_lda} {max_outer_lda} {directed} {dir}').format(
                 Kmin=n_topics,
                 Kmax=n_topics_max,
                 Qmin=n_clusters,
@@ -32,6 +32,7 @@ def process(X, tdm, n_clusters, n_topics, id=0,
                 n_repeat=n_repeat,
                 max_inner_lda=max_inner_lda,
                 max_outer_lda=max_outer_lda,
+                directed=1 if directed else 0,
                 dir=run_dir_for_linkage)
 
     log += cmd_base + '\n'
@@ -128,7 +129,7 @@ def process(X, tdm, n_clusters, n_topics, id=0,
 
         for key in best_result:
             group_result[key] = best_result[key]
-    # os.system('rm -rf %s' % (run_dir,))
+    os.system('rm -rf %s' % (run_dir,))
 
     return groups, log
 
