@@ -10,6 +10,15 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings_dev')
 app = Celery('linkage')
 app.config_from_object('django.conf:settings')
 
+def save_or_retry(obj):
+    for i in range(20):
+        try:
+            obj.save()
+            return
+        except Exception as e:
+            print("couldn't save final result, retry=", i, 'error=', e)
+        time.sleep(1)
+
 @task()
 def process_graph(graph_pk, result_pk=None, ws_delay=0):
     print('Processing graph {}'.format(graph_pk))
@@ -61,7 +70,7 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
     graph.job_log = log
     graph.job_time = (time.time() - t) / 100
     graph.job_progress = 1;
-    graph.save()
+    save_or_retry(graph)
 
     Group("jobs-%d" % graph.user.pk).send({
         'text': '%d - STEP UPDATE' % graph.pk
@@ -80,7 +89,8 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
         db_result.pi_mat = result['pi_mat']
         db_result.theta_qr_mat = result['theta_qr_mat']
         db_result.crit = result['crit']
-        db_result.save()
+        save_or_retry(db_result)
+
 
     time.sleep(ws_delay)
 
