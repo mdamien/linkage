@@ -39,10 +39,13 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
         ) * n_repeat
         graph.job_current_step = 'Clustering (%d/%d models)' % (kq_done, kq_todo)
         graph.job_progress = kq_done / kq_todo
-        graph.save()
-        Group("jobs-%d" % graph.user.pk).send({
-            'text': '%d - UPDATE' % graph.pk
-        })
+        try:
+            graph.save()
+            Group("jobs-%d" % graph.user.pk).send({
+                'text': '%d - UPDATE' % graph.pk
+            })
+        except Exception as e: 
+            print("[warning] couldn't save the job progress", str(e))
 
     results, log = graph_processing.process(
         graph.edges, graph.tdm,
