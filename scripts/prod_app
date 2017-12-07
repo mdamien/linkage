@@ -1,2 +1,2 @@
-./manage.py runworker --settings config.settings_prod
+./manage.py runworker --settings config.settings_prod --threads 6
 
