@@ -65,17 +65,11 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
         max_inner_lda=max_inner_lda, max_outer_lda=max_outer_lda,
         directed=graph.directed)
 
-
     graph.job_current_step = 'Clustering'
     graph.job_log = log
     graph.job_time = (time.time() - t) / 100
     graph.job_progress = 1;
-    save_or_retry(graph)
 
-    Group("jobs-%d" % graph.user.pk).send({
-        'text': '%d - STEP UPDATE' % graph.pk
-    })
-    
     for group, result in results.items():
         db_result = ProcessingResult(
             graph=graph,
@@ -91,6 +85,7 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
         db_result.crit = result['crit']
         save_or_retry(db_result)
 
+    save_or_retry(graph)
 
     time.sleep(ws_delay)
 
