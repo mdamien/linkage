@@ -50,7 +50,8 @@ def process_graph(graph_pk, result_pk=None, ws_delay=0):
         result_pk if result_pk else random.randint(0, 10000),
         param_max_clusters, param_max_topics,
         update=update, n_repeat=n_repeat,
-        max_inner_lda=max_inner_lda, max_outer_lda=max_outer_lda)
+        max_inner_lda=max_inner_lda, max_outer_lda=max_outer_lda,
+        directed=graph.directed)
 
 
     graph.job_current_step = 'Clustering'

@@ -3,7 +3,7 @@ import os, subprocess, time
 def process(X, tdm, n_clusters, n_topics, id=0,
         n_clusters_max=None, n_topics_max=None,
         update=lambda log, kq_done, msg: print('kq_done', kq_done) and print(msg),
-        n_repeat=3, max_inner_lda=10, max_outer_lda=10):
+        n_repeat=3, max_inner_lda=10, max_outer_lda=10, directed=True):
     linkage_dir = '../repos/linkage-cpp/'
     run_dir = '%sruns/%d/' % (linkage_dir, id)
     run_dir_for_linkage = 'runs/%d/' % id
