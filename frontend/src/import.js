@@ -22,6 +22,14 @@ class MyRange extends React.Component {
     }
     render() {
       var {type} = this.props;
+
+      var min = 2;
+      var max = LINKAGE_ENTERPRISE ? 50 : 10
+      var marks = {};
+      for (var i = min; i <= max; i++) {
+        if (i <= 10 || i % 5 == 0) marks[i] = i;
+      }
+
       return <div>
         <div className="col-md-3 control-label">
           <strong>{type}</strong>
@@ -31,19 +39,9 @@ class MyRange extends React.Component {
           <input name={type + '_max'} type="hidden" value={this.state.max}/>
           <Range steps={1} dots defaultValue={[2, 5]}
             count={2}
-            min={2}
-            max={10}
-            marks={{
-              2:2,
-              3:3,
-              4:4,
-              5:5,
-              6:6,
-              7:7,
-              8:8,
-              9:9,
-              10:10,
-            }}
+            min={min}
+            max={max}
+            marks={marks}
             onAfterChange={(v) => {this.setState({min: v[0], max:v[1]})}}/>
         </div>
       </div>;

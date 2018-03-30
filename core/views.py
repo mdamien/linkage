@@ -24,7 +24,9 @@ import TwitterAPI
 from core import templates, models, third_party_import
 from blog.models import Article
 
-MAX_JOBS_PER_USER = 10
+MAX_JOBS_PER_USER = None if settings.LINKAGE_ENTERPRISE else 10
+MAX_REQUESTS_RESULT = None if settings.LINKAGE_ENTERPRISE else 10000
+CLUSTERS_MAX = 50 if settings.LINKAGE_ENTERPRISE else 10
 
 
 class OrgForm(forms.Form):
@@ -71,7 +73,7 @@ def index(request):
     from config.celery import import_graph_data, retrieve_graph_data
 
     user_jobs = models.Graph.objects.filter(user=request.user, job_error_log='').order_by('-pk')
-    if not request.user.is_staff and user_jobs.count() > MAX_JOBS_PER_USER:
+    if not request.user.is_staff and MAX_JOBS_PER_USER and user_jobs.count() > MAX_JOBS_PER_USER:
         messages = [('danger', 'You are limited to %d jobs, please delete previous ones before importing a new one' % MAX_JOBS_PER_USER)]
         return HttpResponse(templates.index(
             request,
@@ -96,15 +98,16 @@ def index(request):
                         or clusters_max < clusters_min or topics_max < topics_min:
                     messages.append(['danger', 'Invalid cluster range'])
                     valid_parameters = False
-                elif clusters_max > 10 or topics_max > 10:
-                    messages.append(['danger', 'Invalid cluster range: must be inferior of 10'])
+                elif clusters_max > CLUSTERS_MAX or topics_max > CLUSTERS_MAX:
+                    messages.append(['danger', 'Invalid cluster range: must be inferior of %d' % CLUSTERS_MAX])
                     valid_parameters = False
             except ValueError:
                 messages.append(['danger', 'Invalid cluster parameters']) # todo: proper form validation
                 valid_parameters = False
         try:
             limit = int(request.POST.get('limit', limit))
-            limit = min(limit, 10000)
+            if MAX_REQUESTS_RESULT:
+                limit = min(limit, MAX_REQUESTS_RESULT)
         except ValueError:
             messages.append(['danger', 'Invalid limit']) # todo: proper form validation
             valid_parameters = False

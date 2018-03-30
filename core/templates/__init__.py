@@ -1,4 +1,4 @@
-import random, collections, csv, json, io, sys, os, datetime
+import random, csv, json, sys, os
 
 from django.middleware.csrf import get_token
 from django.contrib.humanize.templatetags.humanize import naturaltime, naturalday
@@ -13,16 +13,17 @@ from lys import L, raw
 
 from .base import base
 
-csv.field_size_limit(sys.maxsize) # http://stackoverflow.com/questions/15063936/csv-error-field-larger-than-field-limit-131072
+csv.field_size_limit(sys.maxsize)  # http://stackoverflow.com/questions/15063936/csv-error-field-larger-than-field-limit-131072
 DEBUG = settings.DEBUG
 COMMIT_HASH = settings.COMMIT_HASH
 
-SPACER = raw('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;') # dat spacer
+SPACER = raw('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')  # dat spacer
 SHORT_SPACER = raw('&nbsp;&nbsp;')
 
 
 def icon(name):
     return L.span('.glyphicon.glyphicon-' + name)
+
 
 def header(request, page_name=''):
     return L.div('.row') / (
@@ -55,6 +56,7 @@ def header(request, page_name=''):
             L.a('.btn.btn-link', href='/accounts/logout/', style='margin-top: 20px;display:inline-block') / 'logout',
         ) if request.user.is_authenticated else None,
     ), L.hr(style='margin-top:5px;margin-bottom:15px')
+
 
 FOOTER = (
     L.div('.row') / (
@@ -101,9 +103,8 @@ JS_LIBS = (
         L.script(src='/static/js/vendor/bootstrap.js'),
 )
 
-def top_nodes_per_clusters(graph, result):
-    import csv, random, io, sys, os, zipfile
 
+def top_nodes_per_clusters(graph, result):
     labels = list(csv.reader([graph.labels], delimiter=' '))[0]
     clusters = [int(x) for x in 
         list(csv.reader([result.clusters_mat], delimiter=' '))[0]
@@ -188,6 +189,7 @@ def serialize_graph(graph, result, simple=False, scores=None):
             if graph.magic_too_big_to_display_X:
                 data['topics_per_edges_mat'] = '0 0 1'
     return data
+
 
 def result(request, graph, result, scores):
     return base((
@@ -493,6 +495,7 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
         L.script(src='/static/js/dist/import.js?v=' + COMMIT_HASH),
     ))
 
+
 def _very_basic_captcha():
     x = random.randint(1, 10)
     y = random.randint(1, 10)
@@ -508,6 +511,7 @@ def _very_basic_captcha():
             L.input('.form-control.input-sm', name='simple_captcha', style='display:inline;width:40%'),
         ),
     )
+
 
 def login(request, message, signup_form):
     return base((
@@ -588,6 +592,7 @@ def login(request, message, signup_form):
             SENTRY,
         ),
     ))
+
 
 def signup(request, form, message):
     return base((
@@ -953,6 +958,7 @@ def jobs(request, graphs, demo_graphs):
         L.script(src='/static/js/dist/vendor.js?v=' + COMMIT_HASH),
         L.script(src='/static/js/dist/jobs.js?v=' + COMMIT_HASH),
     ))
+
 
 def api_jobs(graphs, demo_graphs):
     return {

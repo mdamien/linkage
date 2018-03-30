@@ -1,6 +1,7 @@
 from lys import L, render, raw
 from django.conf import settings
 
+
 def basic_frame(*content, title=''):
     return render((
         raw('<!DOCTYPE html>'),
@@ -13,10 +14,12 @@ def basic_frame(*content, title=''):
                 L.link(rel='stylesheet', href="/static/css/balloon.css"),
                 L.link(rel='stylesheet', href="/static/css/rc-slider.css"),
                 L.link(rel='stylesheet', href="/static/css/base.css"),
+                L.script / raw("var LINKAGE_ENTERPRISE = %s;" % ('true' if settings.LINKAGE_ENTERPRISE else 'false')),
             ),
             L.body / content,
         ),
     ))
+
 
 def base(*content, **kwargs):
     return basic_frame(content, **kwargs)
