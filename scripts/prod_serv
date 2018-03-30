@@ -1,1 +1,1 @@
-daphne -u server.sock config.asgi:channel_layer
+daphne -u server.sock --http-timeout 60 config.asgi:channel_layer
