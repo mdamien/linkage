@@ -79,7 +79,7 @@ FOOTER = (
                 SPACER,
                 L.a(href='/about/credits/') / 'Credits',
             ) if not settings.LINKAGE_ENTERPRISE else (
-                L.a(href='/about/terms_enterprisee/') / 'Terms and conditions',
+                L.a(href='/about/terms/') / 'Terms and conditions for Enterprise',
             ),
             L.br,
             L.br,
@@ -867,7 +867,10 @@ def terms(request):
             header(request),
             L.div('.row') / (
                 L.div('.col-sm-12') / (
-                    L.h3 / 'Terms and conditions',
+                    L.h3 / (
+                        'Terms and conditions',
+                        ' for Enterprise' if settings.LINKAGE_ENTERPRISE else '',
+                    ),
                     L.ul / (
                         L.li / (
                             L.a(href='/static/doc/linkage-academic-terms.pdf') / 'For Academics',

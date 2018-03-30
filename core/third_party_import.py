@@ -362,7 +362,7 @@ def gmail_to_csv(access_token, limit):
             else:
                 print('NO CONTENT FOR MAIL:')
                 print(parts)
-                open('debug-mail.json','w').write(json.dumps(mail, indent=2))
+                # open('debug-mail.json', 'w').write(json.dumps(mail, indent=2))
                 # TODO
                 text = ''
 
