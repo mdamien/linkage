@@ -454,14 +454,35 @@ def api_clusters_labels(request, pk):
     return JsonResponse({'message': 'ok [nodes-meta-saved]'})
 
 
-
 from django.contrib.auth.views import login as login_view
+from django.contrib.auth import logout as auth_logout
 
 def login(request):
     message = None
     if request.POST:
         login_view(request)
         if request.user.is_authenticated():
+
+            # logout all other sessions for this user to limit multiples devices using the same user
+            if settings.LINKAGE_ENTERPRISE:
+                from importlib import import_module
+                import datetime
+
+                from django.contrib.sessions.models import Session
+                from django.http import HttpRequest
+
+                now = datetime.datetime.now()
+                sessions = Session.objects.filter(expire_date__gt=now)
+
+                for session in sessions:
+                    username = session.get_decoded().get('_auth_user_id')
+                    if str(request.user.id) == username and session.session_key != request.session.session_key:
+                        engine = import_module(settings.SESSION_ENGINE)
+                        request2 = HttpRequest()
+                        request2.session = engine.SessionStore(session.session_key)
+                        auth_logout(request2)
+                        print('    Successfully logout other device for %r user.' % username)
+
             return redirect('/jobs/add/')
         else:
             message = "Please enter a correct username and password"
@@ -526,7 +547,6 @@ https://linkage.fr/?confirm_email_token=%s
 
     return HttpResponse(templates.signup(request, form, message))
 
-from django.contrib.auth import logout as auth_logout
 
 def logout(request):
     auth_logout(request)
