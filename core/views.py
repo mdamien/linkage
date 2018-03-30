@@ -1,11 +1,10 @@
 from io import TextIOWrapper
-import hashlib, itertools
+import hashlib
 from smtplib import SMTPRecipientsRefused
 from functools import wraps
 
 from django import forms
 from django.db import IntegrityError
-from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
@@ -15,14 +14,12 @@ from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.conf import settings
-from django.db.models import Q
 
 from social_django.utils import load_strategy
 from raven.contrib.django.raven_compat.models import client
 import TwitterAPI
 
 from core import templates, models, third_party_import
-from blog.models import Article
 
 MAX_JOBS_PER_USER = None if settings.LINKAGE_ENTERPRISE else 10
 MAX_REQUESTS_RESULT = None if settings.LINKAGE_ENTERPRISE else 10000
@@ -42,6 +39,9 @@ def org_required():
     def decorator(view_func):
         @wraps(view_func)
         def _wrapped_view(request, *args, **kwargs):
+            if settings.LINKAGE_ENTERPRISE:
+                return view_func(request, *args, **kwargs)
+
             user = request.user
             profile = None
             try:
@@ -320,7 +320,13 @@ def landing(request):
             auth_login(request, user, 'django.contrib.auth.backends.ModelBackend')
             messages.success(request, 'Account %s confirmed' % user.email)
         return redirect('/')
-    articles = Article.objects.all().order_by('-pk').filter(published=True)
+
+    if settings.LINKAGE_ENTERPRISE:
+        articles = None
+    else:
+        from blog.models import Article
+        articles = Article.objects.all().order_by('-pk').filter(published=True)
+
     return HttpResponse(templates.landing(request, articles))
 
 

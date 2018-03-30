@@ -52,7 +52,7 @@ def header(request, page_name=''):
             L.span('.btn.btn-link.disabled', style='margin-top: 20px;display:inline-block') / request.user.username,
             (
                 L.a('.btn.btn-link', href='/admin/', style='margin-top: 20px;display:inline-block') / 'admin'
-            ) if request.user.is_superuser else None,
+            ) if request.user.is_superuser or request.user.is_staff else None,
             L.a('.btn.btn-link', href='/accounts/logout/', style='margin-top: 20px;display:inline-block') / 'logout',
         ) if request.user.is_authenticated else None,
     ), L.hr(style='margin-top:5px;margin-bottom:15px')
