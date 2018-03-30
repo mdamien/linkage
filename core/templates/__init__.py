@@ -791,7 +791,7 @@ Linkage allows you to cluster the nodes of networks with textual edges while ide
                     L.ul / (
                         L.li / (
                             'Methodology and code: ',
-                            L.a(href='http://w3.mi.parisdescartes.fr/~cbouveyr/') / 'C. Bouveyron',
+                            L.a(href='http://math.unice.fr/~cbouveyr/') / 'C. Bouveyron',
                             ' and ',
                             L.a(href='http://samm.univ-paris1.fr/Pierre-Latouche') / 'P. Latouche',
                         ),
