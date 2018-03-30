@@ -35,11 +35,12 @@ def process(X, tdm, n_clusters, n_topics, id=0,
                 directed=1 if directed else 0,
                 dir=run_dir_for_linkage)
 
-    log += cmd_base + '\n'
+    log += cmd_cd + cmd_base + '\n'
     n_done = 0
     update(log, n_done, log)
     last_update = time.time()
     print(cmd_base)
+    # TODO: capture warnings
     for line in os.popen(cmd_cd + cmd_base):
         # print(line.strip())
         log += line
@@ -47,7 +48,7 @@ def process(X, tdm, n_clusters, n_topics, id=0,
         # signal: "[linkage-web-signal] - (K|Q) finished: " << K << ";" << Q << "" << endl
         if '[linkage-web-signal] - (K|Q|rep) finished' in line:
             n_done += 1
-        
+
         diff = time.time() - last_update
         # if diff > 5 or '[linkage-web-signal] - (K|Q) finished' in line:
         if '[linkage-web-signal] - (K|Q|rep) finished' in line:
@@ -63,6 +64,7 @@ def process(X, tdm, n_clusters, n_topics, id=0,
     if len(groups.keys()) == 0:
         print('ERROR: NO (?,?) RESULTS FOUND')
 
+    max_clusters = 0
     for group, group_result in groups.items():
         best_result = None
         best_crit = None
@@ -79,6 +81,7 @@ def process(X, tdm, n_clusters, n_topics, id=0,
                 print('ERROR: NO CLUSTERS FOR %s' % group)
                 clusters = ''
             print('clusters:', len(clusters), clusters)
+            max_clusters = max(len(clusters), max_clusters)
             result['clusters'] = clusters
 
             try:
@@ -129,6 +132,11 @@ def process(X, tdm, n_clusters, n_topics, id=0,
 
         for key in best_result:
             group_result[key] = best_result[key]
+
+    if max_clusters == 0:
+        print('LOG:')
+        print(log)
+
     os.system('rm -rf %s' % (run_dir,))
 
     return groups, log

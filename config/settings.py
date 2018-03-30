@@ -121,7 +121,11 @@ CHANNEL_LAYERS = {
 }
 
 import raven
-COMMIT_HASH = raven.fetch_git_sha(os.path.dirname(os.pardir))
+COMMIT_HASH = 'unknown'
+try:
+    COMMIT_HASH = raven.fetch_git_sha(os.path.dirname(os.pardir))
+except Exception:
+    pass
 
 LOGINAS_REDIRECT_URL = '/jobs/'
 LOGIN_REDIRECT_URL = '/jobs/add/'

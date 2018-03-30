@@ -549,7 +549,7 @@ def login(request, message, signup_form):
                             L.br,
                             L.p('.text-center') / (
                                 L.a(href=reverse('social:begin', args=['google-oauth2'])) / 
-                                    L.img('google-signin', style='width:100%; height:auto'),
+                                    L.img('.google-signin', style='width:100%; height:auto'),
                             ) if not settings.LINKAGE_ENTERPRISE else '',
                         ),
 

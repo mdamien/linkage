@@ -40,8 +40,6 @@ fish ./scripts/dev_webpack # webpack (frontend)
 
 You must have the linkage binary at `../repos/linkage-cpp/build/linkage` (compared to the linkage directory)
 
-[TODO: add linkage-cpp diff fork source to this repos]
-
 # In production
 install nginx python3 virtualenv python3-dev build-essential
 the config used on linkage.fr is available in doc/nginx_config
