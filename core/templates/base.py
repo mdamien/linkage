@@ -1,4 +1,5 @@
 from lys import L, render, raw
+from django.conf import settings
 
 def basic_frame(*content, title=''):
     return render((
@@ -6,7 +7,7 @@ def basic_frame(*content, title=''):
         L.html / (
             L.head / (
                 L.meta(charset='utf-8'),
-                L.title / (((title + ' - ') if title else '') + 'Linkage'),
+                L.title / (((title + ' - ') if title else '') + 'Linkage' + (' Enterprise' if settings.LINKAGE_ENTERPRISE else '')),
                 L.link(rel='icon', type='image/png', href='/static/img/favicon.png'),
                 L.link(rel='stylesheet', href="/static/css/bootstrap.css"),
                 L.link(rel='stylesheet', href="/static/css/balloon.css"),

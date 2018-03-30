@@ -58,3 +58,5 @@ SOCIAL_AUTH_GOOGLE_GMAIL_REQUEST_TOKEN_EXTRA_ARGUMENTS = {'access_type': 'offlin
 SOCIAL_AUTH_GOOGLE_GMAIL_SCOPE = [
     "https://www.googleapis.com/auth/gmail.readonly"
 ]
+
+LINKAGE_ENTERPRISE = False

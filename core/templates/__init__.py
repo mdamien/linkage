@@ -26,12 +26,16 @@ def icon(name):
 
 def header(request, page_name=''):
     return L.div('.row') / (
-        L.div('.col-xs-2') / (
+        L.div('.col-xs-3' if settings.LINKAGE_ENTERPRISE else '.col-xs-2') / (
             L.a(href='/') / (
-                L.h2 / ('Linkage', ('*' if DEBUG else None)),
+                L.h2 / (
+                    'Linkage',
+                    (L.small / ' Enterprise') if settings.LINKAGE_ENTERPRISE else '',
+                    # '*' if DEBUG else None
+                ),
             ),
         ),
-        L.div('.col-xs-5') / (
+        L.div('.col-xs-4' if settings.LINKAGE_ENTERPRISE else '.col-xs-5') / (
             L.ul('.nav.nav-pills') / (
                 L.li('.active' if page_name == 'addjob' else '',
                         style='margin-top: 20px;margin-right: 20px;display:inline-block') / (
@@ -74,6 +78,8 @@ FOOTER = (
                 L.a(href='/about/terms/') / 'Terms and conditions',
                 SPACER,
                 L.a(href='/about/credits/') / 'Credits',
+            ) if not settings.LINKAGE_ENTERPRISE else (
+                L.a(href='/about/terms_enterprisee/') / 'Terms and conditions',
             ),
             L.br,
             L.br,
@@ -267,8 +273,10 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                     L.div('.list-group') / (
                         L.a('.list-group-item' + ('.active' if import_type_selected == 'coauth' else ''),
                             href='?import_type=coauth') / 'Papers co-authorship network',
-                        (L.a('.list-group-item' + ('.active' if import_type_selected == 'gmail' else ''),
-                            href='?import_type=gmail') / 'GMail'),
+                        (
+                            (L.a('.list-group-item' + ('.active' if import_type_selected == 'gmail' else ''),
+                                href='?import_type=gmail') / 'GMail')
+                        ) if not settings.LINKAGE_ENTERPRISE else '',
                         L.a('.list-group-item' + ('.active' if import_type_selected == 'mbox' else ''),
                             href='?import_type=mbox') / 'MBox file',
                         L.a('.list-group-item' + ('.active' if import_type_selected == 'twitter' else ''),
@@ -507,9 +515,12 @@ def login(request, message, signup_form):
             header(request),
             L.div('.row') / (
                 L.div('.col-sm-6.center-block', style='float:none') / (
-                    L.div('.alert.alert-info') / 'You need to login or sign up to access this application',
+                    L.div('.alert.alert-info') / (
+                        'You need to login to access this application' if settings.LINKAGE_ENTERPRISE else
+                            'You need to login or sign up to access this application'
+                    ),
                     L.div('.row') / (
-                        L.div('.col-sm-5') / (
+                        L.div('.col-sm-4.col-sm-offset-4'  if settings.LINKAGE_ENTERPRISE else '.col-sm-5') / (
                             L.h3 / 'Login',
                             (L.div('.alert.alert-danger') / message) if message else None,
                             L.form(method='post') / (
@@ -535,12 +546,12 @@ def login(request, message, signup_form):
                             L.p('.text-center') / (
                                 L.a(href=reverse('social:begin', args=['google-oauth2'])) / 
                                     L.img('google-signin', style='width:100%; height:auto'),
-                            ),
+                            ) if not settings.LINKAGE_ENTERPRISE else '',
                         ),
 
                         L.div('.col-sm-2') / (
                             L.h3 / 'or',
-                        ),
+                        ) if not settings.LINKAGE_ENTERPRISE else '',
 
                         L.div('.col-sm-5') / (
                             L.h3 / 'Sign up',
@@ -569,7 +580,7 @@ def login(request, message, signup_form):
                                     L.button('.btn.btn-primary', type='submit') / 'Sign up'
                                 )
                             ),
-                        ),
+                        ) if not settings.LINKAGE_ENTERPRISE else '',
                     ),
                 ),
             ),
@@ -731,7 +742,7 @@ Linkage allows you to cluster the nodes of networks with textual edges while ide
           #   <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
           # """)
           #       )
-            ),
+            ) if not settings.LINKAGE_ENTERPRISE else '',
             L.hr,
             L.div('.row') / (
                 L.div('.col-sm-6') / (
