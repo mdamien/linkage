@@ -1,0 +1,2 @@
+. venv/bin/activate
+DJANGO_SETTINGS_MODULE=config.settings_enterprise celery -A config worker -l info 
