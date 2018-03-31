@@ -1,4 +1,4 @@
-sudo apt-get install python3 python3-dev redis-server postgresql virtualenv libomp5
+sudo apt-get install python3 python3-dev redis-server postgresql virtualenv libomp5 libarpack2
 
 virtualenv -p python3 venv
 . venv/bin/activate
@@ -12,6 +12,8 @@ python manage.py migrate --settings=config.settings_enterprise
 from django.contrib.auth.models import User
 user = User.objects.create_superuser('admin', '', 'admin')
 "
-python manage.py loaddata --settings=config.settings_enterprise doc/staff_group.json
+# python manage.py loaddata --settings=config.settings_enterprise doc/staff_group.json
 
-echo "now runs linkage/scripts/enterprise_serv and linkage/scripts/enterprise_celery"
+echo "now you can run in two process:"
+echo "    - scripts/enterprise_serv"
+echo "    - linkage/scripts/enterprise_celery"
