@@ -710,7 +710,7 @@ def landing(request, articles):
             ),
             L.div('.row') / (
                 L.div(style="margin: auto;max-width: 700px;font-size: 18px;") / (
-                    L.h2 / "Innovative and efficient cluster analysis of networks with textual edges",
+                    L.h2 / "The  statistical AI algorithm to analyze communication networks",
                     L.p / ("""
 Linkage allows you to cluster the nodes of networks with textual edges while identifying topics which are used in communications. You can analyze with Linkage networks such as email networks or co-authorship networks. Linkage allows you to upload your own network data or to make requests on scientific databases (Arxiv, Pubmed, HAL).
 """
