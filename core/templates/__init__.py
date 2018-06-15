@@ -202,7 +202,7 @@ def serialize_graph(graph, result, simple=False, scores=None):
             data['result'] = result.serialize()
             data['result']['top_nodes'] = top_nodes_per_clusters(graph, result)
             if too_big:
-                data['topics_per_edges_mat'] = '0 0 1'
+                data['result']['topics_per_edges_mat'] = '0 0 1'
     return data
 
 
