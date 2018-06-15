@@ -215,7 +215,7 @@ class Sidebar extends React.Component {
       this.state = {
         clusters: GRAPH.result ? GRAPH.result.param_clusters : 3,
         topics: GRAPH.result ? GRAPH.result.param_topics : 3,
-        cutoff: GRAPH.cluster_to_cluster_cutoff,
+        cutoff: GRAPH.cluster_to_cluster_cutoff * 100,
         tab: 'clustering',
       };
       this.updateClusters = this.updateClusters.bind(this);
@@ -261,7 +261,7 @@ class Sidebar extends React.Component {
     }
     updateCutoff(cutoff) {
         this.setState({cutoff: cutoff});
-        GRAPH.cluster_to_cluster_cutoff = cutoff;
+        GRAPH.cluster_to_cluster_cutoff = cutoff / 100;
         init();
     }
     componentWillReceiveProps(props) {
@@ -401,12 +401,14 @@ class Sidebar extends React.Component {
               <div className='panel panel-default'>
                   <div className='panel-heading'>
                       <h3 className='panel-title'>
-                        <abbr title='minimum connectivity (PI) between clusters to show a link between them (helpful when you have many clusters)'>cluster-to-cluster cutoff</abbr> - {(this.state.cutoff * 100).toFixed(3)} %</h3>
+                        <abbr title='minimum connectivity (PI) between clusters to show a link between them (helpful when you have many clusters)'>
+                          cluster-to-cluster cutoff
+                        </abbr> - {(this.state.cutoff).toExponential(4)} %</h3>
                   </div>
                   <div className='panel-body'>
-                      <Slider step={0.00001} defaultValue={this.state.cutoff}
+                      <Slider step={0.001} defaultValue={this.state.cutoff}
                         min={0}
-                        max={0.02}
+                        max={2}
                         handle={handle}
                         onAfterChange={this.updateCutoff}/>
                       <br/>

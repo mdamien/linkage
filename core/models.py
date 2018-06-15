@@ -35,7 +35,7 @@ class Graph(models.Model): # = Job
 
     original_csv = models.TextField(blank=True, default='')
 
-    cluster_to_cluster_cutoff = models.FloatField(default=0)
+    cluster_to_cluster_cutoff = models.FloatField(default=10**(-8))
 
     magic_too_big_to_display_X = models.BooleanField(default=False)
     directed = models.BooleanField(default=True)
