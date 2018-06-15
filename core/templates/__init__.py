@@ -140,13 +140,21 @@ def top_nodes_per_clusters(graph, result):
 
 
 def serialize_graph(graph, result, simple=False, scores=None):
+    count_edges = 0
+    for line in csv.reader(graph.edges.split('\n'), delimiter=' '):
+        if len(line) == 3:
+            source, target, val = line
+            if val == '0':
+                continue
+            count_edges += 1
+
     data = {
         'id': graph.pk,
         'user': graph.user.pk,
         'name': graph.name,
         'labels': graph.labels,
         'edges': graph.edges,
-        'n_edges': len(graph.edges.split('\n')),
+        'n_edges': count_edges,
         'n_labels': len(list(csv.reader([graph.labels], delimiter=' '))[0]),
         'tdm': graph.tdm,
         'public': graph.public,
