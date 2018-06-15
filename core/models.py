@@ -107,16 +107,23 @@ def graph_data_from_links(links, filter_largest_subgraph=False, ignore_self_loop
     import collections
     import time
     import string
+    import Stemmer
 
     csv.field_size_limit(sys.maxsize) # http://stackoverflow.com/questions/15063936/csv-error-field-larger-than-field-limit-131072
 
-    from nltk.tokenize import word_tokenize
-    from nltk.stem.snowball import SnowballStemmer
+    import nltk.tokenize
     from nltk.corpus import stopwords
 
-    stemmer = SnowballStemmer("english")
-    stopwords = stopwords.words('english')
+    stemmer = Stemmer.Stemmer('english')
+    stopwords = set(stopwords.words('english')).union(set(stopwords.words('french')))
     punc_table = dict((ord(char), ' ') for char in string.punctuation)
+
+    def tokenize(string):
+        string = string.translate(punc_table) # remove punctuation
+        for begin, end in nltk.tokenize.WhitespaceTokenizer().span_tokenize(string):
+            word = string[begin:end]
+            if not word.isdigit() and word not in stopwords:
+                yield word
 
     X = io.StringIO()
     X_writer = csv.writer(X, delimiter=' ')
@@ -203,14 +210,7 @@ def graph_data_from_links(links, filter_largest_subgraph=False, ignore_self_loop
             # tokenization
             tokens = []
             text = link[2] if len(link) > 1 else ''
-            for token in word_tokenize(text.translate(punc_table)): # remove punctuation and tokenize
-                if token not in stopwords:
-                    if len(token) > 2:
-                        # remove numbers
-                        try:
-                            int(token)
-                        except:
-                            tokens.append(token)
+            tokens = list(tokenize(text))
 
             # stemming
             if len(tokens) > 0: # filter empty links
@@ -221,8 +221,7 @@ def graph_data_from_links(links, filter_largest_subgraph=False, ignore_self_loop
                     if edge_name not in edges:
                         edges[edge_name] = collections.Counter()
                     doc_terms = edges[edge_name]
-                    for token in tokens:
-                        stemm = stemmer.stem(token)
+                    for token, stemm in zip(tokens, stemmer.stemWords(tokens)):
                         token = token.lower()
                         if stemm in stemm_to_lemm:
                             lemm = stemm_to_lemm[stemm]
