@@ -131,4 +131,4 @@ LOGINAS_REDIRECT_URL = '/jobs/'
 LOGIN_REDIRECT_URL = '/jobs/add/'
 CAN_LOGIN_AS = lambda request, target_user: request.user.is_superuser
 
-LINKAGE_ENTERPRISE = True
+LINKAGE_ENTERPRISE = False

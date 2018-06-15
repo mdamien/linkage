@@ -148,6 +148,13 @@ def serialize_graph(graph, result, simple=False, scores=None):
                 continue
             count_edges += 1
 
+    n_nodes = len(list(csv.reader([graph.labels], delimiter=' '))[0])
+
+    # force magic_too_big_to_display_X for big graphs
+    too_big = graph.magic_too_big_to_display_X
+    if count_edges > 50000 or n_nodes > 15000:
+        too_big = True
+
     data = {
         'id': graph.pk,
         'user': graph.user.pk,
@@ -155,7 +162,7 @@ def serialize_graph(graph, result, simple=False, scores=None):
         'labels': graph.labels,
         'edges': graph.edges,
         'n_edges': count_edges,
-        'n_labels': len(list(csv.reader([graph.labels], delimiter=' '))[0]),
+        'n_labels': n_nodes,
         'tdm': graph.tdm,
         'public': graph.public,
         'dictionnary': graph.dictionnary,
@@ -173,11 +180,11 @@ def serialize_graph(graph, result, simple=False, scores=None):
         'job_param_clusters_max': graph.job_param_clusters_max,
         'job_param_topics_max': graph.job_param_topics_max,
         'job_error_log': graph.job_error_log,
-        'magic_too_big_to_display_X': graph.magic_too_big_to_display_X,
+        'magic_too_big_to_display_X': too_big,
         'scores': scores,
         'has_original_csv': len(graph.original_csv) > 0,
     }
-    if graph.magic_too_big_to_display_X:
+    if too_big:
         data['edges'] = '0 0 1'
         data['labels'] = '0 0'
     if simple:
@@ -194,12 +201,13 @@ def serialize_graph(graph, result, simple=False, scores=None):
         except TypeError:
             data['result'] = result.serialize()
             data['result']['top_nodes'] = top_nodes_per_clusters(graph, result)
-            if graph.magic_too_big_to_display_X:
+            if too_big:
                 data['topics_per_edges_mat'] = '0 0 1'
     return data
 
 
 def result(request, graph, result, scores):
+    serialized = serialize_graph(graph, result, scores=scores)
     return base((
         L.div('.container-fluid') / (
             header(request),
@@ -207,7 +215,7 @@ def result(request, graph, result, scores):
                 L.div('col-sm-12') / (
                     L.div('.alert.alert-warning') / "This is a preview of a result too large to be fully displayed",
                 ),
-            ) if graph.magic_too_big_to_display_X else None),
+            ) if serialized['magic_too_big_to_display_X'] else None),
             L.div('.row') / (
                 L.div('.col-sm-3') / (
                     L.div('#_sidebar'),
@@ -232,7 +240,7 @@ def result(request, graph, result, scores):
                                 L.h4 / 'Nodes per cluster',
                                 L.br,
                                 L.div('#_bar-plot', style="width:100%;height:400px;display: inline-block;"),
-                            )) if graph.magic_too_big_to_display_X else (
+                            )) if serialized['magic_too_big_to_display_X'] else (
                                 L.div('col-sm-6') / (
                                     L.h4 / 'Nodes per cluster',
                                     L.br,
@@ -257,7 +265,7 @@ def result(request, graph, result, scores):
         L.script(src='/static/js/vendor/vivagraph.js'),
         L.script(src='/static/js/vendor/papaparse.js'),
         L.script(src='/static/js/vendor/plotly-latest.min.js'),
-        L.script / raw("var GRAPH = {};".format(json.dumps(serialize_graph(graph, result, scores=scores)))),
+        L.script / raw("var GRAPH = {};".format(json.dumps(serialized))),
         L.script(src='/static/js/dist/vendor.js?v=' + COMMIT_HASH),
         L.script(src='/static/js/dist/graph.js?v=' + COMMIT_HASH),
     ), title=graph.name)

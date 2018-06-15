@@ -33,8 +33,8 @@ function init(state_init = {}) {
   }
 
   STATE.labels = labels;
-  STATE.n_edges = X.length;
-  STATE.n_nodes = labels.length;
+  STATE.n_edges = GRAPH.n_edges;
+  STATE.n_nodes = GRAPH.n_labels;
   STATE.dictionnary = dictionnary;
   STATE.edges = edgesArr(X);
   STATE.tdm = tdm;

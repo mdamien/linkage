@@ -285,7 +285,7 @@ class Sidebar extends React.Component {
         marks_topics[GRAPH.job_param_topics_max] = GRAPH.job_param_topics_max;
 
         return <div>
-            {!GRAPH.magic_too_big_to_display_X ? <ul className="nav nav-tabs">
+            <ul className="nav nav-tabs">
               <li className={this.state.tab == 'clustering' ? 'active' : ''}>
                 <a href='#'
                   onClick={() => this.setState({tab: 'clustering'})}>
@@ -304,8 +304,8 @@ class Sidebar extends React.Component {
                       Log
                   </a>
               </li>*/}
-            </ul> : null}
-            {!GRAPH.magic_too_big_to_display_X ? <br/> : null}
+            </ul>
+            <br/>
             {this.state.tab == 'clustering' ?
               <div>
               {!state.meta_mode ? <SearchBar choices={state.labels}
@@ -375,7 +375,7 @@ class Sidebar extends React.Component {
                   <div className='panel-heading'>
                       <h3 className='panel-title'>{GRAPH.name}</h3>
                   </div>
-                  {!GRAPH.magic_too_big_to_display_X ? <div className='panel-body'>
+                  <div className='panel-body'>
                       <strong>{state.n_edges}</strong> edges, <strong>{state.n_nodes}</strong> nodes
                       <br/>
                       imported <strong>{GRAPH.created_at}</strong><br/>
@@ -385,7 +385,7 @@ class Sidebar extends React.Component {
                           clustering score: <strong>{GRAPH.result.crit}</strong>
                         </span>
                         : null}
-                  </div> : null}
+                  </div>
               </div>
               {GRAPH.USE_EXPERIMENTAL_WEBGL_MODE  ? <p>
                 <button href="#" className="btn btn-primary btn-xs" onClick={() => {

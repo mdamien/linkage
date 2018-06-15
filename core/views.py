@@ -408,7 +408,7 @@ def api_cluster(request, pk):
         raise PermissionDenied
 
     if 'cluster_to_cluster_cutoff' in request.POST:
-        graph.cluster_to_cluster_cutoff = float(cluster_to_cluster_cutoff)
+        graph.cluster_to_cluster_cutoff = float(request.POST['cluster_to_cluster_cutoff'])
         graph.save()
         return JsonResponse({'message': 'ok [cutoff-updated]'})
 
