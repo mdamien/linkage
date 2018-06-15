@@ -172,29 +172,35 @@ def graph_data_from_links(links, filter_largest_subgraph=False, ignore_self_loop
         print('symmetry forced')
 
 
+    nodes_i = {}  # fast lookup of index
+    terms_i = {}  # fast lookup of index
     nodes = [] # labels
     terms = [] # dictionnary
     stemm_to_lemm = {}
 
     def node_to_i(node):
-        try:
-            return nodes.index(node)
-        except ValueError:
-            nodes.append(node)
-            return len(nodes) - 1
+        if node in nodes_i:
+            return nodes_i[node]
+        nodes.append(node)
+        i = len(nodes) - 1
+        nodes_i[node] = i
+        return i
 
     def term_to_i(term):
-        try:
-            return terms.index(term)
-        except ValueError:
-            terms.append(term)
-            return len(terms) - 1
+        if term in terms_i:
+            return terms_i[term]
+        terms.append(term)
+        i = len(terms) - 1
+        terms_i[term] = i
+        return i
 
     print('start making edges', len(links))
 
     edges = collections.OrderedDict()
     for link in links:
         if len(link) > 1:
+
+            # tokenization
             tokens = []
             text = link[2] if len(link) > 1 else ''
             for token in word_tokenize(text.translate(punc_table)): # remove punctuation and tokenize
@@ -205,6 +211,8 @@ def graph_data_from_links(links, filter_largest_subgraph=False, ignore_self_loop
                             int(token)
                         except:
                             tokens.append(token)
+
+            # stemming
             if len(tokens) > 0: # filter empty links
                 start = node_to_i(link[0])
                 end = node_to_i(link[1])
