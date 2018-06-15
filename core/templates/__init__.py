@@ -163,7 +163,7 @@ def serialize_graph(graph, result, simple=False, scores=None):
         'edges': graph.edges,
         'n_edges': count_edges,
         'n_labels': n_nodes,
-        'tdm': graph.tdm,
+        'tdm': '0 0 1' if too_big else graph.tdm,
         'public': graph.public,
         'dictionnary': graph.dictionnary,
         'directed': graph.directed,
