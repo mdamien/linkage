@@ -19,7 +19,7 @@ TwitterAPI==2.4.6
 django-cors-headers==2.1.0
 https://github.com/skorokithakis/django-loginas/archive/master.zip
 psycopg2==2.7.3
-mistune==0.7.4
+mistune==0.8.1
 natural==0.2.0
 https://github.com/mdamien/django-simple-admin-upload/archive/master.zip
 https://github.com/karanlyons/django-save-the-change/archive/master.zip
