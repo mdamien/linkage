@@ -9,7 +9,7 @@ asgi_redis==1.4.2
 beautifulsoup4==4.6.0
 https://github.com/chardet/chardet/archive/master.zip
 raven==6.1.0
-requests==2.18.2
+requests==2.20.0
 django-admin-gitlog==0.2
 xmltodict==0.11.0
 langdetect==1.0.7
