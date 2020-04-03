@@ -13,6 +13,9 @@ from TwitterAPI import TwitterAPI, TwitterRestPager
 
 from raven.contrib.django.raven_compat.models import client
 
+from django.conf import settings
+
+
 def arxiv_to_csv(q, limit=500):
     results = arxiv.query(q, prune=True, start=0, max_results=limit)
 
@@ -182,10 +185,10 @@ def loklak_to_csv(q, limit=500):
 
 
 def twitter_to_csv(q, limit=500):
-    consumer_key='AufuRL0LOPWf39gEJSXl0Eg6M'
-    consumer_secret='n0YDsmnnAjHcgNDFSTTsWny8yAJGeMVq14RNVVkHWMNmsFoYTO'
-    access_token_key='131772959-OnVIRfs1l2B2vNZ809DAwSKXZIF6jBFycLr6RNHN'
-    access_token_secret='OdBVFgyRW6zcjQKLqgFZrjwCrYymsNEXUNEW8RE2A34f2'
+    consumer_key = settings.TWITTER_CONSUMER_KEY
+    consumer_secret = settings.TWITTER_CONSUMER_SECRET
+    access_token_key = settings.TWITTER_ACCESS_TOKEN_KEY
+    access_token_secret = settings.TWITTER_ACCESS_TOKEN_SECRET
     api = TwitterAPI(consumer_key, consumer_secret, access_token_key, access_token_secret)
 
     output = io.StringIO()
