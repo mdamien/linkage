@@ -103,6 +103,7 @@ def pubmed_to_csv(q, limit=500):
             authors = []
             if 'AuthorList' not in article:
                 print('ERROR: NO author list for ', article.get('ArticleTitle'))
+                print(article)
                 continue
             raw_authors = article['AuthorList']['Author']
             if type(raw_authors) is not list:
@@ -119,6 +120,8 @@ def pubmed_to_csv(q, limit=500):
             abstract = []
             if 'Abstract' in article:
                 abstract = article['Abstract']['AbstractText']
+                if not abstract:
+                    abstract = []
                 if type(abstract) is not list:
                     abstract = [abstract]
                 abstract = [x['#text'] if '#text' in x else x for x in abstract if not (not '#text' in x and '@Label' in x)]
@@ -126,10 +129,18 @@ def pubmed_to_csv(q, limit=500):
             if 'ArticleTitle' in article:
                 title = [article['ArticleTitle']]
 
+            from collections import OrderedDict
+            if title and type(title[0]) is OrderedDict: title = [title[0]['#text']]
+            if abstract and type(abstract[0]) is OrderedDict:
+              print('Invalid abstract for', article)
+              abstract = ['']
+
             title = [x for x in title if x]
             abstract = [x for x in abstract if x]
-            
-            text = '\n'.join(title + abstract)
+            try:
+              text = '\n'.join(title + abstract)
+            except TypeError:
+              print('Invalid title or abstract', title, '/', abstract)
             for i, author in enumerate(authors):
                 for author2 in authors[i+1:]:
                     writer.writerow([author, author2, text])

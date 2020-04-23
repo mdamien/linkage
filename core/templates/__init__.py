@@ -488,7 +488,7 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                             L.div('.col-sm-9') / (
                                 L.div('.checkbox') / (
                                     L.label / (
-                                        L.input(name='filter_largest_subgraph', type='checkbox', checked='true') if import_type_selected in ('twitter', 'coauth')
+                                        L.input(name='filter_largest_subgraph', type='checkbox') if import_type_selected in ('twitter', 'coauth')
                                             else L.input(name='filter_largest_subgraph', type='checkbox'),
                                         ' Only keep the largest subgraph from the graph',
                                     )                                    

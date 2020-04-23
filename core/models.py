@@ -209,7 +209,7 @@ def graph_data_from_links(links, filter_largest_subgraph=False, ignore_self_loop
 
             # tokenization
             tokens = []
-            text = link[2] if len(link) > 1 else ''
+            text = link[2] if len(link) > 2 else ''
             tokens = list(tokenize(text))
 
             # stemming
