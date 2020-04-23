@@ -2,6 +2,7 @@ from config.settings import *
 
 try:
     from .secrets_prod import SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET, EMAIL_HOST_PASSWORD
+    from .secrets_prod import TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET, TWITTER_ACCESS_TOKEN_KEY, TWITTER_ACCESS_TOKEN_SECRET
 except ImportError:
     raise Exception('You need to update secrets_prod.py with your own values')
 
