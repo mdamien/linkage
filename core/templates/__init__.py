@@ -326,6 +326,11 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                                         data_balloon="See documentation to learn more about the parameters you can use for HAL") / '?',
                                     SPACER,
                                     L.input('.btn.btn-success', name='choice_pubmed', type='submit', value='search PubMed'),
+                                ),
+                                L.br,L.br,
+                                L.div('.col-sm-11', style="text-align:right") / (
+                                    L.input('.btn.btn-success', name='choice_biorxiv', type='submit', value='search bioRxiv'),
+                                    SPACER,
                                 )
                             ),
                             L.br,

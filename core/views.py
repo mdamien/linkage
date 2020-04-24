@@ -162,6 +162,16 @@ def index(request):
                     )
                 else:
                     messages.append(['danger', 'You must include a search term to do a query'])
+            elif 'choice_biorxiv' in request.POST:
+                q = request.POST['q']
+                if len(q) > 0:
+                    return papers_import(
+                        'bioRxiv import of search term: %s' % (q, ),
+                        'biorxiv_to_csv',
+                        q=q, limit=limit
+                    )
+                else:
+                    messages.append(['danger', 'You must include a search term to do a query'])
             elif 'choice_twitter' in request.POST:
                 q = request.POST['q']
                 if len(q) > 0:

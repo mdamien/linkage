@@ -34,6 +34,38 @@ def arxiv_to_csv(q, limit=500):
     return output.getvalue()
 
 
+def biorxiv_to_csv(q, limit=500):
+    params = {
+        'q': q,
+        'page_size': 250,
+        'page': 0,
+    }
+
+    results = []
+
+    while True:
+        resp = requests.get('https://api.rxivist.org/v1/papers', params=params).json()
+        results += resp['results']
+        if resp['query']['current_page'] == resp['query']['final_page']:
+            break
+        else:
+            params['page'] += 1
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    N = len(results)
+
+    print('biorxiv search for', q, '; results:', N)
+    for result in results:
+        authors = result['authors'][:7]
+        for i, author in enumerate(authors):
+            for author2 in authors[i+1:]:
+                writer.writerow([author['name'], author2['name'], result['title'] + '\n' + result.get('abstract', '')])
+
+    return output.getvalue()
+
+
 def hal_to_csv(q, limit=500):
     params = {
         'fl': 'authFullName_s,title_s,abstract_s',
