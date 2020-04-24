@@ -16,6 +16,9 @@ from raven.contrib.django.raven_compat.models import client
 from django.conf import settings
 
 
+from .medrxiv_search import search as medrxiv_search
+
+
 def arxiv_to_csv(q, limit=500):
     results = arxiv.query(q, prune=True, start=0, max_results=limit)
 
@@ -62,6 +65,24 @@ def biorxiv_to_csv(q, limit=500):
         for i, author in enumerate(authors):
             for author2 in authors[i+1:]:
                 writer.writerow([author['name'], author2['name'], result['title'] + '\n' + result.get('abstract', '')])
+
+    return output.getvalue()
+
+
+def medrxiv_to_csv(q, limit=500):
+    results = medrxiv_search(q, verbose=True, limit=limit)
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    N = len(results)
+
+    print('medrxiv search for', q, '; results:', N)
+    for result in results:
+        authors = result['authors'][:7]
+        for i, author in enumerate(authors):
+            for author2 in authors[i+1:]:
+                writer.writerow([author, author2, result['title'] + '\n' + result['abstract']])
 
     return output.getvalue()
 

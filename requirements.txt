@@ -25,3 +25,4 @@ https://github.com/mdamien/django-simple-admin-upload/archive/master.zip
 https://github.com/karanlyons/django-save-the-change/archive/master.zip
 django-dynamic-preferences==1.3
 pystemmer==1.3.0
+minet==0.27.0

@@ -314,8 +314,11 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                         L.input(type='hidden', name='action', value='import'),
                         (
                             L.div('.row') / (
-                                L.div('.col-sm-5') / L.input('.form-control', type='text', name='q', placeholder="'Deep Learning', 'Speech Synthesis', 'qubit', 'graphene',…"),
-                                L.div('.col-sm-7') / (
+                                L.div('.col-sm-11') / L.input('.form-control', type='text', name='q', placeholder="'Deep Learning', 'Speech Synthesis', 'qubit', 'graphene',…"),
+                            ),
+                            L.div('.row') / (
+                                L.div('.col-sm-12', style="text-align:center") / (
+                                    L.br,
                                     L.input('.btn.btn-success', name='choice_arxiv', type='submit', value='search arXiv'),
                                     SPACER,
                                     L.input('.btn.btn-success', name='choice_hal', type='submit', value='search HAL'),
@@ -326,11 +329,10 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                                         data_balloon="See documentation to learn more about the parameters you can use for HAL") / '?',
                                     SPACER,
                                     L.input('.btn.btn-success', name='choice_pubmed', type='submit', value='search PubMed'),
-                                ),
-                                L.br,L.br,
-                                L.div('.col-sm-11', style="text-align:right") / (
+                                    SPACER,
                                     L.input('.btn.btn-success', name='choice_biorxiv', type='submit', value='search bioRxiv'),
                                     SPACER,
+                                    L.input('.btn.btn-success', name='choice_medrxiv', type='submit', value='search medRxiv'),
                                 )
                             ),
                             L.br,
