@@ -14,7 +14,7 @@ def extract_paper_data(url, html):
 
     data['authors'] = []
     for author in soup.select('.highwire-citation-author'):
-        data['authors'].append(author.text)
+        data['authors'].append(author.text.replace('View ORCID Profile', '').strip())
 
     return data
 
