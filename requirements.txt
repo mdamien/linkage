@@ -1,4 +1,4 @@
-django==1.10
+django==1.11.28
 lys==0.2
 https://github.com/lukasschwab/arxiv.py/archive/master.zip
 django-celery==3.2.1
