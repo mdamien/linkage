@@ -222,8 +222,18 @@ def index(request):
                 q = request.POST['q']
                 if len(q) > 0:
                     return papers_import(
-                        'PubMed import of search term: %s' % (q, ),
+                        'PubMed (abstracts) import of search term: %s' % (q, ),
                         'pubmed_to_csv',
+                        q=q, limit=limit
+                    )
+                else:
+                    messages.append(['danger', 'You must include a search term to do a query'])
+            elif 'choice_pubmed_keywords' in request.POST:
+                q = request.POST['q']
+                if len(q) > 0:
+                    return papers_import(
+                        'PubMed (keywords) import of search term: %s' % (q, ),
+                        'pubmed_keywords_to_csv',
                         q=q, limit=limit
                     )
                 else:

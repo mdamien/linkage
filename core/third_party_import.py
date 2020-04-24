@@ -117,7 +117,12 @@ def hal_to_csv(q, limit=500):
 
     return output.getvalue()
 
-def pubmed_to_csv(q, limit=500):
+
+def pubmed_keywords_to_csv(q, limit=500):
+    return pubmed_to_csv(q, limit=limit, use_keywords=True)
+
+
+def pubmed_to_csv(q, limit=500, use_keywords=False):
     output = io.StringIO()
     writer = csv.writer(output)
 
@@ -150,7 +155,7 @@ def pubmed_to_csv(q, limit=500):
         }
         resp = requests.get(BASE + 'efetch.fcgi', params=params)
         xml = xmltodict.parse(resp.text)
-
+        
         for pubarticle in xml['PubmedArticleSet']['PubmedArticle']:
             article = pubarticle['MedlineCitation']['Article']
             authors = []
@@ -182,6 +187,14 @@ def pubmed_to_csv(q, limit=500):
             if 'ArticleTitle' in article:
                 title = [article['ArticleTitle']]
 
+            keywords = []
+            xml_keywords = pubarticle['MedlineCitation'].get('KeywordList', {}).get('Keyword', [])
+            if type(xml_keywords) is not list:
+                xml_keywords = [xml_keywords]
+            for keyword in xml_keywords:
+                keywords.append(keyword['#text'].replace(' ', '_'))
+            keywords = ' '.join(keywords)
+
             from collections import OrderedDict
             if title and type(title[0]) is OrderedDict: title = [title[0]['#text']]
             if abstract and type(abstract[0]) is OrderedDict:
@@ -190,13 +203,14 @@ def pubmed_to_csv(q, limit=500):
 
             title = [x for x in title if x]
             abstract = [x for x in abstract if x]
+
             try:
               text = '\n'.join(title + abstract)
             except TypeError:
               print('Invalid title or abstract', title, '/', abstract)
             for i, author in enumerate(authors):
                 for author2 in authors[i+1:]:
-                    writer.writerow([author, author2, text])
+                    writer.writerow([author, author2, keywords if use_keywords else text])
 
     return output.getvalue()
 

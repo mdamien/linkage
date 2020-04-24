@@ -327,9 +327,19 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                                         href='https://api.archives-ouvertes.fr/docs/search/#q',
                                         data_balloon_pos="bottom",
                                         data_balloon="See documentation to learn more about the parameters you can use for HAL") / '?',
+                                )
+                            ),
+                            L.div('.row') / (
+                                L.div('.col-sm-12', style="text-align:center") / (
+                                    L.br,
+                                    L.input('.btn.btn-success', name='choice_pubmed', type='submit', value='search PubMed (use abstracts)'),
                                     SPACER,
-                                    L.input('.btn.btn-success', name='choice_pubmed', type='submit', value='search PubMed'),
-                                    SPACER,
+                                    L.input('.btn.btn-success', name='choice_pubmed_keywords', type='submit', value='search PubMed (use keywords)'),
+                                )
+                            ),
+                            L.div('.row') / (
+                                L.div('.col-sm-12', style="text-align:center") / (
+                                    L.br,
                                     L.input('.btn.btn-success', name='choice_biorxiv', type='submit', value='search bioRxiv'),
                                     SPACER,
                                     L.input('.btn.btn-success', name='choice_medrxiv', type='submit', value='search medRxiv'),
