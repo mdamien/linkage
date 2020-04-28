@@ -238,6 +238,16 @@ def index(request):
                     )
                 else:
                     messages.append(['danger', 'You must include a search term to do a query'])
+            elif 'choice_pubmed_citations' in request.POST:
+                q = request.POST['q']
+                if len(q) > 0:
+                    return papers_import(
+                        'PubMed citation-network import of search term: %s' % (q, ),
+                        'pubmed_citations_to_csv',
+                        q=q, limit=limit
+                    )
+                else:
+                    messages.append(['danger', 'You must include a search term to do a query'])
             elif 'choice_dropdown' in request.POST:
                 filename = request.POST['sample_dropdown']
                 assert '/' not in filename

@@ -215,6 +215,157 @@ def pubmed_to_csv(q, limit=500, use_keywords=False):
     return output.getvalue()
 
 
+
+def _pubmed_search(q, limit=500):
+    BASE = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/'
+    url = BASE + 'esearch.fcgi?db=pubmed&retmode=json&retmax=20&sort=relevance&term=fever'
+
+    params = {
+        'db': 'pubmed',
+        'retmode': 'json',
+        'retmax': limit,
+        'sort': 'relevance',
+        'term': q,
+    }
+    resp = requests.get(BASE + 'esearch.fcgi', params=params)
+    ids = resp.json()['esearchresult']['idlist']
+
+    yield from _pubmed_content(ids)
+
+
+def _chunks(l, n):
+    """Yield successive n-sized chunks from l."""
+    for i in range(0, len(l), n):
+        yield l[i:i + n]
+
+
+def _pubmed_content(ids):
+    for chunk in _chunks(ids, 100):
+        params = {
+            'db': 'pubmed',
+            'retmode': 'xml',
+            'id': ','.join(chunk),
+        }
+        resp = requests.get('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi', params=params)
+        xml = xmltodict.parse(resp.text)
+        open('pubmed.json', 'w').write(json.dumps(xml, indent=2))
+
+        articles = xml['PubmedArticleSet']['PubmedArticle']
+        if type(articles) is not list:
+            articles = [articles]
+        for pubarticle in articles:
+            article = pubarticle['MedlineCitation']['Article']
+            authors = []
+            if 'AuthorList' not in article:
+                print('ERROR: NO author list for ', article.get('ArticleTitle'))
+                print(article)
+                continue
+            raw_authors = article['AuthorList']['Author']
+            if type(raw_authors) is not list:
+                raw_authors = [raw_authors]
+            raw_authors = raw_authors[:7] # constrain the authors to avoid exponential edge growth
+            for author in raw_authors:
+                if 'CollectiveName' in author:
+                    authors.append(author['CollectiveName'])
+                else:
+                    if 'LastName' or 'ForeName' in authors:
+                        authors.append(author.get('LastName', '') + ' ' + author.get('ForeName', ''))
+                    else:
+                        raise Exception('Author with no infos:', author)
+            abstract = []
+            if 'Abstract' in article:
+                abstract = article['Abstract']['AbstractText']
+                if not abstract:
+                    abstract = []
+                if type(abstract) is not list:
+                    abstract = [abstract]
+                abstract = [x['#text'] if '#text' in x else x for x in abstract if not (not '#text' in x and '@Label' in x)]
+            title = []
+            if 'ArticleTitle' in article:
+                title = [article['ArticleTitle']]
+
+            keywords = []
+            xml_keywords = pubarticle['MedlineCitation'].get('KeywordList', {}).get('Keyword', [])
+            if type(xml_keywords) is not list:
+                xml_keywords = [xml_keywords]
+            for keyword in xml_keywords:
+                try:
+                    keywords.append(keyword['#text'].replace(' ', '_'))
+                except:
+                    print('problem importing keyword', xml_keywords, keyword)
+            keywords = ' '.join(keywords)
+
+            from collections import OrderedDict
+            if title and type(title[0]) is OrderedDict: title = [title[0]['#text']]
+            if abstract and type(abstract[0]) is OrderedDict:
+              print('Invalid abstract for', article)
+              abstract = ['']
+
+            title = [x for x in title if x]
+            abstract = [x for x in abstract if x]
+
+            text = ''
+            try:
+              text = '\n'.join(title + abstract)
+            except TypeError:
+              print('Invalid title or abstract', title, '/', abstract)
+
+            yield {
+                'id': pubarticle['MedlineCitation']['PMID']['#text'],
+                'text': text,
+                'keywords': keywords,
+                'authors': authors,
+            }
+
+
+def pubmed_citations_to_csv(q, limit=500):
+    """
+    1- Récupérer tous les articles sur PubMed sur un sujet (comme avant)
+    2- Réupérer (toujours sur PubMed) les citations UNIQUEMENT entre ces articles
+
+    Pour la construction du graphe : 
+
+    lien entre chercheur A et chercheur B : si le chercheur A a écrit un article C qui cite le chercheur B. Texte associé : abstract de l'article C
+    """
+    # get pubmed articles
+    articles = list(_pubmed_search(q, limit=limit))
+    articles_by_ids = {article['id']: article for article in articles}
+
+    # get pubmed citations
+    cited_by = {}
+    articles_ids = list(articles_by_ids.keys())
+    for chunk in _chunks(articles_ids, 100):
+        params = {
+            'dbfrom': 'pubmed',
+            'linkname': 'pubmed_pubmed_citedin',
+            'id': chunk,
+            'retmode': 'json',
+        }
+        resp = requests.get('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi', params=params)
+        for linkset in resp.json()['linksets']:
+            article_id = linkset['ids'][0]
+            if 'linksetdbs' in linkset:
+                linkset_ids = linkset['linksetdbs'][0]['links']
+                linkset_ids = [id for id in linkset_ids if id in articles_by_ids]
+                cited_by[article_id] = linkset_ids
+                print(article_id, 'cited_by', len(cited_by[article_id]))
+            else:
+                cited_by[article_id] = []
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    for article in articles:
+        for other_article_id in cited_by[article['id']]:
+            other_article = articles_by_ids[other_article_id]
+            for author in article['authors']:
+                for author2 in other_article['authors']:
+                    writer.writerow([author, author2, other_article['text']])
+
+    return output.getvalue()
+
+
+
 def loklak_to_csv(q, limit=500):
     params = {
         'q': q,

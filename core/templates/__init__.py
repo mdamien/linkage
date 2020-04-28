@@ -291,6 +291,8 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                     L.div('.list-group') / (
                         L.a('.list-group-item' + ('.active' if import_type_selected == 'coauth' else ''),
                             href='?import_type=coauth') / 'Papers co-authorship network',
+                        L.a('.list-group-item' + ('.active' if import_type_selected == 'cocitation' else ''),
+                            href='?import_type=cocitation') / 'Papers co-citation network',
                         (
                             (L.a('.list-group-item' + ('.active' if import_type_selected == 'gmail' else ''),
                                 href='?import_type=gmail') / 'GMail')
@@ -357,6 +359,28 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                                 ),
                             ),
                         ) if import_type_selected == 'coauth' else None,
+                        (
+                            L.div('.row') / (
+                                L.div('.col-sm-11') / L.input('.form-control', type='text', name='q', placeholder="'Deep Learning', 'Speech Synthesis', 'qubit', 'graphene',…"),
+                            ),
+                            L.div('.row') / (
+                                L.div('.col-sm-12', style="text-align:center") / (
+                                    L.br,
+                                    L.input('.btn.btn-success', name='choice_pubmed_citations', type='submit', value='search PubMed'),
+                                )
+                            ),
+                            L.br,
+                            L.div('.form-group') / (
+                                L.div('.col-sm-3.control-label') / (
+                                    L.strong / (
+                                        L.abbr(title='The maximum number of papers to be retrieved') / 'Limit',
+                                    ),
+                                ),
+                                L.div('.col-sm-2') / (
+                                    L.input('.form-control', name='limit', value='500', type='number', max='10000'),
+                                ),
+                            ),
+                        ) if import_type_selected == 'cocitation' else None,
                         (
                             L.div('.row') / (
                                 L.div('.col-sm-5') / L.input('.form-control', type='text', name='q', placeholder="@spotify, #fakenews,…"),
