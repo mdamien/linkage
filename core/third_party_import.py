@@ -192,7 +192,10 @@ def pubmed_to_csv(q, limit=500, use_keywords=False):
             if type(xml_keywords) is not list:
                 xml_keywords = [xml_keywords]
             for keyword in xml_keywords:
-                keywords.append(keyword['#text'].replace(' ', '_'))
+                try:
+                    keywords.append(keyword['#text'].replace(' ', '_'))
+                except:
+                    print('problem importing keyword', xml_keywords, keyword)
             keywords = ' '.join(keywords)
 
             from collections import OrderedDict
@@ -204,6 +207,7 @@ def pubmed_to_csv(q, limit=500, use_keywords=False):
             title = [x for x in title if x]
             abstract = [x for x in abstract if x]
 
+            text = ''
             try:
               text = '\n'.join(title + abstract)
             except TypeError:
