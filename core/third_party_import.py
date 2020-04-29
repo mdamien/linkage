@@ -126,95 +126,10 @@ def pubmed_to_csv(q, limit=500, use_keywords=False):
     output = io.StringIO()
     writer = csv.writer(output)
 
-    BASE = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/'
-    url = BASE + 'esearch.fcgi?db=pubmed&retmode=json&retmax=20&sort=relevance&term=fever'
-
-    params = {
-        'db': 'pubmed',
-        'retmode': 'json',
-        'retmax': limit,
-        'sort': 'relevance',
-        'term': q,
-    }
-    resp = requests.get(BASE + 'esearch.fcgi', params=params)
-    ids = resp.json()['esearchresult']['idlist']
-    print('PUBMED search for', q, ':', len(ids), 'papers found')
-    if len(ids) == 0:
-        return ''
-
-    def chunks(l, n):
-        """Yield successive n-sized chunks from l."""
-        for i in range(0, len(l), n):
-            yield l[i:i + n]
-
-    for chunk in chunks(ids, 100):
-        params = {
-            'db': 'pubmed',
-            'retmode': 'xml',
-            'id': ','.join(chunk),
-        }
-        resp = requests.get(BASE + 'efetch.fcgi', params=params)
-        xml = xmltodict.parse(resp.text)
-        
-        for pubarticle in xml['PubmedArticleSet']['PubmedArticle']:
-            article = pubarticle['MedlineCitation']['Article']
-            authors = []
-            if 'AuthorList' not in article:
-                print('ERROR: NO author list for ', article.get('ArticleTitle'))
-                print(article)
-                continue
-            raw_authors = article['AuthorList']['Author']
-            if type(raw_authors) is not list:
-                raw_authors = [raw_authors]
-            raw_authors = raw_authors[:7] # constrain the authors to avoid exponential edge growth
-            for author in raw_authors:
-                if 'CollectiveName' in author:
-                    authors.append(author['CollectiveName'])
-                else:
-                    if 'LastName' or 'ForeName' in authors:
-                        authors.append(author.get('LastName', '') + ' ' + author.get('ForeName', ''))
-                    else:
-                        raise Exception('Author with no infos:', author)
-            abstract = []
-            if 'Abstract' in article:
-                abstract = article['Abstract']['AbstractText']
-                if not abstract:
-                    abstract = []
-                if type(abstract) is not list:
-                    abstract = [abstract]
-                abstract = [x['#text'] if '#text' in x else x for x in abstract if not (not '#text' in x and '@Label' in x)]
-            title = []
-            if 'ArticleTitle' in article:
-                title = [article['ArticleTitle']]
-
-            keywords = []
-            xml_keywords = pubarticle['MedlineCitation'].get('KeywordList', {}).get('Keyword', [])
-            if type(xml_keywords) is not list:
-                xml_keywords = [xml_keywords]
-            for keyword in xml_keywords:
-                try:
-                    keywords.append(keyword['#text'].replace(' ', '_'))
-                except:
-                    print('problem importing keyword', xml_keywords, keyword)
-            keywords = ' '.join(keywords)
-
-            from collections import OrderedDict
-            if title and type(title[0]) is OrderedDict: title = [title[0]['#text']]
-            if abstract and type(abstract[0]) is OrderedDict:
-              print('Invalid abstract for', article)
-              abstract = ['']
-
-            title = [x for x in title if x]
-            abstract = [x for x in abstract if x]
-
-            text = ''
-            try:
-              text = '\n'.join(title + abstract)
-            except TypeError:
-              print('Invalid title or abstract', title, '/', abstract)
-            for i, author in enumerate(authors):
-                for author2 in authors[i+1:]:
-                    writer.writerow([author, author2, keywords if use_keywords else text])
+    for paper in _pubmed_search(q, limit=limit):
+        for i, author in enumerate(paper['authors']):
+            for author2 in paper['authors'][i+1:]:
+                writer.writerow([author, author2, paper['keywords'] if use_keywords else paper['text']])
 
     return output.getvalue()
 
@@ -233,6 +148,8 @@ def _pubmed_search(q, limit=500):
     }
     resp = requests.get(BASE + 'esearch.fcgi', params=params)
     ids = resp.json()['esearchresult']['idlist']
+
+    print('PUBMED search for', q, ':', len(ids), 'papers found')
 
     yield from _pubmed_content(ids)
 
@@ -314,6 +231,8 @@ def _pubmed_content(ids):
             except TypeError:
               print('Invalid title or abstract', title, '/', abstract)
 
+            authors = list(set(authors[:2]).union(set(authors[-2:])))
+
             yield {
                 'id': pubarticle['MedlineCitation']['PMID']['#text'],
                 'text': text,
@@ -362,8 +281,8 @@ def pubmed_citations_to_csv(q, limit=500):
     for article in articles:
         for other_article_id in cited_by[article['id']]:
             other_article = articles_by_ids[other_article_id]
-            for author in article['authors']:
-                for author2 in other_article['authors']:
+            for author in article['authors'][:7]:
+                for author2 in other_article['authors'][:7]:
                     writer.writerow([author, author2, other_article['text']])
 
     return output.getvalue()
