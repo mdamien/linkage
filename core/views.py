@@ -151,34 +151,45 @@ def index(request):
                 links = third_party_import.mbox_to_csv(mbox, request.POST.get('mbox_subject_only'))
                 import_graph_data.delay(graph.pk, links, filter_largest_subgraph)
                 return redirect('/jobs/')
-
-            elif 'choice_arxiv' in request.POST:
+            elif 'choice_coauth' in request.POST:
                 q = request.POST['q']
-                if len(q) > 0:
-                    return papers_import(
-                        'arXiv import of search term: %s' % (q, ),
-                        'arxiv_to_csv',
-                        q=q, limit=limit
-                    )
+                databases = {
+                    'arxiv': 'choice_arxiv' in request.POST,
+                    'biorxiv': 'choice_biorxiv' in request.POST,
+                    'medrxiv': 'choice_medrxiv' in request.POST,
+                    'hal': 'choice_hal' in request.POST,
+                    'pubmed': 'choice_pubmed' in request.POST,
+                    'pubmed_keywords': 'choice_pubmed_keywords' in request.POST,
+                }
+                databases_titles = []
+                for db, enabled in databases.items():
+                    if enabled:
+                        databases_titles.append({
+                            'arxiv': 'arXiv',
+                            'biorxiv': 'bioRxiv',
+                            'medrxiv': 'medRxiv',
+                            'hal': 'HAL',
+                            'pubmed': 'PubMed by abstracts' ,
+                            'pubmed_keywords': 'PubMed by keywords',
+                        }[db])
+                if databases_titles:
+                    if len(q) > 0:
+                        return papers_import(
+                            'Co-authorship (%s) import of search term: %s' % (''.join(databases_titles), q),
+                            'coauth_to_csv',
+                            q=q, limit=limit, databases=databases,
+                        )
+                    else:
+                        messages.append(['danger', 'You must include a search term to do a query'])
                 else:
-                    messages.append(['danger', 'You must include a search term to do a query'])
-            elif 'choice_biorxiv' in request.POST:
+                    messages.append(['danger', 'You must include a database to do a query'])
+            elif 'choice_pubmed_citations' in request.POST:
                 q = request.POST['q']
                 if len(q) > 0:
                     return papers_import(
-                        'bioRxiv import of search term: %s' % (q, ),
-                        'biorxiv_to_csv',
-                        q=q, limit=limit
-                    )
-                else:
-                    messages.append(['danger', 'You must include a search term to do a query'])
-            elif 'choice_medrxiv' in request.POST:
-                q = request.POST['q']
-                if len(q) > 0:
-                    return papers_import(
-                        'medRxiv import of search term: %s' % (q, ),
-                        'medrxiv_to_csv',
-                        q=q, limit=limit
+                        'PubMed citation-network import of search term: %s' % (q, ),
+                        'pubmed_citations_to_csv',
+                        q=q, limit=limit, directed=True
                     )
                 else:
                     messages.append(['danger', 'You must include a search term to do a query'])
@@ -206,46 +217,6 @@ def index(request):
                         except TwitterAPI.TwitterRequestError as e:
                             messages.append(['danger', str(e)])
                             links = ''
-                else:
-                    messages.append(['danger', 'You must include a search term to do a query'])
-            elif 'choice_hal' in request.POST:
-                q = request.POST['q']
-                if len(q) > 0:
-                    return papers_import(
-                        'HAL import of search term: %s' % (q, ),
-                        'hal_to_csv',
-                        q=q, limit=limit
-                    )
-                else:
-                    messages.append(['danger', 'You must include a search term to do a query'])
-            elif 'choice_pubmed' in request.POST:
-                q = request.POST['q']
-                if len(q) > 0:
-                    return papers_import(
-                        'PubMed (abstracts) import of search term: %s' % (q, ),
-                        'pubmed_to_csv',
-                        q=q, limit=limit
-                    )
-                else:
-                    messages.append(['danger', 'You must include a search term to do a query'])
-            elif 'choice_pubmed_keywords' in request.POST:
-                q = request.POST['q']
-                if len(q) > 0:
-                    return papers_import(
-                        'PubMed (keywords) import of search term: %s' % (q, ),
-                        'pubmed_keywords_to_csv',
-                        q=q, limit=limit
-                    )
-                else:
-                    messages.append(['danger', 'You must include a search term to do a query'])
-            elif 'choice_pubmed_citations' in request.POST:
-                q = request.POST['q']
-                if len(q) > 0:
-                    return papers_import(
-                        'PubMed citation-network import of search term: %s' % (q, ),
-                        'pubmed_citations_to_csv',
-                        q=q, limit=limit
-                    )
                 else:
                     messages.append(['danger', 'You must include a search term to do a query'])
             elif 'choice_dropdown' in request.POST:

@@ -206,12 +206,16 @@ def _pubmed_content(ids):
                 title = [article['ArticleTitle']]
 
             keywords = []
-            xml_keywords = pubarticle['MedlineCitation'].get('KeywordList', {}).get('Keyword', [])
+            xml_keywords = pubarticle['MedlineCitation'].get('MeshHeadingList', {}).get('MeshHeading', [])
             if type(xml_keywords) is not list:
                 xml_keywords = [xml_keywords]
             for keyword in xml_keywords:
                 try:
-                    keywords.append(keyword['#text'].replace(' ', '_'))
+                    keyword = keyword['DescriptorName']['#text']
+                    import string
+                    for char in string.punctuation + ' ':
+                        keyword = keyword.replace(char, '_')
+                    keywords.append(keyword)
                 except:
                     print('problem importing keyword', xml_keywords, keyword)
             keywords = ' '.join(keywords)
@@ -552,3 +556,23 @@ def gmail_to_csv(access_token, limit):
             break
 
     return output.getvalue()
+
+
+def coauth_to_csv(q, databases, limit=500):
+    output = ''
+    for database, enabled in databases.items():
+        if enabled is True:
+            if database == 'arxiv':
+                output += arxiv_to_csv(q, limit)
+            if database == 'biorxiv':
+                output += biorxiv_to_csv(q, limit)
+            if database == 'medrxiv':
+                output += medrxiv_to_csv(q, limit)
+            if database == 'pubmed':
+                output += pubmed_to_csv(q, limit)
+            if database == 'pubmed_keywords':
+                output += pubmed_keywords_to_csv(q, limit)
+            if database == 'hal':
+                output += hal_to_csv(q, limit)
+
+    return output

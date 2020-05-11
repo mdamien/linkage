@@ -116,7 +116,7 @@ def graph_data_from_links(links, filter_largest_subgraph=False, ignore_self_loop
 
     stemmer = Stemmer.Stemmer('english')
     stopwords = set(stopwords.words('english')).union(set(stopwords.words('french')))
-    punc_table = dict((ord(char), ' ') for char in string.punctuation)
+    punc_table = dict((ord(char), ' ') for char in string.punctuation if char not in '_-')
 
     def tokenize(string):
         string = string.translate(punc_table) # remove punctuation

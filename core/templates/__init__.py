@@ -316,38 +316,53 @@ def index(request, messages, import_type_selected='coauth', quota_exceeded=False
                         L.input(type='hidden', name='action', value='import'),
                         (
                             L.div('.row') / (
-                                L.div('.col-sm-11') / L.input('.form-control', type='text', name='q', placeholder="'Deep Learning', 'Speech Synthesis', 'qubit', 'graphene',…"),
-                            ),
-                            L.div('.row') / (
-                                L.div('.col-sm-12', style="text-align:center") / (
-                                    L.br,
-                                    L.input('.btn.btn-success', name='choice_arxiv', type='submit', value='search arXiv'),
-                                    SPACER,
-                                    L.input('.btn.btn-success', name='choice_hal', type='submit', value='search HAL'),
-                                    ' ',
-                                    L.a('.label.label-default',
-                                        href='https://api.archives-ouvertes.fr/docs/search/#q',
-                                        data_balloon_pos="bottom",
-                                        data_balloon="See documentation to learn more about the parameters you can use for HAL") / '?',
-                                )
-                            ),
-                            L.div('.row') / (
-                                L.div('.col-sm-12', style="text-align:center") / (
-                                    L.br,
-                                    L.input('.btn.btn-success', name='choice_pubmed', type='submit', value='search PubMed (use abstracts)'),
-                                    SPACER,
-                                    L.input('.btn.btn-success', name='choice_pubmed_keywords', type='submit', value='search PubMed (use keywords)'),
-                                )
-                            ),
-                            L.div('.row') / (
-                                L.div('.col-sm-12', style="text-align:center") / (
-                                    L.br,
-                                    L.input('.btn.btn-success', name='choice_biorxiv', type='submit', value='search bioRxiv'),
-                                    SPACER,
-                                    L.input('.btn.btn-success', name='choice_medrxiv', type='submit', value='search medRxiv'),
+                                L.div('.col-sm-5') / L.input('.form-control', type='text', name='q', placeholder="'Deep Learning', 'Speech Synthesis', 'qubit', 'graphene',…"),
+                                L.div('.col-sm-7') / (
+                                    L.input('.btn.btn-success', name='choice_coauth', type='submit', value='search'),
                                 )
                             ),
                             L.br,
+                            L.div('.form-group') / (
+                                L.div('.col-sm-3.control-label') / (L.strong / 'Databases'),
+                                L.div('.col-sm-9') / (
+                                    L.div('.checkbox') / (
+                                        L.label / (
+                                            L.input(name='choice_arxiv', type='checkbox'),
+                                            ' arXiv.org'
+                                        )                                    
+                                    ),
+                                    L.div('.checkbox') / (
+                                        L.label / (
+                                            L.input(name='choice_hal', type='checkbox'),
+                                            ' hal.archives-ouvertes.fr'
+                                        )                                    
+                                    ),
+                                    L.div('.checkbox') / (
+                                        L.label / (
+                                            L.input(name='choice_pubmed', type='checkbox'),
+                                            ' ncbi.nlm.nih.gov (PubMed) - by abstract'
+                                        )                                    
+                                    ),
+                                    L.div('.checkbox') / (
+                                        L.label / (
+                                            L.input(name='choice_pubmed_keywords', type='checkbox'),
+                                            ' ncbi.nlm.nih.gov (PubMed) - by keywords'
+                                        )                                    
+                                    ),
+                                    L.div('.checkbox') / (
+                                        L.label / (
+                                            L.input(name='choice_biorxiv', type='checkbox'),
+                                            ' biorxiv.org'
+                                        )
+                                    ),
+                                    L.div('.checkbox') / (
+                                        L.label / (
+                                            L.input(name='choice_medrxiv', type='checkbox'),
+                                            ' medrxiv.org'
+                                        )
+                                    ),
+                                ),
+                            ),
                             L.div('.form-group') / (
                                 L.div('.col-sm-3.control-label') / (
                                     L.strong / (
